@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import type { PostType } from "../components/Post";
-import Loader from "../components/Loader";
-import Post from "../components/Post";
+import type { PostType } from "../@/components/Post";
+import Loader from "../@/components/Loader";
+import Post from "../@/components/Post";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -31,9 +31,8 @@ const Home = () => {
     void fetchPosts();
   }, []);
   return (
-    <main className="py-6 px-4 mx-auto" style={{ maxWidth: 840 }}>
-      {/* <div className="grid grid-cols-12 gap-10"> */}
-      <div className="col-span-7">
+    <main className="py-6 px-4 mx-auto w-[560px]">
+      <div className="col-span-7 mt-20">
         {loading ? (
           <div className="flex justify-center items-center">
             <Loader />
@@ -47,7 +46,6 @@ const Home = () => {
             </div>
           </>
         )}
-        {/* </div> */}
       </div>
     </main>
   );
