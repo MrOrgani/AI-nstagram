@@ -1,11 +1,12 @@
 import React from "react";
 import {
   IoHeartOutline,
-  IoPaperPlaneOutline,
-  IoBookmarkOutline,
   IoChatbubbleOutline,
   IoHappyOutline,
 } from "react-icons/io5";
+
+import { HiArrowDownTray } from "react-icons/hi2";
+import { downloadImage } from "../lib/utils";
 
 type User = {
   avatar: string;
@@ -75,9 +76,11 @@ const Post = ({ data }: { data: PostType }) => {
             />
             {/* )} */}
             <IoChatbubbleOutline className="cursor-pointer hover:opacity-50" />
-            <IoPaperPlaneOutline className="cursor-pointer hover:opacity-50" />
           </div>
-          <IoBookmarkOutline className="cursor-pointer hover:opacity-50" />
+          <HiArrowDownTray
+            className="cursor-pointer hover:opacity-50"
+            onClick={() => downloadImage(data._id, data.photo)}
+          />
         </div>
         <div className="flex items-center my-3 space-x-2">
           {data.likes > 0 ? (
