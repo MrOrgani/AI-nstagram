@@ -8,13 +8,13 @@ import {
 } from "@radix-ui/react-dialog";
 import { DialogFooter, DialogHeader } from "./ui/dialog";
 import { Button } from "./ui/button";
-import { IoOpenOutline } from "react-icons/io5";
 import preview from "../../assets/preview.png";
 import Loader from "./Loader";
 import { Textarea } from "./ui/textarea";
 import { RiOpenaiFill } from "react-icons/ri";
+import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 
-const PostButton = () => {
+const PostDialog = () => {
   const [form, setForm] = useState<{
     name: string;
     prompt: string;
@@ -54,6 +54,10 @@ const PostButton = () => {
     }
   };
 
+  const deleteImg = () => {
+    setForm({ ...form, photo: "" });
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -82,13 +86,23 @@ const PostButton = () => {
           />
         </div>
 
-        <div className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-64 p-3 h-64 place-self-center">
+        <div className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-64 p-3 h-64 place-self-center relative">
           {form.photo ? (
-            <img
-              src={form.photo}
-              alt={form.prompt}
-              className="w-full  h-full object-contain"
-            />
+            <div className="group flex">
+              <img
+                src={form.photo}
+                alt={form.prompt}
+                className="block w-full  h-full object-contain"
+              />
+              <div className="hidden group-hover:block ">
+                <div
+                  className="absolute right-1 top-1 bg-gray-500 full-rounded h-6 w-6 rounded-full flex justify-center items-center text-white text-md font-bold"
+                  onClick={deleteImg}
+                >
+                  <IoCloseSharp />
+                </div>
+              </div>
+            </div>
           ) : (
             <img
               src={preview}
@@ -127,4 +141,4 @@ const PostButton = () => {
   );
 };
 
-export default PostButton;
+export default PostDialog;

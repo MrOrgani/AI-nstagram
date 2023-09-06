@@ -46,7 +46,7 @@ const Post = ({ data }: { data: PostType }) => {
               />
             </div>
           ) : (
-            <div className="h-10 w-10 rounded-full bg-green-700 flex justify-center items-center text-white text-nd font-bold">
+            <div className="h-10 w-10 rounded-full bg-green-700 flex justify-center items-center text-white text-md font-bold">
               {data.name[0]}
             </div>
           )}
