@@ -42,10 +42,9 @@ const PostDialog = () => {
           { prompt: form.prompt }
         );
 
-        const data = response.getGeneratedImg;
-        console.log("REs", response);
+        const generatedImg = response.generateImg;
 
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data}` });
+        setForm({ ...form, photo: `data:image/jpeg;base64,${generatedImg}` });
       } catch (err) {
         console.log(err);
       } finally {
