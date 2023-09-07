@@ -13,6 +13,8 @@ import Loader from "./Loader";
 import { Textarea } from "./ui/textarea";
 import { RiOpenaiFill } from "react-icons/ri";
 import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
+import request from "graphql-request";
+import { generateImgQuery } from "../lib/queries";
 
 const PostDialog = () => {
   const [form, setForm] = useState<{
@@ -30,20 +32,20 @@ const PostDialog = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const generateImg = async () => {
+  const handleGenerateImg = async () => {
     if (form.prompt) {
       setGeneratingImg(true);
       try {
-        const res = await fetch(`https://van-gan.onrender.com/api/v1/dalle`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: form.prompt }),
-        });
-        const data = (await res.json()) as { photo: string };
+        const response = await request(
+          "http://localhost:4000/graphql",
+          generateImgQuery,
+          { prompt: form.prompt }
+        );
 
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        const data = response.getGeneratedImg;
+        console.log("REs", response);
+
+        setForm({ ...form, photo: `data:image/jpeg;base64,${data}` });
       } catch (err) {
         console.log(err);
       } finally {
@@ -118,7 +120,7 @@ const PostDialog = () => {
         </div>
         <DialogFooter>
           <Button
-            onClick={generateImg}
+            onClick={handleGenerateImg}
             className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md "
           >
             <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">

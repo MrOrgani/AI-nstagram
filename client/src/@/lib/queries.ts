@@ -9,5 +9,10 @@ const getAllPeopleQuery = gql`
     }
   }
 `;
+const generateImgQuery = gql`
+  query ($prompt: String) {
+    generateImg(prompt: $prompt)
+  }
+`;
 
-export { getAllPeopleQuery };
+export { getAllPeopleQuery, generateImgQuery };

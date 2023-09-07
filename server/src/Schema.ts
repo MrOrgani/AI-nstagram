@@ -1,4 +1,5 @@
 import { gql } from "apollo-server-express"; //will create a schema
+
 const Schema = gql`
   type Person {
     id: ID!
@@ -8,6 +9,7 @@ const Schema = gql`
   type Query {
     getAllPeople: [Person] #will return multiple Person instances
     getPerson(id: Int): Person #has an argument of 'id' of type Integer.
+    generateImg(prompt: String): String #Request DALL-E to generate an img
   }
 
   type Mutation {
