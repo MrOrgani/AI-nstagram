@@ -24,6 +24,8 @@ const Home = () => {
         .order("created_at", { ascending: false })
         .returns<PostType[]>();
 
+      console.log("data", data);
+
       setAllPosts(data ?? []);
     } catch (err) {
       console.log(err);

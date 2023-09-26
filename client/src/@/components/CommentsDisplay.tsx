@@ -11,8 +11,6 @@ const CommentsDisplay = ({ currentPost }: Props) => {
   const [diplayComments, setDiplayComments] = useState(false);
   const [currentComments, setCurrentComments] = useState<any[]>([]);
 
-  console.log("diplayComments", diplayComments);
-
   const fetchComments = useCallback(async () => {
     const { data: comments, error } = await supabase
       .from("comments")
@@ -54,7 +52,7 @@ const CommentsDisplay = ({ currentPost }: Props) => {
       ) : (
         <>
           {currentComments.map((comment) => (
-            <div className="flex mb-4">
+            <div className="flex mb-4" key={comment.id}>
               {currentPost.user?.avatar ? (
                 <div className="min-h-10 min-w-[3rem] bg-neutral-200 rounded-full">
                   <img

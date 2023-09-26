@@ -7,6 +7,7 @@ import { cn } from "../lib/utils";
 import { buttonVariants } from "./ui/button";
 import useAuthStore from "../../store/authStore";
 import { googleLogout } from "@react-oauth/google";
+import supabase from "../../supabase";
 
 const Navbar = () => {
   const { userProfile, logout } = useAuthStore();
@@ -19,8 +20,12 @@ const Navbar = () => {
 
       {userProfile ? (
         <div
-          onClick={() => {
+          onClick={async () => {
             googleLogout();
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+              console.log(error);
+            }
             logout();
           }}
           className={cn(

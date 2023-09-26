@@ -27,13 +27,11 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
             </div>
           ) : (
             <div className="h-10 w-10 rounded-full bg-green-700 flex justify-center items-center text-white text-md font-bold">
-              {currentPost.user.name[0]}
+              {currentPost.user?.name?.[0]}
             </div>
           )}
           <div className="ml-2.5">
-            <p className="font-medium text-sm">
-              {currentPost.user?.name || currentPost.user.name}
-            </p>
+            <p className="font-medium text-sm">{currentPost.user?.name}</p>
           </div>
         </div>
       </div>
