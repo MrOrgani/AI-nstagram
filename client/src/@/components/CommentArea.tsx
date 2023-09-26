@@ -3,6 +3,25 @@ import { IoHappyOutline } from "react-icons/io5";
 import supabase from "../../supabase";
 import type { PostType } from "../lib/types";
 import useAuthStore from "../../store/authStore";
+import { Card } from "./ui/card";
+import { UserAuthForm } from "./UserAuthFrom";
+
+const LoginModal = () => {
+  const { userProfile } = useAuthStore();
+
+  if (userProfile?.id) {
+    return null;
+  }
+
+  return (
+    <div>
+      <div className="fixed inset-0 bg-black opacity-50 z-20"></div>
+      <Card className="fixed inset-0 flex flex-col items-center justify-center w-1/2 h-1/2 mx-auto my-auto z-50">
+        <UserAuthForm className=" z-10" />
+      </Card>
+    </div>
+  );
+};
 
 interface Props {
   currentPost: PostType;
@@ -23,7 +42,13 @@ const CommentArea = ({ currentPost }: Props) => {
   const [comment, setComment] = useState("");
   const { userProfile } = useAuthStore();
 
+  const [loginDialog, setLoginDialog] = useState(false);
+
   const handlePost = async () => {
+    if (!userProfile) {
+      setLoginDialog(true);
+      return;
+    }
     const { data, error } = await supabase.from("comments").insert([
       {
         post_id: currentPost.id,
@@ -36,10 +61,11 @@ const CommentArea = ({ currentPost }: Props) => {
 
   return (
     <>
+      {loginDialog ? <LoginModal /> : null}
       <IoHappyOutline className="text-2xl" />
       <textarea
         id={`comment_area_${currentPost.id}`}
-        className="outline-none w-full resize-none h-5 leading-5"
+        className="outline-none w-full resize-none h-5 leading-5 z-10"
         placeholder="Add a comment"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
