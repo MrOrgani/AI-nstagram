@@ -1,19 +1,13 @@
-import React from "react";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  // UserButton,
-  // useUser,
-  RedirectToSignIn,
-  UserButton,
-  SignInButton,
-} from "@clerk/clerk-react";
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages";
 
-import AInstagramLogo from "./assets/AInstagramLogo.svg";
-import PostButton from "./@/components/PostButton";
+import AuthenticationPage from "./pages/AuthenticationPage";
+import Navbar from "./@/components/Navbar";
+import supabase from "./supabase";
+import useAuthStore from "./store/authStore";
 
 const clerkPubKey = import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -22,41 +16,40 @@ if (!clerkPubKey) {
 }
 
 function App() {
-  return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <SignedIn>
-        <Welcome />
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </ClerkProvider>
-  );
-}
+  const { addUser } = useAuthStore();
 
-function Welcome() {
+  useEffect(() => {
+    const session = supabase.auth.getSession();
+    console.log("getSession", session);
+    addUser(session?.data?.session ?? null);
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        const currentUser = session?.user;
+        addUser(currentUser ?? null);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
   return (
-    <BrowserRouter>
-      <header className="w-full flex justify-between items-center bg-white sm:px-8 px-4 py-4 border-blue-500 fixed">
-        <Link to="/">
-          <img src={AInstagramLogo} alt={"logo"} className="w-20" />
-        </Link>
-        <PostButton />
-        <SignedIn>
-          {/* Mount the UserButton component */}
-          <UserButton />
-        </SignedIn>
-        <SignedOut>
-          {/* Signed out users get sign in button */}
-          <SignInButton />
-        </SignedOut>
-      </header>
-      <main className=" px-4 w-full bg-[#f9fafe] min-h-[calc(100vh-73px)]">
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+    <GoogleOAuthProvider
+      clientId={import.meta.env.VITE_PUBLIC_GOOGLE_API_TOKEN}
+    >
+      <BrowserRouter>
+        <Navbar />
+        <main className=" px-4 w-full bg-[#f9fafe] min-h-[calc(100vh-73px)]">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/sign-in" element={<AuthenticationPage />} />
+            <Route path="/sign-up" element={<AuthenticationPage />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
