@@ -15,8 +15,12 @@ import { RiOpenaiFill } from "react-icons/ri";
 import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 import request from "graphql-request";
 import { generateImgQuery } from "../lib/queries";
+import useAuthStore from "../../store/authStore";
+import supabase from "../../supabase";
 
 const PostDialog = () => {
+  const { userProfile } = useAuthStore();
+
   const [form, setForm] = useState<{
     name: string;
     prompt: string;
@@ -35,6 +39,7 @@ const PostDialog = () => {
   const handleGenerateImg = async () => {
     if (form.prompt) {
       setGeneratingImg(true);
+
       try {
         const response = await request(
           "http://localhost:4000/graphql",
@@ -52,6 +57,22 @@ const PostDialog = () => {
       }
     } else {
       alert("Please entre a prompt");
+    }
+  };
+
+  const handlePublishPost = async () => {
+    try {
+      const { data, error } = await supabase.from("posts").insert([
+        {
+          prompt: form.prompt,
+          user_id: userProfile?.id,
+          photo: form.photo,
+        },
+      ]);
+
+      console.log("publishedPost", data, error);
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -130,9 +151,9 @@ const PostDialog = () => {
             </div>
           </Button>
           <Button
-            type="submit"
             className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
             disabled={!form.photo}
+            onClick={handlePublishPost}
           >
             Publish
           </Button>

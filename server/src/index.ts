@@ -7,6 +7,8 @@ import http from "http";
 
 async function startApolloServer(schema: any, resolvers: any) {
   const app = express();
+  app.use(express.json({ limit: "50mb" }));
+
   const httpServer = http.createServer(app);
   const server = new ApolloServer({
     typeDefs: schema,
