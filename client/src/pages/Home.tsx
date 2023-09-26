@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import type { PostType } from "../@/components/Post";
 import Loader from "../@/components/Loader";
 import Post from "../@/components/Post";
-import { getAllPeopleQuery } from "../@/lib/queries";
-import request from "graphql-request";
+import supabase from "../supabase";
+
+import type { PostType } from "../@/lib/types";
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
@@ -13,20 +13,18 @@ const Home = () => {
     setLoading(true);
 
     try {
-      // const res = await fetch("https://van-gan.onrender.com/api/v1/post", {
-      //   method: "GET",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
-      const res = await request(
-        "http://localhost:4000/graphql",
-        getAllPeopleQuery
-      );
-      console.log("res", res);
-      // const photos = (await res.json()) as { data: PostType[] };
-      // setAllPosts(photos.data.reverse());
-      setAllPosts((res as any).getAllPeople);
+      const { data } = await supabase
+        .from("posts")
+        .select(
+          `*,
+        user:user_id (*),
+        likedByUser:likes(user_id)
+        `
+        )
+        .order("created_at", { ascending: false })
+        .returns<PostType[]>();
+
+      setAllPosts(data ?? []);
     } catch (err) {
       console.log(err);
     } finally {
@@ -48,7 +46,7 @@ const Home = () => {
           <>
             <div className="">
               {allPosts.map((post) => (
-                <Post key={post._id} data={post} />
+                <Post key={`post-${post.id}`} currentPost={post} />
               ))}
             </div>
           </>
