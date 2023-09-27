@@ -26,6 +26,7 @@ const CommentArea = ({ currentPost }: Props) => {
   const { userProfile } = useAuthStore();
 
   const [loginDialog, setLoginDialog] = useState(false);
+  const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
   const handlePost = async () => {
     if (!userProfile) {
@@ -42,7 +43,6 @@ const CommentArea = ({ currentPost }: Props) => {
     console.log("handlePost", data, error);
   };
 
-  const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
   return (
     <>
       {loginDialog ? (
