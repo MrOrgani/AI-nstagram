@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAuthStore from "../../store/authStore";
 import { Card } from "./ui/card";
 import { cn, createOrGetUser, signInUser, signUpUser } from "../lib/utils";
@@ -8,6 +8,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { Icons } from "./ui/icons";
 import { GoogleLogin } from "@react-oauth/google";
 import { ImCross } from "react-icons/im";
+import { useToast } from "./ui/use-toast";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -20,7 +21,7 @@ const LoginModal = ({
   displayButton = true,
   onClose,
 }: LoginModalProps) => {
-  const { userProfile, addUser } = useAuthStore();
+  const { userProfile } = useAuthStore();
   const [diplayModal, setDiplayModal] = useState(initialDisplay);
 
   const [mode, settMode] = useState<"signup" | "signin">("signin");
@@ -30,6 +31,7 @@ const LoginModal = ({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
   if (userProfile?.id) {
     return null;
@@ -39,10 +41,15 @@ const LoginModal = ({
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
+    const { data, error } =
+      mode === "signup"
+        ? await signUpUser({ email, password, name })
+        : await signInUser({ email, password });
+    if (error) {
+      setError(error.message);
+    }
 
-    return mode === "signup"
-      ? signUpUser({ email, password, name }, addUser)
-      : signInUser({ email, password }, addUser);
+    //TODO: Do we need Data ?
   }
 
   return (
@@ -155,6 +162,13 @@ const LoginModal = ({
                       />
                     ) : null}
                   </div>
+                  {error && (
+                    <div className="flex align-middle justify-center">
+                      <p className="text-xs text-muted-foreground text-red-600 justify-center">
+                        {error}
+                      </p>
+                    </div>
+                  )}
                   <Button disabled={isLoading}>
                     {isLoading && (
                       <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -185,7 +199,7 @@ const LoginModal = ({
                 <div>Logged In</div>
               ) : (
                 <GoogleLogin
-                  onSuccess={(response) => createOrGetUser(response, addUser)}
+                  onSuccess={(response) => createOrGetUser(response)}
                 />
               )}
               <p className="px-8 text-center text-sm text-muted-foreground">

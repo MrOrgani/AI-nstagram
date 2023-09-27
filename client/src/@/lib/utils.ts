@@ -22,7 +22,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 );
 
-const createOrGetUser = async (response: any, addUser: any) => {
+const createOrGetUser = async (response: any) => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
   });
@@ -30,45 +30,37 @@ const createOrGetUser = async (response: any, addUser: any) => {
 
   console.log("decodeddecode", JSON.stringify(decoded, null, 2));
 
-  const { name, picture, sub } = decoded;
+  //TODO: verirfy we need  'addUser' function
 
-  addUser({ _type: "user", _id: sub, fullName: name, image: picture });
+  // const { name, picture, sub } = decoded;
+
+  // addUser({ _type: "user", _id: sub, fullName: name, image: picture });
 };
 
-const signUpUser = async ({ email, password, name }, addUser) => {
-  try {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    console.log("Client res signUpUser", data, error);
+const signUpUser = async ({ email, password, name }) => {
+  const { error: signUpError } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+  });
 
-    const res = await supabase
-      .from("users")
-      .insert([
-        {
-          fullname: name,
-          email: email,
-          password: password,
-        },
-      ])
-      .select();
-    return res;
-  } catch (err) {
-    console.log(err);
-  }
+  const { data, error: registerUserError } = await supabase
+    .from("profiles")
+    .insert([
+      {
+        name,
+        email: email,
+        password: password,
+      },
+    ]);
+  return { data, error: signUpError || registerUserError };
 };
 
-const signInUser = async ({ email, password }, addUser) => {
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    console.log("Client res signInUser", data, error);
-  } catch (err) {
-    console.log(err);
-  }
+const signInUser = async ({ email, password }) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  return { data, error };
 };
 
 const getDateFromNow = (referenceDate: string) => {

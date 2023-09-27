@@ -4,10 +4,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages";
 
-import AuthenticationPage from "./pages/AuthenticationPage";
 import Navbar from "./@/components/Navbar";
 import supabase from "./supabase";
 import useAuthStore from "./store/authStore";
+import { Toaster } from "./@/components/ui/toaster";
 
 const clerkPubKey = import.meta.env.VITE_REACT_APP_CLERK_PUBLISHABLE_KEY;
 
@@ -41,6 +41,7 @@ function App() {
     >
       <BrowserRouter>
         <Navbar />
+        <Toaster />
         <main className=" px-4 w-full bg-[#f9fafe] min-h-[calc(100vh-73px)]">
           <Routes>
             <Route path="/" element={<Home />} />
