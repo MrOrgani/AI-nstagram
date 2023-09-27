@@ -6,8 +6,16 @@ import type { PostType } from "../lib/types";
 import LikeIcon from "./LikeIcon";
 import CommentArea from "./CommentArea";
 import CommentsDisplay from "./CommentsDisplay";
+import { useRef } from "react";
 
 const Post = ({ currentPost }: { currentPost: PostType }) => {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleIconClick = () => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
   return (
     <div className="border bg-white rounded-xl mb-4">
       {/* <PostCardContextMenu
@@ -42,7 +50,10 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
         <div className="flex items-center justify-between text-2xl">
           <div className="flex items-center space-x-4">
             <LikeIcon {...{ currentPost }} />
-            <IoChatbubbleOutline className="cursor-pointer hover:opacity-50" />
+            <IoChatbubbleOutline
+              className="cursor-pointer hover:opacity-50"
+              onClick={handleIconClick}
+            />
           </div>
           <HiArrowDownTray
             className="cursor-pointer hover:opacity-50"
@@ -69,7 +80,7 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
         </p>
       </div>
       <div className="border-t p-3 text-sm flex items-center justify-between space-x-3">
-        <CommentArea {...{ currentPost }} />
+        <CommentArea {...{ currentPost }} ref={textareaRef} />
       </div>
     </div>
   );
