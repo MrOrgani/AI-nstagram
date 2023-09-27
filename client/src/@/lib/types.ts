@@ -1,5 +1,5 @@
 type User = {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   email: string;
@@ -12,7 +12,7 @@ type PostType = {
   comments: number;
   likes: number;
   user: User;
-  likedByUser: User[];
+  likedByUser: Array<{ id: User["id"] }>;
 };
 
 export type { User, PostType };

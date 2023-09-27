@@ -10,10 +10,11 @@ interface Props {
 const LikeIcon = ({ currentPost }: Props) => {
   const { userProfile } = useAuthStore();
 
-  const isLikedByUser = currentPost.likedByUser.length;
+  const isLikedByUser = currentPost.likedByUser.find(
+    (user) => user.id === userProfile?.id
+  );
 
   const likePost = async (post_id: string) => {
-    // console.log(`I likes post ${post_id} with my id ${userProfile?.id}`);
     if (!userProfile) return null;
     const { data, error } = await supabase.from("likes").insert([
       {

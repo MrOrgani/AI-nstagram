@@ -18,7 +18,7 @@ const Home = () => {
         .select(
           `*,
         user:user_id (*),
-        likedByUser:likes(user_id)
+        likedByUser:likes(id:user_id)
         `
         )
         .order("created_at", { ascending: false })
