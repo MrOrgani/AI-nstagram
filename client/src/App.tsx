@@ -44,8 +44,6 @@ function App() {
         <main className=" px-4 w-full bg-[#f9fafe] min-h-[calc(100vh-73px)]">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/sign-in" element={<AuthenticationPage />} />
-            <Route path="/sign-up" element={<AuthenticationPage />} />
           </Routes>
         </main>
       </BrowserRouter>
