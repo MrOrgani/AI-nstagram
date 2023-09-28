@@ -38,21 +38,20 @@ const createOrGetUser = async (response: any) => {
 };
 
 const signUpUser = async ({ email, password, name }) => {
-  const { error: signUpError } = await supabase.auth.signUp({
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email: email,
     password: password,
   });
 
-  const { data, error: registerUserError } = await supabase
+  const { error: registerUserError } = await supabase
     .from("profiles")
-    .insert([
+    .update([
       {
-        name,
-        email: email,
-        password: password,
+        name: name,
       },
-    ]);
-  return { data, error: signUpError || registerUserError };
+    ])
+    .eq("user_id", signUpData?.user?.id);
+  return { data: null, error: signUpError || registerUserError };
 };
 
 const signInUser = async ({ email, password }) => {
