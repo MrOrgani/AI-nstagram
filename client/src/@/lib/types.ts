@@ -10,6 +10,7 @@ type PostType = {
   photo: string;
   created_at: string;
   comments: number;
+  commentsByUser: Array<{ id: User["id"] }>;
   likes: number;
   user: User;
   likedByUser: Array<{ id: User["id"] }>;

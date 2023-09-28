@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
-import type { PostType } from "../lib/types";
 import supabase from "../../supabase";
+
 import { getDateFromNow } from "../lib/utils";
+import { usePostContext } from "../context/PostContext";
 
-interface Props {
-  currentPost: PostType;
-}
-
-const CommentsDisplay = ({ currentPost }: Props) => {
+const CommentsDisplay = () => {
   const [diplayComments, setDiplayComments] = useState(false);
   const [currentComments, setCurrentComments] = useState<any[]>([]);
+  const { currentPost, update } = usePostContext();
 
   const fetchComments = useCallback(async () => {
     const { data: comments, error } = await supabase
@@ -24,10 +22,14 @@ const CommentsDisplay = ({ currentPost }: Props) => {
 
     if (error) {
       console.log(error);
+    } else {
+      update({
+        ...currentPost,
+        commentsByUser: comments,
+      });
     }
-    console.log("fetching comments for", currentPost.id, comments);
     setCurrentComments(comments ?? []);
-  }, [currentPost.id]);
+  }, [currentPost.comments]);
 
   useEffect(() => {
     if (diplayComments) {
@@ -36,7 +38,7 @@ const CommentsDisplay = ({ currentPost }: Props) => {
     return;
   }, [diplayComments, fetchComments]);
 
-  if (currentPost.comments < 1) {
+  if (!currentPost || currentPost?.comments < 1) {
     return null;
   }
 
@@ -50,7 +52,7 @@ const CommentsDisplay = ({ currentPost }: Props) => {
           View all {currentPost.comments} comments
         </p>
       ) : (
-        <>
+        <div className={"max-h-80 overflow-auto"}>
           {currentComments.map((comment) => (
             <div className="flex mb-4" key={comment.id}>
               {currentPost.user?.avatar ? (
@@ -83,7 +85,7 @@ const CommentsDisplay = ({ currentPost }: Props) => {
               </div>
             </div>
           ))}
-        </>
+        </div>
       )}
     </>
   );
