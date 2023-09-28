@@ -1,9 +1,20 @@
 import { createContext, useContext, useState } from "react";
+import { PostType } from "../lib/types";
 
-const PostContext = createContext({});
+export const PostContext = createContext<{
+  currentPost: PostType | null;
+  update: React.Dispatch<React.SetStateAction<PostType>>;
+}>({ currentPost: null, update: () => null });
 
-export const PostProvider = ({ post, children }) => {
-  const [currentPost, setCurrentPost] = useState(post);
+import { ReactNode } from "react";
+
+interface PostProviderProps {
+  post: PostType;
+  children: ReactNode;
+}
+
+export const PostProvider = ({ post, children }: PostProviderProps) => {
+  const [currentPost, setCurrentPost] = useState<PostType>(post);
 
   return (
     <PostContext.Provider value={{ currentPost, update: setCurrentPost }}>
