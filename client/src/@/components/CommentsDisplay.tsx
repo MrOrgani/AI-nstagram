@@ -17,19 +17,21 @@ const CommentsDisplay = () => {
           user:user_id(*)
         `
       )
-      .eq("post_id", currentPost.id)
+      .eq("post_id", currentPost?.id)
       .order("created_at", { ascending: true });
 
     if (error) {
       console.log(error);
     } else {
-      update({
-        ...currentPost,
-        commentsByUser: comments,
-      });
+      if (currentPost) {
+        update({
+          ...currentPost,
+          commentsByUser: comments,
+        });
+      }
     }
     setCurrentComments(comments ?? []);
-  }, [currentPost.comments]);
+  }, [currentPost?.comments]);
 
   useEffect(() => {
     if (diplayComments) {
@@ -56,7 +58,7 @@ const CommentsDisplay = () => {
           {currentComments.map((comment) => (
             <div
               className="flex mb-4"
-              key={`post-${currentPost.id}-comment-${comment.id}`}
+              key={`post-${currentPost.id}-comment-${comment.comment_id}`}
             >
               {currentPost.user?.avatar ? (
                 <div className="min-h-10 min-w-[3rem] bg-neutral-200 rounded-full">

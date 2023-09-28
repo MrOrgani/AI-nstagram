@@ -1,4 +1,4 @@
-import { IoChatbubbleOutline, IoHappyOutline } from "react-icons/io5";
+import { IoChatbubbleOutline } from "react-icons/io5";
 
 import { HiArrowDownTray } from "react-icons/hi2";
 import { downloadImage, getDateFromNow } from "../lib/utils";
@@ -8,6 +8,7 @@ import CommentArea from "./CommentArea";
 import CommentsDisplay from "./CommentsDisplay";
 import { useRef } from "react";
 import { PostProvider } from "../context/PostContext";
+import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 
 const Post = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -51,7 +52,7 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
         <div className="p-3">
           <div className="flex items-center justify-between text-2xl">
             <div className="flex items-center space-x-4">
-              <LikeIcon {...{ currentPost }} />
+              <LikeIcon />
               <IoChatbubbleOutline
                 className="cursor-pointer hover:opacity-50"
                 onClick={handleIconClick}
@@ -63,11 +64,7 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
             />
           </div>
           <div className="flex items-center my-3 space-x-2">
-            {currentPost.likes > 0 ? (
-              <div className="my-2 text-sm">
-                <span className="font-medium">{currentPost.likes} likes</span>
-              </div>
-            ) : null}
+            <NumberOfLikesDisplay />
           </div>
           <div className="text-sm my-2">
             <span className=" font-semibold inline-block mr-2">

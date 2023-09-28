@@ -1,21 +1,18 @@
 import useAuthStore from "../../store/authStore";
-import type { PostType } from "../lib/types";
 import supabase from "../../supabase";
 import { IoHeart, IoHeartOutline } from "react-icons/io5";
 import { useState } from "react";
 import LoginModal from "./LoginModal";
+import { usePostContext } from "../context/PostContext";
 
-interface Props {
-  currentPost: PostType;
-}
-
-const LikeIcon = ({ currentPost }: Props) => {
+const LikeIcon = () => {
   const { userProfile } = useAuthStore();
+  const { currentPost, update } = usePostContext();
 
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
-  const isLikedByUser = currentPost.likedByUser.find(
+  const isLikedByUser = currentPost?.likedByUser.find(
     (user) => user.id === userProfile?.id
   );
 
@@ -31,6 +28,13 @@ const LikeIcon = ({ currentPost }: Props) => {
       },
     ]);
 
+    if (!error && currentPost) {
+      update({
+        ...currentPost,
+        likes: currentPost.likes + 1,
+      });
+    }
+
     console.log("likedPost", data, error);
   };
   const unlikePost = async (post_id: string) => {
@@ -42,6 +46,19 @@ const LikeIcon = ({ currentPost }: Props) => {
 
     if (error) {
       console.log(error);
+    } else {
+      if (currentPost) {
+        const currentUserLikeIndex = currentPost.likedByUser.findIndex(
+          (user) => user.id === userProfile?.id
+        );
+
+        currentPost.likedByUser.splice(currentUserLikeIndex, 1);
+        console.log("update unlike");
+        update({
+          ...currentPost,
+          likes: currentPost.likes - 1,
+        });
+      }
     }
   };
 
