@@ -1,15 +1,10 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useState } from "react";
 import { IoHappyOutline } from "react-icons/io5";
 import supabase from "../../supabase";
-import type { PostType } from "../lib/types";
 import useAuthStore from "../../store/authStore";
 import LoginModal from "./LoginModal";
 import { cn } from "../lib/utils";
-import { usePostContext } from "./Post";
-
-interface Props {
-  currentPost: PostType;
-}
+import { usePostContext } from "../context/PostContext";
 
 function auto_grow(event) {
   const element = document.getElementById(event.target.id);

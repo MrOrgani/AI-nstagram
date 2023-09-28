@@ -54,7 +54,10 @@ const CommentsDisplay = () => {
       ) : (
         <div className={"max-h-80 overflow-auto"}>
           {currentComments.map((comment) => (
-            <div className="flex mb-4" key={comment.id}>
+            <div
+              className="flex mb-4"
+              key={`post-${currentPost.id}-comment-${comment.id}`}
+            >
               {currentPost.user?.avatar ? (
                 <div className="min-h-10 min-w-[3rem] bg-neutral-200 rounded-full">
                   <img
