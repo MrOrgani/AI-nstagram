@@ -67,7 +67,19 @@ const getDateFromNow = (referenceDate: string) => {
   return dayjs(referenceDate).fromNow();
 };
 
+function auto_grow(event: { target: { id: string } }) {
+  const element = document.getElementById(event.target.id);
+  if (!element) return;
+
+  const currentHeight = parseInt(element.style.height);
+  if (isNaN(currentHeight) || currentHeight < 240) {
+    element.style.height = "5px";
+    element.style.height = element.scrollHeight + "px";
+  }
+}
+
 export {
+  auto_grow,
   signUpUser,
   signInUser,
   cn,

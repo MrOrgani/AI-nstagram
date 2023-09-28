@@ -3,19 +3,8 @@ import { IoHappyOutline } from "react-icons/io5";
 import supabase from "../../supabase";
 import useAuthStore from "../../store/authStore";
 import LoginModal from "./LoginModal";
-import { cn } from "../lib/utils";
+import { auto_grow, cn } from "../lib/utils";
 import { usePostContext } from "../context/PostContext";
-
-function auto_grow(event) {
-  const element = document.getElementById(event.target.id);
-  if (!element) return;
-
-  const currentHeight = parseInt(element.style.height);
-  if (isNaN(currentHeight) || currentHeight < 240) {
-    element.style.height = "5px";
-    element.style.height = element.scrollHeight + "px";
-  }
-}
 
 const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const [comment, setComment] = useState("");
