@@ -21,12 +21,13 @@ const LikeIcon = () => {
       setLoginDialog(true);
       return null;
     }
-    const { data, error } = await supabase.from("likes").insert([
-      {
+
+    const { data, error } = await supabase.functions.invoke("likePost", {
+      body: JSON.stringify({
         post_id,
         user_id: userProfile?.id,
-      },
-    ]);
+      }),
+    });
 
     if (!error && currentPost) {
       update({

@@ -8,6 +8,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 console.log(`Function "likePost" is up and running!`);
 
+const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
+
 serve(async (req: Request) => {
   // This is needed if you're planning to invoke your function from a browser.
   if (req.method === "OPTIONS") {
@@ -18,9 +21,9 @@ serve(async (req: Request) => {
     // Create a Supabase client with the Auth context of the logged in user.
     const supabaseClient = createClient(
       // Supabase API URL - env var exported by default.
-      Deno.env.get("_SUPABASE_URL") ?? "",
+      supabaseUrl,
       // Supabase API ANON KEY - env var exported by default.
-      Deno.env.get("_SUPABASE_ANON_KEY") ?? "",
+      supabaseKey,
       // Create client with Auth context of the user that called the function.
       // This way your row-level-security (RLS) policies are applied.
       {
@@ -29,24 +32,38 @@ serve(async (req: Request) => {
         },
       }
     );
-
-    // Now we can get the session or user object
-    const {
-      data: { user },
-    } = await supabaseClient.auth.getUser();
-
+    // We add the new likes to the table
     const { post_id, user_id } = await req.json();
 
-    console.log({ user, post_id, user_id });
+    await supabaseClient.from("likes").insert([
+      {
+        post_id,
+        user_id,
+      },
+    ]);
 
-    // And we can run queries in the context of our authenticated user
-    const { data, error } = await supabaseClient.from("profiles").select("*");
-    if (error) throw error;
+    // We get the current likes of the liked post and increment it by one
+    const { data: currentPostLikes } = await supabaseClient
+      .from("posts")
+      .select("likes")
+      .eq("id", post_id);
 
-    return new Response(JSON.stringify({ user, data }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    const { data: updatedPost, error: iupdatedPostError } = await supabaseClient
+      .from("posts")
+      .update({ likes: parseInt(currentPostLikes?.[0].likes) + 1 })
+      .eq("id", post_id)
+      .select();
+
+    return new Response(
+      JSON.stringify({
+        updatedPost,
+        iupdatedPostError,
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -54,9 +71,3 @@ serve(async (req: Request) => {
     });
   }
 });
-
-// To invoke:
-// curl -i --location --request POST 'http://localhost:54321/functions/v1/getPosts' \
-//   --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24ifQ.625_WdcF3KHqz5amU0x2X5WWHP-OEs_4qj0ssLNHzTs' \
-//   --header 'Content-Type: application/json' \
-//   --data '{"name":"Functions"}'
