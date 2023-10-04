@@ -13,20 +13,8 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const { data } = await supabase
-        .from("posts")
-        .select(
-          `*,
-        user:user_id (*),
-        likedByUser:likes(id:user_id)
-        `
-        )
-        .order("created_at", { ascending: false })
-        .returns<PostType[]>();
-
-      console.log("data", data);
-
-      setAllPosts(data ?? []);
+      const { data } = await supabase.functions.invoke("getPosts");
+      setAllPosts(data.data ?? []);
     } catch (err) {
       console.log(err);
     } finally {
