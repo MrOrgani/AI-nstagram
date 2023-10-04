@@ -48,22 +48,16 @@ serve(async (req: Request) => {
       .select("likes")
       .eq("id", post_id);
 
-    const { data: updatedPost, error: iupdatedPostError } = await supabaseClient
+    const { data: updatedPost } = await supabaseClient
       .from("posts")
       .update({ likes: parseInt(currentPostLikes?.[0].likes) + 1 })
       .eq("id", post_id)
       .select();
 
-    return new Response(
-      JSON.stringify({
-        updatedPost,
-        iupdatedPostError,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
-    );
+    return new Response(JSON.stringify(updatedPost), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
