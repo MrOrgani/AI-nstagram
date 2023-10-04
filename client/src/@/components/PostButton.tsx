@@ -13,8 +13,6 @@ import Loader from "./Loader";
 import { Textarea } from "./ui/textarea";
 import { RiOpenaiFill } from "react-icons/ri";
 import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
-import request from "graphql-request";
-import { generateImgQuery } from "../lib/queries";
 import useAuthStore from "../../store/authStore";
 import supabase from "../../supabase";
 
@@ -24,11 +22,11 @@ const PostDialog = () => {
   const [form, setForm] = useState<{
     name: string;
     prompt: string;
-    photo: string;
+    photoUrl: string;
   }>({
     name: "",
     prompt: "",
-    photo: "",
+    photoUrl: "",
   });
   const [generatingImg, setGeneratingImg] = useState(false);
 
@@ -41,15 +39,13 @@ const PostDialog = () => {
       setGeneratingImg(true);
 
       try {
-        const response = await request(
-          "http://localhost:4000/graphql",
-          generateImgQuery,
-          { prompt: form.prompt }
-        );
+        const { data } = await supabase.functions.invoke("openai", {
+          body: JSON.stringify({
+            prompt: form.prompt,
+          }),
+        });
 
-        const generatedImg = response.generateImg;
-
-        setForm({ ...form, photo: `data:image/jpeg;base64,${generatedImg}` });
+        setForm({ ...form, photoUrl: data.photoUrl });
       } catch (err) {
         console.log(err);
       } finally {
@@ -66,7 +62,7 @@ const PostDialog = () => {
         {
           prompt: form.prompt,
           user_id: userProfile?.id,
-          photo: form.photo,
+          photo: form.photoUrl,
         },
       ]);
 
@@ -77,7 +73,7 @@ const PostDialog = () => {
   };
 
   const deleteImg = () => {
-    setForm({ ...form, photo: "" });
+    setForm({ ...form, photoUrl: "" });
   };
 
   return (
@@ -109,10 +105,10 @@ const PostDialog = () => {
         </div>
 
         <div className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-64 p-3 h-64 place-self-center relative">
-          {form.photo ? (
+          {form.photoUrl ? (
             <div className="group flex">
               <img
-                src={form.photo}
+                src={form.photoUrl}
                 alt={form.prompt}
                 className="block w-full  h-full object-contain"
               />
@@ -152,7 +148,7 @@ const PostDialog = () => {
           </Button>
           <Button
             className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
-            disabled={!form.photo}
+            disabled={!form.photoUrl}
             onClick={handlePublishPost}
           >
             Publish
