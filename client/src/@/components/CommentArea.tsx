@@ -19,22 +19,28 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
       setLoginDialog(true);
       return;
     }
-    const { data, error } = await supabase
-      .from("comments")
-      .insert([
-        {
+
+    try {
+      if (!currentPost) return;
+      const { data } = await supabase.functions.invoke("commentPost", {
+        body: JSON.stringify({
           post_id: currentPost.id,
           user_id: userProfile?.id,
           text: comment,
-        },
-      ])
-      .select();
-    update({
-      ...currentPost,
-      commentsByUser: [...(currentPost?.commentsByUser || []), ...(data || [])],
-      comments: currentPost.comments + 1,
-    });
-    setComment("");
+        }),
+      });
+      update({
+        ...currentPost,
+        commentsByUser: [
+          ...(currentPost?.commentsByUser || []),
+          ...(data || []),
+        ],
+        comments: currentPost.comments + 1,
+      });
+      setComment("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (!currentPost) {
@@ -59,7 +65,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         onChange={(e) => setComment(e.target.value)}
         autoComplete="off"
         autoCorrect="off"
-        onInput={(e) => auto_grow(e)}
+        onInput={(e: React.ChangeEvent<HTMLTextAreaElement>) => auto_grow(e)}
         ref={ref}
       />
       <div

@@ -66,7 +66,7 @@ const getDateFromNow = (referenceDate: string) => {
   return dayjs(referenceDate).fromNow();
 };
 
-function auto_grow(event: { target: { id: string } }) {
+function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
   const element = document.getElementById(event.target.id);
   if (!element) return;
 
