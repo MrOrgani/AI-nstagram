@@ -10,27 +10,26 @@ const CommentsDisplay = () => {
   const { currentPost, update } = usePostContext();
 
   const fetchComments = useCallback(async () => {
-    const { data: comments, error } = await supabase
-      .from("comments")
-      .select(
-        `*,
-          user:user_id(*)
-        `
-      )
-      .eq("post_id", currentPost?.id)
-      .order("created_at", { ascending: true });
+    try {
+      const { data: comments } = await supabase.functions.invoke(
+        "getPostComments",
+        {
+          body: JSON.stringify({
+            post_id: currentPost?.id,
+          }),
+        }
+      );
 
-    if (error) {
-      console.log(error);
-    } else {
       if (currentPost) {
         update({
           ...currentPost,
           commentsByUser: comments,
         });
       }
+      setCurrentComments(comments ?? []);
+    } catch (error) {
+      console.log(error);
     }
-    setCurrentComments(comments ?? []);
   }, [currentPost?.comments]);
 
   useEffect(() => {

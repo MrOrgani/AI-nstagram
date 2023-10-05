@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 const authStore = (set: any) => ({
-  userProfile: { id: null },
+  userProfile: { id: "" },
   addUser: (user: any) => set({ userProfile: user }),
   logout: () => set({ userProfile: null }),
 });
