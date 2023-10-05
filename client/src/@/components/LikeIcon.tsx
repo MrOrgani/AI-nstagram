@@ -22,13 +22,6 @@ const LikeIcon = () => {
       return null;
     }
     try {
-      await supabase.functions.invoke("likePost", {
-        body: JSON.stringify({
-          post_id,
-          user_id: userProfile?.id,
-        }),
-      });
-
       if (currentPost) {
         update({
           ...currentPost,
@@ -38,6 +31,12 @@ const LikeIcon = () => {
             ...(currentPost?.likedByUser || []),
           ],
         });
+        await supabase.functions.invoke("likePost", {
+          body: JSON.stringify({
+            post_id,
+            user_id: userProfile?.id,
+          }),
+        });
       }
     } catch (error) {
       console.log(error);
@@ -45,13 +44,6 @@ const LikeIcon = () => {
   };
   const unlikePost = async (post_id: string) => {
     try {
-      await supabase.functions.invoke("unlikePost", {
-        body: JSON.stringify({
-          post_id,
-          user_id: userProfile?.id,
-        }),
-      });
-
       if (currentPost) {
         const currentUserLikeIndex = currentPost.likedByUser.findIndex(
           (user) => user.id === userProfile?.id
@@ -61,6 +53,12 @@ const LikeIcon = () => {
         update({
           ...currentPost,
           likes: Math.max(currentPost.likes - 1, 0),
+        });
+        await supabase.functions.invoke("unlikePost", {
+          body: JSON.stringify({
+            post_id,
+            user_id: userProfile?.id,
+          }),
         });
       }
     } catch (error) {
