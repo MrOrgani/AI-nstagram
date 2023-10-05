@@ -49,7 +49,7 @@ serve(async (req: Request) => {
 
     const { data: updatedPost } = await supabaseClient
       .from("posts")
-      .update({ likes: Math.max(0, parseInt(currentPostLikes?.[0].likes) + 1) })
+      .update({ likes: Math.max(0, parseInt(currentPostLikes?.[0].likes) - 1) })
       .eq("id", post_id);
 
     return new Response(JSON.stringify(updatedPost), {
