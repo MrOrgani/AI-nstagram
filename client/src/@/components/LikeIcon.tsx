@@ -21,47 +21,56 @@ const LikeIcon = () => {
       setLoginDialog(true);
       return null;
     }
-
-    const { data, error } = await supabase.functions.invoke("likePost", {
-      body: JSON.stringify({
-        post_id,
-        user_id: userProfile?.id,
-      }),
-    });
-
-    if (!error && currentPost) {
-      update({
-        ...currentPost,
-        likes: currentPost.likes + 1,
+    try {
+      await supabase.functions.invoke("likePost", {
+        body: JSON.stringify({
+          post_id,
+          user_id: userProfile?.id,
+        }),
       });
-    }
 
-    console.log("likedPost", data, error);
+      if (currentPost) {
+        update({
+          ...currentPost,
+          likes: currentPost.likes + 1,
+          likedByUser: [
+            { id: userProfile?.id },
+            ...(currentPost?.likedByUser || []),
+          ],
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   const unlikePost = async (post_id: string) => {
-    const { error } = await supabase
-      .from("likes")
-      .delete()
-      .eq("post_id", post_id)
-      .eq("user_id", userProfile?.id);
+    try {
+      await supabase.functions.invoke("unlikePost", {
+        body: JSON.stringify({
+          post_id,
+          user_id: userProfile?.id,
+        }),
+      });
 
-    if (error) {
-      console.log(error);
-    } else {
       if (currentPost) {
         const currentUserLikeIndex = currentPost.likedByUser.findIndex(
           (user) => user.id === userProfile?.id
         );
 
         currentPost.likedByUser.splice(currentUserLikeIndex, 1);
-        console.log("update unlike");
         update({
           ...currentPost,
-          likes: currentPost.likes - 1,
+          likes: Math.max(currentPost.likes - 1, 0),
         });
       }
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  if (!currentPost) {
+    return null;
+  }
 
   return (
     <>
