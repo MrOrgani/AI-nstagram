@@ -47,7 +47,11 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
           </div>
         </div>
         <div className="w-full bg-neutral-200">
-          <img src={currentPost.photo} alt="" className="w-full h-full" />
+          <img
+            src={currentPost.photo}
+            alt={currentPost.prompt}
+            className="w-full h-full"
+          />
         </div>
         <div className="p-3">
           <div className="flex items-center justify-between text-2xl">

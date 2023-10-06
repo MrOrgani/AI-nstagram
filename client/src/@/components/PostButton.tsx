@@ -16,8 +16,12 @@ import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 import useAuthStore from "../../store/authStore";
 import supabase from "../../supabase";
 
-const PostDialog = () => {
+const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
+
+const PostButton = () => {
   const { userProfile } = useAuthStore();
+
+  const [open, setOpen] = useState(false);
 
   const [form, setForm] = useState<{
     name: string;
@@ -58,15 +62,13 @@ const PostDialog = () => {
 
   const handlePublishPost = async () => {
     try {
-      const { data, error } = await supabase.from("posts").insert([
+      await supabase.from("posts").insert([
         {
           prompt: form.prompt,
           user_id: userProfile?.id,
           photo: form.photoUrl,
         },
       ]);
-
-      console.log("publishedPost", data, error);
     } catch (err) {
       console.log(err);
     }
@@ -77,9 +79,12 @@ const PostDialog = () => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md ">
+        <Button
+          className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md "
+          onClick={() => setOpen(true)}
+        >
           <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
             <span className="mx-1">Post</span>
             <IoOpenOutline />
@@ -146,17 +151,25 @@ const PostDialog = () => {
               <RiOpenaiFill />
             </div>
           </Button>
-          <Button
-            className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
-            disabled={!form.photoUrl}
-            onClick={handlePublishPost}
+          <form
+            onSubmit={(event) => {
+              wait().then(() => setOpen(false));
+              event.preventDefault();
+            }}
           >
-            Publish
-          </Button>
+            <Button
+              className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
+              disabled={!form.photoUrl}
+              onClick={handlePublishPost}
+              type="submit"
+            >
+              Publish
+            </Button>
+          </form>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default PostDialog;
+export default PostButton;
