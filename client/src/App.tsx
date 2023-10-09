@@ -42,7 +42,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Toaster />
-        <main className=" px-4 w-full bg-[#f9fafe] min-h-[calc(100vh-73px)]">
+        <main className=" px-4 w-full bg-[#f9fafe] min-h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
           </Routes>
