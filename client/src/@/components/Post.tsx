@@ -9,6 +9,7 @@ import CommentsDisplay from "./CommentsDisplay";
 import { useRef } from "react";
 import { PostProvider } from "../context/PostContext";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
+import supabase from "../../supabase";
 
 const Post = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -48,7 +49,11 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
         </div>
         <div className="w-full bg-neutral-200">
           <img
-            src={currentPost.photo}
+            src={
+              supabase.storage
+                .from("ai-stagram-bucket")
+                .getPublicUrl(currentPost.photo).data.publicUrl
+            }
             alt={currentPost.prompt}
             className="w-full h-full"
           />

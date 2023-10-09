@@ -19,9 +19,11 @@ serve(async (req) => {
       prompt,
       n: 1,
       size: "1024x1024",
+      responseFormat: "b64_json",
     });
+
     const res = new Response(
-      JSON.stringify({ photoUrl: aiResponse["0"].url }),
+      JSON.stringify({ photoUrl: aiResponse["0"].b64_json }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,

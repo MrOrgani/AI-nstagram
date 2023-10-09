@@ -16,6 +16,12 @@ import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 import useAuthStore from "../../store/authStore";
 import supabase from "../../supabase";
 
+async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
+  const res: Response = await fetch(dataUrl);
+  const blob: Blob = await res.blob();
+  return new File([blob], fileName, { type: "image/jpeg" });
+}
+
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const PostButton = () => {
@@ -49,7 +55,10 @@ const PostButton = () => {
           }),
         });
 
-        setForm({ ...form, photoUrl: data.photoUrl });
+        setForm({
+          ...form,
+          photoUrl: `data:image/jpeg;base64,${data.photoUrl}`,
+        });
       } catch (err) {
         console.log(err);
       } finally {
@@ -62,13 +71,19 @@ const PostButton = () => {
 
   const handlePublishPost = async () => {
     try {
+      const fileName = `${userProfile?.id}_${Date.now()}`;
+      const fileImage = await dataUrlToFile(form.photoUrl, fileName);
+      const { data } = await supabase.storage
+        .from("ai-stagram-bucket")
+        .upload(fileName, fileImage);
       await supabase.from("posts").insert([
         {
           prompt: form.prompt,
           user_id: userProfile?.id,
-          photo: form.photoUrl,
+          photo: data?.path,
         },
       ]);
+      setForm({ ...form, photoUrl: "" });
     } catch (err) {
       console.log(err);
     }
@@ -161,7 +176,7 @@ const PostButton = () => {
               className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
               disabled={!form.photoUrl}
               onClick={handlePublishPost}
-              type="submit"
+              // type="submit"
             >
               Publish
             </Button>
