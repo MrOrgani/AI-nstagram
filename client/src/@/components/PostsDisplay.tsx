@@ -55,15 +55,20 @@ const PostsDisplay = () => {
   }, [containerRef]);
 
   const loadMoreTickets = useCallback(async () => {
+    if (isLast) {
+      return;
+    }
     setIsLoading(true);
     setOffset((prev) => prev + 1);
     const { data: newPosts } = await fetchTickets(offset);
-    if (newPosts.length <= PAGE_COUNT) {
+    if (newPosts.length < PAGE_COUNT) {
       setIsLast(true);
     }
-    setLoadedPosts((prevPosts) => [...prevPosts, ...newPosts]);
+    if (newPosts.length > 0) {
+      setLoadedPosts((prevPosts) => [...prevPosts, ...newPosts]);
+    }
     setIsLoading(false);
-  }, [offset]);
+  }, [isLast, offset]);
 
   useEffect(() => {
     const fetchNewPosts = async () => {
@@ -88,6 +93,8 @@ const PostsDisplay = () => {
   const fetchTickets = async (offset: number) => {
     const from = offset * PAGE_COUNT;
     const to = from + PAGE_COUNT - 1;
+
+    console.log(from, to);
 
     const { data } = await supabase
       .from("posts")
