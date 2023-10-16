@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useAuthStore from "../../store/authStore";
 import { Card } from "./ui/card";
 import { cn, createOrGetUser, signInUser, signUpUser } from "../lib/utils";
@@ -8,7 +8,6 @@ import { Button, buttonVariants } from "./ui/button";
 import { Icons } from "./ui/icons";
 import { GoogleLogin } from "@react-oauth/google";
 import { ImCross } from "react-icons/im";
-import { useToast } from "./ui/use-toast";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -41,11 +40,12 @@ const LoginModal = ({
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
-    const { data, error } =
+    try {
       mode === "signup"
         ? await signUpUser({ email, password, name })
         : await signInUser({ email, password });
-    if (error) {
+      setDiplayModal(false);
+    } catch (error) {
       setError(error.message);
     }
 
