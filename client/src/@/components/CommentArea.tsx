@@ -22,7 +22,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
 
     try {
       if (!currentPost) return;
-      const { data } = await supabase.functions.invoke("commentPost", {
+      await supabase.functions.invoke("commentPost", {
         body: JSON.stringify({
           post_id: currentPost.id,
           user_id: userProfile?.id,
@@ -33,7 +33,14 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         ...currentPost,
         commentsByUser: [
           ...(currentPost?.commentsByUser || []),
-          ...(data || []),
+          {
+            comment_id: crypto.randomUUID(),
+            created_at: Date.toString(),
+            post_id: currentPost.id,
+            text: comment,
+            user: userProfile,
+            user_id: userProfile.id,
+          },
         ],
         comments: currentPost.comments + 1,
       });
@@ -48,7 +55,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <>
+    <div className="border-t p-3 text-sm flex items-center justify-between space-x-3">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}
@@ -74,7 +81,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
       >
         Post
       </div>
-    </>
+    </div>
   );
 });
 

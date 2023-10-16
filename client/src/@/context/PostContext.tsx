@@ -2,9 +2,9 @@ import { createContext, useContext, useState } from "react";
 import { PostType } from "../lib/types";
 
 export const PostContext = createContext<{
-  currentPost: PostType | null;
+  currentPost: PostType;
   update: React.Dispatch<React.SetStateAction<PostType>>;
-}>({ currentPost: null, update: () => null });
+}>({ currentPost: {} as PostType, update: () => null });
 
 import { ReactNode } from "react";
 

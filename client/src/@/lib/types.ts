@@ -4,16 +4,24 @@ type User = {
   avatar: string;
   email: string;
 };
+type Comment = {
+  comment_id: string;
+  created_at: string;
+  user_id: string;
+  text: string;
+  post_id: number;
+  user: User;
+};
 type PostType = {
-  id: string;
+  id: number;
   prompt: string;
   photo: string;
   created_at: string;
   comments: number;
-  commentsByUser: Array<{ id: User["id"] }>;
+  commentsByUser: Comment[];
   likes: number;
   user: User;
   likedByUser: Array<{ id: User["id"] }>;
 };
 
-export type { User, PostType };
+export type { User, PostType, Comment };

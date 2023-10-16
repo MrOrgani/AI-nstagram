@@ -1,43 +1,59 @@
-import React, { useCallback, useEffect, useState } from "react";
-import supabase from "../../supabase";
+import { useCallback, useEffect, useState } from "react";
 
 import { getDateFromNow } from "../lib/utils";
 import { usePostContext } from "../context/PostContext";
+import { getCommentsFromPostId } from "../lib/fetch/utils";
+
+import type { Comment } from "../lib/types";
 
 const CommentsDisplay = () => {
   const [diplayComments, setDiplayComments] = useState(false);
-  const [currentComments, setCurrentComments] = useState<any[]>([]);
   const { currentPost, update } = usePostContext();
+  const [currentComments, setCurrentComments] = useState<Comment[]>([]);
 
   const fetchComments = useCallback(async () => {
     try {
-      const { data: comments } = await supabase.functions.invoke(
-        "getPostComments",
-        {
-          body: JSON.stringify({
-            post_id: currentPost?.id,
-          }),
-        }
-      );
+      if (!currentPost) {
+        return;
+      }
 
+      const comments = await getCommentsFromPostId(currentPost?.id);
       if (currentPost) {
-        update({
-          ...currentPost,
+        update((prev) => ({
+          ...prev,
           commentsByUser: comments,
-        });
+        }));
       }
       setCurrentComments(comments ?? []);
     } catch (error) {
       console.log(error);
     }
-  }, [currentPost?.comments]);
+  }, [currentPost]);
 
   useEffect(() => {
-    if (diplayComments) {
+    const existingCommentsAreEmpty =
+      diplayComments &&
+      currentPost.comments > 0 &&
+      !currentPost?.commentsByUser;
+    if (existingCommentsAreEmpty) {
       fetchComments();
     }
+
+    const currentUserAddedAComment =
+      currentPost?.commentsByUser &&
+      currentPost?.commentsByUser.length > currentComments.length;
+    if (currentUserAddedAComment) {
+      setCurrentComments(currentPost?.commentsByUser);
+    }
+
     return;
-  }, [diplayComments, fetchComments]);
+  }, [
+    currentComments.length,
+    currentPost.comments,
+    currentPost?.commentsByUser,
+    diplayComments,
+    fetchComments,
+  ]);
 
   if (!currentPost || currentPost?.comments < 1) {
     return null;
@@ -49,13 +65,18 @@ const CommentsDisplay = () => {
         <p
           className="text-neutral-500 font-medium text-sm my-2 cursor-pointer"
           onClick={() => setDiplayComments(!diplayComments)}
+          data-testid="view-all-comments"
         >
           View all {currentPost.comments} comments
         </p>
       ) : (
-        <div className={"max-h-80 overflow-auto"}>
+        <div
+          data-testid="comments-from-post"
+          className={"max-h-80 overflow-auto"}
+        >
           {currentComments.map((comment) => (
             <div
+              data-testid="comments-on-post"
               className="flex mb-4"
               key={`post-${currentPost.id}-comment-${comment.comment_id}`}
             >
