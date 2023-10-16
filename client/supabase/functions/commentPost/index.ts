@@ -50,7 +50,7 @@ serve(async (req: Request) => {
 
     const { data: updatedPost } = await supabaseClient
       .from("posts")
-      .update({ likes: parseInt(currentPostComments?.[0].comments) + 1 })
+      .update({ comments: parseInt(currentPostComments?.[0].comments) + 1 })
       .eq("id", post_id)
       .select();
 
