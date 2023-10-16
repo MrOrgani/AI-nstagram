@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { User } from "../@/lib/types";
 
 const authStore = (set: any) => ({
-  userProfile: { id: "" },
+  userProfile: { id: "" } as User,
   addUser: (user: any) => set({ userProfile: user }),
   logout: () => set({ userProfile: null }),
 });

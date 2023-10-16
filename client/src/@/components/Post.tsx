@@ -21,7 +21,7 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
   };
   return (
     <PostProvider post={currentPost}>
-      <div className="border bg-white rounded-xl mb-4">
+      <div data-testid="feed-post" className="border bg-white rounded-xl mb-4">
         {/* <PostCardContextMenu
         open={contextMenuOpen}
         setOpen={setContextMenuOpen}
@@ -87,9 +87,7 @@ const Post = ({ currentPost }: { currentPost: PostType }) => {
             {getDateFromNow(currentPost.created_at)}
           </p>
         </div>
-        <div className="border-t p-3 text-sm flex items-center justify-between space-x-3">
-          <CommentArea ref={textareaRef} />
-        </div>
+        <CommentArea ref={textareaRef} />
       </div>
     </PostProvider>
   );

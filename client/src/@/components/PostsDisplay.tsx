@@ -94,8 +94,6 @@ const PostsDisplay = () => {
     const from = offset * PAGE_COUNT;
     const to = from + PAGE_COUNT - 1;
 
-    console.log(from, to);
-
     const { data } = await supabase
       .from("posts")
       .select(
@@ -113,7 +111,7 @@ const PostsDisplay = () => {
 
   return (
     <>
-      <div className="" ref={containerRef}>
+      <div ref={containerRef}>
         {loadedPosts.map((post) => (
           <Post key={`post-${post.id}`} currentPost={post} />
         ))}

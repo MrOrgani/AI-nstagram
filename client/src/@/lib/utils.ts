@@ -43,14 +43,13 @@ const signUpUser = async ({ email, password, name }) => {
     password: password,
   });
 
-  const { error: registerUserError } = await supabase
-    .from("profiles")
-    .update([
-      {
-        name: name,
-      },
-    ])
-    .eq("user_id", signUpData?.user?.id);
+  const { error: registerUserError } = await supabase.from("profiles").insert([
+    {
+      name: name,
+      user_id: signUpData?.user?.id,
+      email: signUpData?.user?.email,
+    },
+  ]);
   return { data: null, error: signUpError || registerUserError };
 };
 
@@ -63,7 +62,15 @@ const signInUser = async ({ email, password }) => {
 };
 
 const getDateFromNow = (referenceDate: string) => {
-  return dayjs(referenceDate).fromNow();
+  return dayjs(referenceDate).fromNow(true);
+};
+const getFormatedDate = (referenceDate: string, format: string) => {
+  return dayjs(referenceDate).format(format);
+};
+
+const getShortenedDateFromNow = (referenceDate: string) => {
+  const [number, time] = dayjs(referenceDate).fromNow(true).split(" ");
+  return `${number} ${time[0]}`;
 };
 
 function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -85,4 +92,6 @@ export {
   downloadImage,
   createOrGetUser,
   getDateFromNow,
+  getFormatedDate,
+  getShortenedDateFromNow,
 };

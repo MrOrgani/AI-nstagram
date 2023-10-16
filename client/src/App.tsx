@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Home } from "./pages";
+import { Home, Profile } from "./pages";
 
 import Navbar from "./@/components/Navbar";
 import supabase from "./supabase";
@@ -20,20 +20,30 @@ function App() {
 
   useEffect(() => {
     const session = supabase.auth.getSession();
-    console.log("getSession", session);
-    addUser(session?.data?.session ?? null);
+    addUser(session?.data?.session.user ?? null);
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        const currentUser = session?.user;
-        addUser(currentUser ?? null);
+        if (event === "SIGNED_IN") {
+          const {
+            data: { name },
+          } = await supabase
+            .from("profiles")
+            .select("name")
+            .eq("user_id", session?.user?.id)
+            .single();
+          const currentUser = session?.user;
+          addUser({ ...currentUser, name } ?? null);
+        } else if (event === "SIGNED_OUT") {
+          addUser(null);
+        }
       }
     );
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [addUser]);
 
   return (
     <GoogleOAuthProvider
@@ -45,6 +55,7 @@ function App() {
         <main className=" px-4 w-full bg-[#f9fafe] min-h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
       </BrowserRouter>
