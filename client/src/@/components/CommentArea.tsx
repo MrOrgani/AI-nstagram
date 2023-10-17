@@ -75,12 +75,14 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         ref={ref}
       />
       <IoHappyOutline className="text-2xl" />
-      <div
-        className="text-blue-400 font-bold mr-1 cursor-pointer"
-        onClick={handlePost}
-      >
-        Post
-      </div>
+      {comment.length ? (
+        <div
+          className="text-blue-400 font-bold mr-1 cursor-pointer"
+          onClick={handlePost}
+        >
+          Post
+        </div>
+      ) : null}
     </div>
   );
 });
