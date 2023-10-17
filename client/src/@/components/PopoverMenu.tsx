@@ -11,19 +11,16 @@ import {
 import supabase from "../../supabase";
 import useAuthStore from "../../store/authStore";
 import { Link } from "react-router-dom";
+import { SmallAvatar } from "./SmallAvatar";
 
 const PopoverMenu = () => {
-  const { logout } = useAuthStore();
+  const { userProfile, logout } = useAuthStore();
 
   return (
     <Menubar className="border-none">
       <MenubarMenu>
         <MenubarTrigger className="p-0 rounded-full">
-          <Avatar>
-            <AvatarImage src={""} />
-            {/* TODO: AJOUTER LA BONNE SOURCE */}
-            <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
+          <SmallAvatar user={userProfile} />
         </MenubarTrigger>
         <MenubarContent>
           <Link to="/profile">
