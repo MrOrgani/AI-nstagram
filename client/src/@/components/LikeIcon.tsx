@@ -16,53 +16,51 @@ const LikeIcon = () => {
     (user) => user.id === userProfile?.id
   );
 
-  const likePost = async (post_id: string) => {
+  const likePost = async (post_id: number) => {
     if (!userProfile) {
       setLoginDialog(true);
       return null;
     }
-    try {
-      if (currentPost) {
-        update({
-          ...currentPost,
-          likes: currentPost.likes + 1,
-          likedByUser: [
-            { id: userProfile?.id },
-            ...(currentPost?.likedByUser || []),
-          ],
-        });
-        await supabase.functions.invoke("likePost", {
-          body: JSON.stringify({
-            post_id,
-            user_id: userProfile?.id,
-          }),
-        });
+    if (currentPost) {
+      update({
+        ...currentPost,
+        likes: currentPost.likes + 1,
+        likedByUser: [
+          { id: userProfile?.id },
+          ...(currentPost?.likedByUser || []),
+        ],
+      });
+      const { error } = await supabase.functions.invoke("likePost", {
+        body: JSON.stringify({
+          post_id,
+          user_id: userProfile?.id,
+        }),
+      });
+      if (error) {
+        console.log(error.message);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
-  const unlikePost = async (post_id: string) => {
-    try {
-      if (currentPost) {
-        const currentUserLikeIndex = currentPost.likedByUser.findIndex(
-          (user) => user.id === userProfile?.id
-        );
+  const unlikePost = async (post_id: number) => {
+    if (currentPost) {
+      const currentUserLikeIndex = currentPost.likedByUser.findIndex(
+        (user) => user.id === userProfile?.id
+      );
 
-        currentPost.likedByUser.splice(currentUserLikeIndex, 1);
-        update({
-          ...currentPost,
-          likes: Math.max(currentPost.likes - 1, 0),
-        });
-        await supabase.functions.invoke("unlikePost", {
-          body: JSON.stringify({
-            post_id,
-            user_id: userProfile?.id,
-          }),
-        });
+      currentPost.likedByUser.splice(currentUserLikeIndex, 1);
+      update({
+        ...currentPost,
+        likes: Math.max(currentPost.likes - 1, 0),
+      });
+      const { error } = await supabase.functions.invoke("unlikePost", {
+        body: JSON.stringify({
+          post_id,
+          user_id: userProfile?.id,
+        }),
+      });
+      if (error) {
+        console.log(error.message);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 

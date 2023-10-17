@@ -35,6 +35,22 @@ serve(async (req: Request) => {
     // We add the new likes to the table
     const { post_id, user_id } = await req.json();
 
+    const { data: alreadyExistingLike } = await supabaseClient
+      .from("likes")
+      .select("*")
+      .eq("post_id", post_id)
+      .eq("user_id", user_id);
+
+    if (alreadyExistingLike.length > 0) {
+      return new Response(
+        JSON.stringify({ error: "You already liked this post" }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
+    }
+
     await supabaseClient.from("likes").insert([
       {
         post_id,
