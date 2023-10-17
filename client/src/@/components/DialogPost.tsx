@@ -12,13 +12,16 @@ import { getCommentsFromPostId } from "../lib/fetch/utils";
 import CommentArea from "./CommentArea";
 import { PostProvider } from "../context/PostContext";
 
+import type { Comment } from "../lib/types";
+import { CommentsList } from "./CommentsList";
+
 interface Props {
   post: PostType;
 }
 
 const DialogPost = ({ post }: Props) => {
   const { userProfile } = useAuthStore();
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     if (post.comments < 1) {
@@ -85,8 +88,8 @@ const DialogPost = ({ post }: Props) => {
                   {userProfile?.user_metadata?.full_name}
                 </div>
               </header>
-              <div className="grow max-h-[500px] min-w-[calc(100%-32px)] overflow-auto">
-                <div className="flex  p-3">
+              <div className="grow max-h-[500px] min-w-[calc(100%-32px)] overflow-auto p-3">
+                <div className="flex">
                   <Avatar className="w-8 h-8 ">
                     <AvatarImage
                       src={userProfile?.user_metadata?.picture}
@@ -110,38 +113,7 @@ const DialogPost = ({ post }: Props) => {
                     </time>
                   </div>
                 </div>
-                {comments.length > 0 &&
-                  comments.map((comment) => {
-                    return (
-                      <div key={comment.comment_id} className="flex  pl-3 pb-3">
-                        <Avatar className="w-8 h-8 ">
-                          <AvatarImage
-                            src={userProfile?.user_metadata?.picture}
-                            alt="avatar"
-                          />
-                          <AvatarFallback>OM</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col text-sm ml-3">
-                          <div>
-                            <span className="font-semibold mr-1">
-                              {comment?.user?.name}
-                            </span>
-                            {comment.text}
-                          </div>
-                          <time
-                            dateTime={comment.created_at}
-                            title={getFormatedDate(
-                              comment.created_at,
-                              "D MMMM YYYY"
-                            )}
-                            className="text-xs text-[#737373] mt-2 mb-1"
-                          >
-                            {getShortenedDateFromNow(comment.created_at)}
-                          </time>
-                        </div>
-                      </div>
-                    );
-                  })}
+                {comments.length > 0 && <CommentsList comments={comments} />}
               </div>
               <CommentArea />
             </div>
@@ -151,5 +123,4 @@ const DialogPost = ({ post }: Props) => {
     </PostProvider>
   );
 };
-
 export default DialogPost;

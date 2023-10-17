@@ -1,15 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-import {
-  getContrastingColor,
-  getDateFromNow,
-  stringToColour,
-} from "../lib/utils";
 import { usePostContext } from "../context/PostContext";
 import { getCommentsFromPostId } from "../lib/fetch/utils";
 
 import type { Comment } from "../lib/types";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { CommentsList } from "./CommentsList";
 
 const CommentsDisplay = () => {
   const [diplayComments, setDiplayComments] = useState(false);
@@ -79,50 +74,7 @@ const CommentsDisplay = () => {
           data-testid="comments-from-post"
           className={"max-h-80 overflow-auto"}
         >
-          {currentComments.map((comment) => {
-            const bgColour = stringToColour(comment.user.name);
-            const color = getContrastingColor(bgColour);
-
-            return (
-              <div
-                data-testid="comments-on-post"
-                className="flex mb-4"
-                key={`post-${currentPost.id}-comment-${comment.comment_id}`}
-              >
-                <div
-                  className={`min-h-10 min-w-[3rem] ${
-                    currentPost.user?.avatar ? "bg-neutral-200" : ""
-                  } rounded-full`}
-                >
-                  <Avatar className="w-8 h-8 ">
-                    <AvatarImage
-                      src={comment.user.avatar}
-                      alt={comment.user?.name + "_avatar"}
-                    />
-                    <AvatarFallback
-                      className={`text-md font-bold`}
-                      style={{ backgroundColor: bgColour, color }}
-                    >
-                      {comment.user.name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                </div>
-                <div className="ml-1">
-                  <div>
-                    <span className="text-sm font-semibold text-gray-800 mr-1">
-                      {comment.user.name}
-                    </span>
-                    <span className="text-black text-sm break-words">
-                      {comment.text}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[#737373]">
-                    {getDateFromNow(comment.created_at)}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+          <CommentsList comments={currentComments} />
         </div>
       )}
     </>
