@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import supabase from "../../supabase";
 import Loader from "./Loader";
-import Post from "./Post";
+import FeedPost from "./FeedPost";
 
 import { debounce } from "lodash";
 import { PostType } from "../lib/types";
@@ -9,7 +9,7 @@ import useAuthStore from "../../store/authStore";
 
 const PAGE_COUNT = 2;
 
-const PostsDisplay = () => {
+const FeedPostsDisplay = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loadedPosts, setLoadedPosts] = useState<PostType[]>([]);
   const [offset, setOffset] = useState(1);
@@ -113,7 +113,7 @@ const PostsDisplay = () => {
     <>
       <div ref={containerRef}>
         {loadedPosts.map((post) => (
-          <Post key={`post-${post.id}`} currentPost={post} />
+          <FeedPost key={`post-${post.id}`} currentPost={post} />
         ))}
       </div>
       {isLoading ? (
@@ -125,4 +125,4 @@ const PostsDisplay = () => {
   );
 };
 
-export default PostsDisplay;
+export default FeedPostsDisplay;

@@ -1,19 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoChatbubbleSharp, IoHeartSharp } from "react-icons/io5";
 import supabase from "../../supabase";
 
 import { PostType } from "../lib/types";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Avatar } from "./ui/avatar";
 import useAuthStore from "../../store/authStore";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { getFormatedDate, getShortenedDateFromNow } from "../lib/utils";
+import {
+  getDateFromNow,
+  getFormatedDate,
+  getShortenedDateFromNow,
+} from "../lib/utils";
 import { getCommentsFromPostId } from "../lib/fetch/utils";
 import CommentArea from "./CommentArea";
 import { PostProvider } from "../context/PostContext";
 
 import type { Comment } from "../lib/types";
 import { CommentsList } from "./CommentsList";
+import { PostIconsHeader } from "./PostIconsHeader";
+import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
+import { SmallAvatar } from "./SmallAvatar";
 
 interface Props {
   post: PostType;
@@ -22,6 +27,14 @@ interface Props {
 const ProfilePost = ({ post }: Props) => {
   const { userProfile } = useAuthStore();
   const [comments, setComments] = useState<Comment[]>([]);
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleIconClick = () => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
 
   useEffect(() => {
     if (post.comments < 1) {
@@ -59,7 +72,7 @@ const ProfilePost = ({ post }: Props) => {
             />
           </div>
         </DialogTrigger>
-        <DialogContent className="w-full max-w-2xl p-0 overflow-hidden">
+        <DialogContent className="w-full max-w-5xl p-0 overflow-hidden">
           <article className="max-h-[calc(100vh - 40px)] h-full flex ">
             <div className="grow-[1] aspect-[3/4] relative w-full">
               <img
@@ -74,47 +87,37 @@ const ProfilePost = ({ post }: Props) => {
             </div>
             <div className="flex flex-col min-w-[400px] ">
               <header className="flex p-3 align-middle items-center border-b border-[#EFEFEF]">
-                <Avatar className="w-8 h-8 ">
-                  <AvatarImage
-                    src={userProfile?.user_metadata?.picture}
-                    alt="avatar"
-                  />
-                  <AvatarFallback>
-                    {userProfile?.user_metadata?.full_name[0]}
-                  </AvatarFallback>
-                </Avatar>
+                <SmallAvatar user={post.user} />
                 <div className="font-semibold text-sm ml-3 b">
-                  {userProfile?.user_metadata?.full_name}
+                  {post?.user?.name}
                 </div>
               </header>
-              <div className="grow max-h-[500px] min-w-[calc(100%-32px)] overflow-auto p-3">
-                <div className="flex">
-                  <Avatar className="w-8 h-8 ">
-                    <AvatarImage
-                      src={userProfile?.user_metadata?.picture}
-                      alt="avatar"
-                    />
-                    <AvatarFallback>
-                      {userProfile?.user_metadata?.full_name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col text-sm ml-3">
-                    <div>
-                      <span className="font-semibold mr-1">
-                        {userProfile?.user_metadata?.full_name}
-                      </span>
-                      {post.prompt}
-                    </div>
-                    <time
-                      dateTime={post.created_at}
-                      title={getFormatedDate(post.created_at, "D MMMM YYYY")}
-                      className="text-xs text-[#737373] mt-2 mb-1"
-                    >
-                      {getShortenedDateFromNow(post.created_at)}
-                    </time>
-                  </div>
+              <div className=" p-3">
+                <div className="grow max-h-[500px] min-w-[calc(100%-32px)] overflow-auto">
+                  <CommentsList
+                    comments={[
+                      {
+                        comment_id: `${post.id}`,
+                        created_at: post.created_at,
+                        user_id: post.user.id,
+                        text: post.prompt,
+                        post_id: post.id,
+                        user: post.user,
+                      },
+                    ]}
+                  />
+                  {comments.length > 0 && <CommentsList comments={comments} />}
                 </div>
-                {comments.length > 0 && <CommentsList comments={comments} />}
+                <PostIconsHeader {...{ handleIconClick, currentPost: post }} />
+                <div className="flex items-center space-x-2">
+                  <NumberOfLikesDisplay />
+                </div>
+                <p
+                  className=" text-neutral-400 text-sm"
+                  style={{ fontSize: 12 }}
+                >
+                  {getDateFromNow(post.created_at)}
+                </p>
               </div>
               <CommentArea />
             </div>

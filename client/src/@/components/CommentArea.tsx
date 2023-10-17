@@ -55,7 +55,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <div className="border-t p-3 text-sm flex items-center justify-between space-x-3">
+    <div className=" text-sm flex items-center justify-between space-x-3">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}
@@ -63,7 +63,6 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
           onClose={() => setLoginDialogCallback(false)}
         />
       ) : null}
-      <IoHappyOutline className="text-2xl" />
       <textarea
         id={`comment_area_${currentPost.id}`}
         className={cn("outline-none w-full resize-none h-5 leading-5 static")}
@@ -75,6 +74,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         onInput={(e: React.ChangeEvent<HTMLTextAreaElement>) => auto_grow(e)}
         ref={ref}
       />
+      <IoHappyOutline className="text-2xl" />
       <div
         className="text-blue-400 font-bold mr-1 cursor-pointer"
         onClick={handlePost}

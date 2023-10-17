@@ -12,7 +12,7 @@ const LikeIcon = () => {
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
-  const isLikedByUser = currentPost?.likedByUser.find(
+  const isLikedByUser = currentPost?.likedByUser?.find(
     (user) => user.id === userProfile?.id
   );
 
@@ -69,7 +69,7 @@ const LikeIcon = () => {
   }
 
   return (
-    <>
+    <div className="p-2 -m-2">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}
@@ -88,7 +88,7 @@ const LikeIcon = () => {
           onClick={() => likePost(currentPost.id)}
         />
       )}
-    </>
+    </div>
   );
 };
 

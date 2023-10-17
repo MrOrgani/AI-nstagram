@@ -4,10 +4,17 @@ import { PostType } from "../types";
 const getPostsByUserId = async (userId: string) => {
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("*")
+    .select(
+      `*,
+    user:user_id (*),
+    likedByUser:likes(id:user_id)
+    `
+    )
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .returns<PostType[]>();
+
+  console.log("posts", posts);
   if (error) {
     throw new Error(error.message);
   }

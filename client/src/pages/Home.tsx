@@ -1,10 +1,10 @@
-import PostsDisplay from "../@/components/PostsDisplay";
+import FeedPostsDisplay from "../@/components/FeedPostsDisplay";
 
 const Home = () => {
   return (
     <main className="py-6 px-4 mx-auto w-[560px] ">
       <div className="mt-20">
-        <PostsDisplay />
+        <FeedPostsDisplay />
       </div>
     </main>
   );

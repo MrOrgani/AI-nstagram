@@ -13,7 +13,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const downloadImage = (_id: string, photo: string) => {
+const downloadImage = (_id: number, photo: string) => {
   FileSaver.saveAs(photo, `download-${_id}.jpg`);
 };
 

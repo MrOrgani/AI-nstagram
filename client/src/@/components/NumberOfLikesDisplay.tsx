@@ -8,9 +8,11 @@ const NumberOfLikesDisplay = () => {
   }
 
   return (
-    <div className="my-2 text-sm">
-      <span className="font-medium">{currentPost.likes} likes</span>
-    </div>
+    <section className="mb-2">
+      <div className="text-sm">
+        <span className="font-medium">{currentPost.likes} likes</span>
+      </div>
+    </section>
   );
 };
 
