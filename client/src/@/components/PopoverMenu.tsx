@@ -20,7 +20,8 @@ const PopoverMenu = () => {
       <MenubarMenu>
         <MenubarTrigger className="p-0 rounded-full">
           <Avatar>
-            <AvatarImage src="/avatars/01.png" />
+            <AvatarImage src={""} />
+            {/* TODO: AJOUTER LA BONNE SOURCE */}
             <AvatarFallback>OM</AvatarFallback>
           </Avatar>
         </MenubarTrigger>

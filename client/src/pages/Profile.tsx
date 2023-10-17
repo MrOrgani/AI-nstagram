@@ -4,7 +4,7 @@ import { getPostsByUserId } from "../@/lib/fetch/utils";
 import { PostType } from "../@/lib/types";
 
 import DialogPost from "../@/components/DialogPost";
-import { ProfileHeader } from "./ProfileHeader";
+import { ProfileHeader } from "../@/components/ProfileHeader";
 import { Icons } from "../@/components/ui/icons";
 
 const Profile = () => {
