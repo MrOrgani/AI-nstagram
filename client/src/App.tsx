@@ -52,7 +52,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Toaster />
-        <main className=" px-4 w-full bg-[#f9fafe] min-h-screen">
+        <main className=" px-4 w-full bg-white min-h-screen">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
