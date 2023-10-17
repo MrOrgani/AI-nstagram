@@ -24,7 +24,7 @@ export const CommentsList = ({ comments }: Props) => {
         key={`post-comment-${comment.comment_id}`}
       >
         <div
-          className={`min-h-10 min-w-[3rem] ${
+          className={`min-h-10 ${
             comment.user?.avatar ? "bg-neutral-200" : ""
           } rounded-full`}
         >
@@ -41,7 +41,7 @@ export const CommentsList = ({ comments }: Props) => {
             </AvatarFallback>
           </Avatar>
         </div>
-        <div className="ml-1">
+        <div className="ml-3">
           <div>
             <span className="text-sm font-semibold text-gray-800 mr-1">
               {comment.user.name}

@@ -3,7 +3,7 @@ import useAuthStore from "../store/authStore";
 import { getPostsByUserId } from "../@/lib/fetch/utils";
 import { PostType } from "../@/lib/types";
 
-import DialogPost from "../@/components/DialogPost";
+import ProfilePost from "../@/components/ProfilePost";
 import { ProfileHeader } from "../@/components/ProfileHeader";
 import { Icons } from "../@/components/ui/icons";
 
@@ -41,7 +41,7 @@ const Profile = () => {
         </div>
         <div className="grid grid-cols-3 gap-2">
           {currentUserPosts.map((post) => (
-            <DialogPost key={post.id} post={post} />
+            <ProfilePost key={post.id} post={post} />
           ))}
         </div>
       </div>

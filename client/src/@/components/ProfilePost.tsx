@@ -19,7 +19,7 @@ interface Props {
   post: PostType;
 }
 
-const DialogPost = ({ post }: Props) => {
+const ProfilePost = ({ post }: Props) => {
   const { userProfile } = useAuthStore();
   const [comments, setComments] = useState<Comment[]>([]);
 
@@ -60,10 +60,7 @@ const DialogPost = ({ post }: Props) => {
           </div>
         </DialogTrigger>
         <DialogContent className="w-full max-w-2xl p-0 overflow-hidden">
-          {/* <div>X</div> */}
-
           <article className="max-h-[calc(100vh - 40px)] h-full flex ">
-            {/* <div className="grow-[1] aspect-[1440/1800] relative w-full"> */}
             <div className="grow-[1] aspect-[3/4] relative w-full">
               <img
                 className="object-cover w-full h-full absolute top-0 left-0"
@@ -82,7 +79,9 @@ const DialogPost = ({ post }: Props) => {
                     src={userProfile?.user_metadata?.picture}
                     alt="avatar"
                   />
-                  <AvatarFallback>OM</AvatarFallback>
+                  <AvatarFallback>
+                    {userProfile?.user_metadata?.full_name[0]}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="font-semibold text-sm ml-3 b">
                   {userProfile?.user_metadata?.full_name}
@@ -95,7 +94,9 @@ const DialogPost = ({ post }: Props) => {
                       src={userProfile?.user_metadata?.picture}
                       alt="avatar"
                     />
-                    <AvatarFallback>OM</AvatarFallback>
+                    <AvatarFallback>
+                      {userProfile?.user_metadata?.full_name[0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col text-sm ml-3">
                     <div>
@@ -123,4 +124,4 @@ const DialogPost = ({ post }: Props) => {
     </PostProvider>
   );
 };
-export default DialogPost;
+export default ProfilePost;
