@@ -50,7 +50,9 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
             </span>
             <span>{currentPost.prompt}</span>
           </div>
-          <CommentsDisplay />
+          <div className="max-h-80 overflow-auto">
+            <CommentsDisplay />
+          </div>
         </div>
         <CommentArea ref={textareaRef} />
       </div>

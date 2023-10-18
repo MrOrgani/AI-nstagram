@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import supabase from "../supabase";
 
 const Profile = () => {
-  // const { userProfile } = useAuthStore();
   const [currentUserProfile, setCurrentUserProfile] = useState<User | null>(
     null
   );
@@ -25,7 +24,12 @@ const Profile = () => {
     const fetchUserProfile = async () => {
       const { data: userProfile, error: userError } = await supabase
         .from("profiles")
-        .select("*, posts(*)")
+        .select(
+          `
+        *, 
+        posts(*,likedByUser:likes(id:user_id))
+        `
+        )
         .eq("user_id", userId)
         .single();
 
@@ -42,8 +46,6 @@ const Profile = () => {
 
     fetchUserProfile();
   }, [userId]);
-
-  console.log(currentUserPosts);
 
   if (!currentUserProfile) {
     return null;

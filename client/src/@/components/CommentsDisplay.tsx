@@ -6,10 +6,19 @@ import { getCommentsFromPostId } from "../lib/fetch/utils";
 import type { Comment } from "../lib/types";
 import { CommentsList } from "./CommentsList";
 
-const CommentsDisplay = () => {
-  const [diplayComments, setDiplayComments] = useState(false);
+interface CommentsDisplayProps {
+  defaultComments?: Comment[];
+  defaultDisplayComments?: boolean;
+}
+
+const CommentsDisplay = ({
+  defaultComments = [],
+  defaultDisplayComments = false,
+}: CommentsDisplayProps) => {
+  const [diplayComments, setDiplayComments] = useState(defaultDisplayComments);
   const { currentPost, update } = usePostContext();
-  const [currentComments, setCurrentComments] = useState<Comment[]>([]);
+  const [currentComments, setCurrentComments] =
+    useState<Comment[]>(defaultComments);
 
   const fetchComments = useCallback(async () => {
     try {
@@ -21,7 +30,7 @@ const CommentsDisplay = () => {
       if (currentPost) {
         update((prev) => ({
           ...prev,
-          commentsByUser: comments,
+          commentsByUser: [...defaultComments, ...comments],
         }));
       }
       setCurrentComments(comments ?? []);
@@ -70,10 +79,7 @@ const CommentsDisplay = () => {
           View all {currentPost.comments} comments
         </p>
       ) : (
-        <div
-          data-testid="comments-from-post"
-          className={"max-h-80 overflow-auto"}
-        >
+        <div data-testid="comments-from-post">
           <CommentsList comments={currentComments} />
         </div>
       )}
