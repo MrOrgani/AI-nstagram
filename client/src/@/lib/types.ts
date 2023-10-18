@@ -3,6 +3,7 @@ type User = {
   name: string;
   avatar: string;
   email: string;
+  user_id: string;
 };
 type Comment = {
   comment_id: string;

@@ -22,19 +22,26 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 );
 
+const updateUserProfile = async (user: any) => {
+  const { error: registerUserError } = await supabase.from("profiles").insert([
+    {
+      name: user.name,
+      user_id: user?.id,
+      email: user?.email,
+      avatar: user?.user_metadata?.avatar_url,
+    },
+  ]);
+  if (registerUserError) {
+    throw new Error(registerUserError.message);
+  }
+  return;
+};
+
 const createOrGetUser = async (response: any) => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
   });
   const decoded = jwtDecode(response.credential);
-
-  console.log("decodeddecode", JSON.stringify(decoded, null, 2));
-
-  //TODO: verirfy we need  'addUser' function
-
-  // const { name, picture, sub } = decoded;
-
-  // addUser({ _type: "user", _id: sub, fullName: name, image: picture });
 };
 
 const signUpUser = async ({ email, password, name }) => {
@@ -43,14 +50,13 @@ const signUpUser = async ({ email, password, name }) => {
     password: password,
   });
 
-  const { error: registerUserError } = await supabase.from("profiles").insert([
-    {
-      name: name,
-      user_id: signUpData?.user?.id,
-      email: signUpData?.user?.email,
-    },
-  ]);
-  return { data: null, error: signUpError || registerUserError };
+  updateUserProfile({
+    name: name,
+    user_id: signUpData?.user?.id,
+    email: signUpData?.user?.email,
+    picture: signUpData?.user?.user_metadata?.avatar_url,
+  });
+  return { data: null, error: signUpError };
 };
 
 const signInUser = async ({ email, password }) => {
@@ -85,6 +91,7 @@ function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
 }
 
 const stringToColour = (str: string) => {
+  if (!str) return;
   let hash = 0;
   str.split("").forEach((char) => {
     hash = char.charCodeAt(0) + ((hash << 5) - hash);
