@@ -8,6 +8,7 @@ import { PostIconsHeader } from "./PostIconsHeader";
 import { SmallAvatar } from "./SmallAvatar";
 import { getShortenedDateFromNow } from "../lib/utils";
 import { ImgPost } from "./ImgPost";
+import { Link } from "react-router-dom";
 
 const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -25,16 +26,16 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
       >
         <div className="flex items-center justify-between p-2.5">
           <div className="flex items-center">
-            <SmallAvatar user={currentPost.user} />
-            <div className="ml-2.5">
-              <span className="font-medium text-sm">
+            <Link to={`/${currentPost.user?.id}`} className="flex items-center">
+              <SmallAvatar user={currentPost.user} />
+              <span className="font-medium text-sm ml-2.5">
                 {currentPost.user?.name}
               </span>
-              <span className="text-neutral-500 text-sm mx-1">•</span>
-              <time className=" text-neutral-500 text-sm font-normal">
-                {getShortenedDateFromNow(currentPost.created_at)}
-              </time>
-            </div>
+            </Link>
+            <span className="text-neutral-500 text-sm mx-1">•</span>
+            <time className=" text-neutral-500 text-sm font-normal">
+              {getShortenedDateFromNow(currentPost.created_at)}
+            </time>
           </div>
         </div>
         <div className="w-full">
