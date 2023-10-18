@@ -61,7 +61,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     <PostProvider post={post}>
       <Dialog>
         <DialogTrigger asChild>
-          <div key={post.id} className="group p-0 cursor-pointer ">
+          <div key={post.id} className="group p-0 cursor-pointer relative ">
             <div className="hidden group-hover:flex absolute align-middle justify-center items-center left-0 right-0 top-0 bottom-0">
               <span className="z-10  text-white flex  items-center">
                 <IoHeartSharp className=" w-11  " color={"white"} />
@@ -124,7 +124,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                   </p>
                 </div>
                 <div className="min-h-[40px] border-t px-2">
-                  <CommentArea />
+                  <CommentArea ref={textareaRef} />
                 </div>
               </div>
             </div>
