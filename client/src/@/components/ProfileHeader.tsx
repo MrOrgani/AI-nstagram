@@ -1,19 +1,28 @@
 import React from "react";
+import { SmallAvatar } from "./SmallAvatar";
+import { User } from "../lib/types";
 
-export const ProfileHeader = ({ picture, name, nbOfPosts }) => {
+interface Props {
+  user: User;
+  nbOfPosts: number;
+  children: React.ReactNode;
+}
+
+export const ProfileHeader: React.FC<Props> = ({
+  user,
+  nbOfPosts,
+  children,
+}) => {
   return (
-    <header className="flex mb-11 h-[182px]">
+    <header className="flex h-[182px]">
       <div className="rounded-full mr-7 flex justify-center grow-[1] items-center ">
         <div className="flex ">
-          <img
-            className="h-[150px] w-[150px] rounded-full"
-            src={picture}
-            alt="avatar"
-          />
+          <SmallAvatar user={user} className="h-[150px] w-[150px]" />
         </div>
       </div>
       <section className="grow-[2] flex flex-col mt-4">
-        <div className="font-normal text-xl mb-5">{name}</div>
+        <div className="font-normal text-xl mb-5">{user.name}</div>
+        {children}
         <span className="text-base">
           <span className="font-semibold">{nbOfPosts}</span> posts
         </span>
