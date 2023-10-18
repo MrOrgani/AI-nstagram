@@ -68,11 +68,11 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
       <Dialog>
         <ProfilePostDialogTrigger />
         <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-full">
-          <article className="max-h-[calc(100vh - 40px)] flex ">
-            <div className="max-w-1/2 ">
-              <div className="w-full h-full">
+          <article className="max-h-[867px] flex ">
+            <div className="w-1/2 grow ">
+              <div className="h-full overflow-hidden">
                 <img
-                  className=" w-full h-full object-cover"
+                  className=" h-full object-cover"
                   src={
                     supabase.storage
                       .from("ai-stagram-bucket")
@@ -82,7 +82,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                 />
               </div>
             </div>
-            <div className="flex flex-col min-w-[400px]  mx-0 my-0 relative h-full">
+            <div className="flex flex-col w-[475px]  mx-0 my-0 relative h-[867px] ">
               <header className="flex p-3 align-middle items-center border-b border-[#EFEFEF] ">
                 <SmallAvatar user={currentUserProfile} />
                 <div className="font-semibold text-sm ml-3 b">
@@ -91,7 +91,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
               </header>
 
               <div className="flex  flex-col  overflow-auto h-full ">
-                <div className="flex-grow-[2] overflow-auto h-[650px] p-3 ">
+                <div className=" shrink overflow-auto max-h-[650px] p-3 ">
                   <CommentsDisplay
                     defaultComments={[postDecription]}
                     defaultDisplayComments={true}
@@ -108,7 +108,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                     {getDateFromNow(post.created_at)}
                   </p>
                 </div>
-                <div className="min-h-[40px] border-t px-2">
+                <div className="grow border-t px-2 ">
                   <CommentArea ref={textareaRef} />
                 </div>
               </div>
