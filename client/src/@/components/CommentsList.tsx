@@ -23,11 +23,7 @@ export const CommentsList = ({ comments }: Props) => {
         className="flex mb-4"
         key={`post-comment-${comment.comment_id}`}
       >
-        <div
-          className={`min-h-10 ${
-            comment.user?.avatar ? "bg-neutral-200" : ""
-          } rounded-full`}
-        >
+        <div className={`min-h-10  rounded-full`}>
           <Avatar className="w-8 h-8 flex items-center align-middle">
             <AvatarImage
               src={comment.user.avatar}
@@ -37,7 +33,7 @@ export const CommentsList = ({ comments }: Props) => {
               className={`text-md font-bold w-full h-full flex items-center justify-center text-center`}
               style={{ backgroundColor: bgColour, color }}
             >
-              <span>{comment.user.name[0]}</span>
+              <span>{comment.user?.name?.[0]}</span>
             </AvatarFallback>
           </Avatar>
         </div>

@@ -55,7 +55,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <div className=" text-sm flex items-center justify-between space-x-3">
+    <div className=" text-sm flex items-center justify-between space-x-2 max-h-48 h-full">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}
@@ -65,8 +65,10 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
       ) : null}
       <textarea
         id={`comment_area_${currentPost.id}`}
-        className={cn("outline-none w-full resize-none h-5 leading-5 static")}
-        placeholder="Add a comment"
+        className={cn(
+          "outline-none w-full resize-none h-5 leading-5 static max-h-[140px]"
+        )}
+        placeholder="Add a comment..."
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         autoComplete="off"
