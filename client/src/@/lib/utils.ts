@@ -91,7 +91,7 @@ function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
 }
 
 const stringToColour = (str: string) => {
-  if (!str) return;
+  if (!str) return "";
   let hash = 0;
   str.split("").forEach((char) => {
     hash = char.charCodeAt(0) + ((hash << 5) - hash);
