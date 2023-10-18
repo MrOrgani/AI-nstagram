@@ -84,7 +84,8 @@ function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
   if (!element) return;
 
   const currentHeight = parseInt(element.style.height);
-  if (isNaN(currentHeight) || currentHeight < 240) {
+
+  if (isNaN(currentHeight) || currentHeight < 140) {
     element.style.height = "5px";
     element.style.height = element.scrollHeight + "px";
   }
