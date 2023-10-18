@@ -6,8 +6,7 @@ import FeedPost from "./FeedPost";
 import { debounce } from "lodash";
 import { PostType } from "../lib/types";
 import useAuthStore from "../../store/authStore";
-
-const PAGE_COUNT = 2;
+import { PAGE_COUNT, fetchFeedPosts } from "../lib/fetch/utils";
 
 const FeedPostsDisplay = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -60,7 +59,7 @@ const FeedPostsDisplay = () => {
     }
     setIsLoading(true);
     setOffset((prev) => prev + 1);
-    const { data: newPosts } = await fetchTickets(offset);
+    const { data: newPosts } = await fetchFeedPosts(offset);
     if (newPosts.length < PAGE_COUNT) {
       setIsLast(true);
     }
@@ -72,7 +71,7 @@ const FeedPostsDisplay = () => {
 
   useEffect(() => {
     const fetchNewPosts = async () => {
-      const { data } = await fetchTickets(0);
+      const { data } = await fetchFeedPosts(0);
       setLoadedPosts(data ?? []);
     };
     fetchNewPosts();
@@ -89,25 +88,6 @@ const FeedPostsDisplay = () => {
       window.removeEventListener("scroll", handleDebouncedScroll);
     };
   }, [isLast, handleScroll, loadMoreTickets]);
-
-  const fetchTickets = async (offset: number) => {
-    const from = offset * PAGE_COUNT;
-    const to = from + PAGE_COUNT - 1;
-
-    const { data } = await supabase
-      .from("posts")
-      .select(
-        `*,
-        user:user_id (*),
-        likedByUser:likes(id:user_id)
-        `
-      )
-      .range(from, to)
-      .order("created_at", { ascending: false })
-      .limit(PAGE_COUNT);
-
-    return { data: data ?? [] };
-  };
 
   return (
     <>
