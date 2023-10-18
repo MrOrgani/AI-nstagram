@@ -92,7 +92,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                 </header>
 
                 <div className="flex  flex-col  overflow-auto h-full ">
-                  <div className="grow shrink overflow-auto  p-3 ">
+                  <div className=" flex-grow-[100] shrink overflow-auto  p-3 ">
                     <CommentsDisplay
                       defaultComments={[postDecription]}
                       defaultDisplayComments={true}
