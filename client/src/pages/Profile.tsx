@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../store/authStore";
-import { getPostsByUserId } from "../@/lib/fetch/utils";
 import { PostType, User } from "../@/lib/types";
 
 import ProfilePost from "../@/components/ProfilePost";
 import { ProfileHeader } from "../@/components/ProfileHeader";
 import { Icons } from "../@/components/ui/icons";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import supabase from "../supabase";
+import { Button } from "../@/components/ui/button";
 
 const Profile = () => {
+  const { userProfile } = useAuthStore();
   const [currentUserProfile, setCurrentUserProfile] = useState<User | null>(
     null
   );
@@ -50,6 +51,8 @@ const Profile = () => {
   if (!currentUserProfile) {
     return null;
   }
+
+  const isMyProfile = userProfile?.id === userId;
   return (
     <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] ">
       <div className="mt-20 h-full">
@@ -59,9 +62,13 @@ const Profile = () => {
             nbOfPosts: currentUserPosts.length,
           }}
         >
-          <button className="text-sm font-semibold text-[#0095f6]">
-            Edit Profile
-          </button>
+          {isMyProfile && (
+            <Link to={`/${userProfile?.id}/edit`}>
+              <Button className="text-sm font-semibold text-black bg-gray-200 ml-5 px-2 h-8 hover:bg-gray-300">
+                Edit Profile
+              </Button>
+            </Link>
+          )}
         </ProfileHeader>
         <div className="border-t border-[#dbdbdb] flex justify-center">
           <a className="flex items-center uppercase h-[52px]">

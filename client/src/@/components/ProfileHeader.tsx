@@ -21,8 +21,10 @@ export const ProfileHeader: React.FC<Props> = ({
         </div>
       </div>
       <section className="grow-[2] flex flex-col mt-4">
-        <div className="font-normal text-xl mb-5">{user.name}</div>
-        {children}
+        <div className="font-normal text-xl mb-5">
+          <span>{user.name}</span>
+          {children}
+        </div>
         <span className="text-base">
           <span className="font-semibold">{nbOfPosts}</span> posts
         </span>
