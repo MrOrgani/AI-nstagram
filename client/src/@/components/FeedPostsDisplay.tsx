@@ -28,9 +28,9 @@ const FeedPostsDisplay = () => {
               .from("posts")
               .select(
                 `*,
-          user:user_id (*),
-          likedByUser:likes(id:user_id)
-          `
+                user:user_id (*,id:user_id),
+                likedByUser:likes(id:user_id)
+                `
               )
               .eq("id", payload.new.id)
               .single();
