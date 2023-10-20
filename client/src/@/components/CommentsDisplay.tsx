@@ -64,8 +64,10 @@ const CommentsDisplay = ({
     fetchComments,
   ]);
 
-  console.log("currentComments", currentComments);
-  if (!currentPost || currentPost.comments === 0) {
+  const feedPostWithNoComments =
+    !defaultDisplayComments && currentPost.comments === 0;
+
+  if (!currentPost || feedPostWithNoComments) {
     return null;
   }
 
