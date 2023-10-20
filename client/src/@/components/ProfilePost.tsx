@@ -68,7 +68,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
       <Dialog>
         <ProfilePostDialogTrigger />
         <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-full">
-          <article className=" flex ">
+          <article className=" flex overflow-auto">
             <div className="w-1/2 grow flex content-center justify-center items-center">
               <div className="h-full overflow-hidden">
                 <img
@@ -82,8 +82,8 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                 />
               </div>
             </div>
-            <div className="flex flex-col">
-              <div className="grow flex flex-col w-[475px]  mx-0 my-0 relative h-[867px] ">
+            <div className=" contents">
+              <div className="flex flex-col w-[475px]  mx-0 my-0 relative ">
                 <header className="flex p-3 content-center items-center border-b border-[#EFEFEF] ">
                   <SmallAvatar user={currentUserProfile} />
                   <div className="font-semibold text-sm ml-3 b">
@@ -91,27 +91,25 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                   </div>
                 </header>
 
-                <div className="flex  flex-col  overflow-auto h-full ">
-                  <div className=" flex-grow-[100] shrink overflow-auto  p-3 ">
-                    <CommentsDisplay
-                      defaultComments={[postDecription]}
-                      defaultDisplayComments={true}
-                    />
+                <div className="grow overflow-auto  p-3 ">
+                  <CommentsDisplay
+                    defaultComments={[postDecription]}
+                    defaultDisplayComments={true}
+                  />
+                </div>
+                <div className="  border-t border-[#EFEFEF] px-3 mt-1 ">
+                  <PostIconsHeader
+                    {...{ handleIconClick, currentPost: post }}
+                  />
+                  <div className="flex items-center space-x-2 -mb-2 ">
+                    <NumberOfLikesDisplay />
                   </div>
-                  <div className="  border-t border-[#EFEFEF] px-3 mt-1">
-                    <PostIconsHeader
-                      {...{ handleIconClick, currentPost: post }}
-                    />
-                    <div className="flex items-center space-x-2 -mb-2">
-                      <NumberOfLikesDisplay />
-                    </div>
-                    <p className=" text-neutral-400 text-xs mb-2">
-                      {getDateFromNow(post.created_at)}
-                    </p>
-                  </div>
-                  <div className="grow border-t px-2 py-3 ">
-                    <CommentArea ref={textareaRef} />
-                  </div>
+                  <p className=" text-neutral-400 text-xs mb-2 ">
+                    {getDateFromNow(post.created_at)}
+                  </p>
+                </div>
+                <div className=" border-t px-2 py-3">
+                  <CommentArea ref={textareaRef} />
                 </div>
               </div>
             </div>
