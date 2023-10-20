@@ -64,7 +64,8 @@ const CommentsDisplay = ({
     fetchComments,
   ]);
 
-  if (!currentPost || currentComments.length < 1) {
+  console.log("currentComments", currentComments);
+  if (!currentPost || currentPost.comments === 0) {
     return null;
   }
 
