@@ -23,7 +23,7 @@ export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
       <AvatarImage
         src={user?.avatar}
         alt={user?.name + "_avatar"}
-        className="w-full h-full "
+        className="object-cover"
       />
       <AvatarFallback
         className={`text-md font-bold w-full h-full flex items-center justify-center text-center`}
