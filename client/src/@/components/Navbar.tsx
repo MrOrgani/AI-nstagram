@@ -11,7 +11,7 @@ const Navbar = () => {
   const { userProfile } = useAuthStore();
 
   return (
-    <header className="w-full flex justify-between items-center bg-white sm:px-8 px-4 py-4 border-blue-500 fixed z-50 border-b border-b-gray-300">
+    <header className="w-full flex justify-between items-center bg-white sm:px-8 px-4 py-4  top-0 fixed z-50 border-b border-b-gray-300">
       <Link to="/">
         <img src={AInstagramLogo} alt={"logo"} className="w-20" />
       </Link>
