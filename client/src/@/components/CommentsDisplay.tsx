@@ -5,7 +5,26 @@ import { getCommentsFromPostId } from "../lib/fetch/utils";
 
 import type { Comment } from "../lib/types";
 import { CommentsList } from "./CommentsList";
+import { Skeleton } from "./ui/skeleton";
 
+const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
+
+const SkeletonComment = () => {
+  return (
+    <div data-testid="comments-on-post" className="flex mb-4">
+      <div className={`min-h-10  rounded-full`}>
+        <Skeleton className="w-8 h-8  rounded-full" />
+      </div>
+      <div className="ml-3">
+        <div className="flex">
+          <Skeleton className="h-4 w-[50px] mr-1 mb-1" />
+          <Skeleton className="h-4 w-[200px] mb-1" />
+        </div>
+        <Skeleton className="h-4 w-[20px]" />
+      </div>
+    </div>
+  );
+};
 interface CommentsDisplayProps {
   defaultComments?: Comment[];
   defaultDisplayComments?: boolean;
@@ -20,20 +39,23 @@ const CommentsDisplay = ({
   const [currentComments, setCurrentComments] =
     useState<Comment[]>(defaultComments);
 
+  const [loading, setLoading] = useState(false);
+
   const fetchComments = useCallback(async () => {
     try {
       if (!currentPost) {
         return;
       }
 
+      setLoading(true);
       const comments = await getCommentsFromPostId(currentPost?.id);
-      if (currentPost) {
-        update((prev) => ({
-          ...prev,
-          commentsByUser: [...defaultComments, ...comments],
-        }));
-      }
+
+      update((prev) => ({
+        ...prev,
+        commentsByUser: [...defaultComments, ...comments],
+      }));
       setCurrentComments(comments ?? []);
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -73,7 +95,16 @@ const CommentsDisplay = ({
 
   return (
     <>
-      {!diplayComments ? (
+      {diplayComments && loading && (
+        <div data-testid="comments-from-post">
+          {new Array(currentPost.comments)
+            .fill(<SkeletonComment key={0} />)
+            .map((_, i) => (
+              <SkeletonComment key={i} />
+            ))}
+        </div>
+      )}
+      {!diplayComments && (
         <p
           className="text-neutral-500 font-medium text-sm my-2 cursor-pointer"
           onClick={() => setDiplayComments(!diplayComments)}
@@ -81,7 +112,8 @@ const CommentsDisplay = ({
         >
           View all {currentPost.comments} comments
         </p>
-      ) : (
+      )}
+      {diplayComments && (
         <div data-testid="comments-from-post">
           <CommentsList comments={currentComments} />
         </div>
