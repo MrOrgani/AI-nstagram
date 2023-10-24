@@ -191,7 +191,6 @@ const PostButton = () => {
                 className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
                 disabled={!form.photoUrl}
                 onClick={handlePublishPost}
-                // type="submit"
               >
                 Publish
               </Button>

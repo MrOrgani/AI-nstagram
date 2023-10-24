@@ -39,7 +39,9 @@ const PopoverMenu = () => {
           <MenubarItem
             onClick={async () => {
               googleLogout();
+              await supabase.removeAllChannels();
               const { error } = await supabase.auth.signOut();
+
               if (error) {
                 console.log(error);
               }

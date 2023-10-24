@@ -5,6 +5,8 @@ import { Label } from "../@/components/ui/label";
 import { Input } from "../@/components/ui/input";
 import { Button } from "../@/components/ui/button";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import supabase from "../supabase";
+import { useNavigate } from "react-router-dom";
 
 interface Inputs {
   username: string;
@@ -12,25 +14,57 @@ interface Inputs {
 }
 
 const ProfileForm = () => {
-  const { userProfile } = useAuthStore();
+  const { userProfile, addUser } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    setError,
+    formState: { errors: inputErrors },
   } = useForm<Inputs>();
-
-  // onSubmit doit envoyer la photo de profil sur le storage de supabase,
-  // le nom de l'utilisateur sur la database, et le lien de la photo de profil dans le champ avatar de la database
-  const onSubmit: SubmitHandler<Inputs> = (data) =>
-    console.log("data FORM", data);
-
   const [selectedImage, setSelectedImage] = useState<FileList | undefined>(
     undefined
   );
 
-  console.log("errors", errors);
+  const onSubmit: SubmitHandler<Inputs> = async (inputs) => {
+    if (Object.keys(inputErrors).length > 0) return;
+
+    const { username, avatar } = inputs;
+    const fileName = `${userProfile?.id}_${Date.now()}`;
+    let file: File | string | undefined = avatar?.[0];
+    if (file) {
+      const { data: avatarData, error: errorUpload } = await supabase.storage
+        .from("ai-stagram-bucket")
+        .upload(`/avatar/${fileName}`, file, {
+          upsert: true,
+        });
+      const { error: errorDelete } = await supabase.storage
+        .from("ai-stagram-bucket")
+        .remove([`${userProfile?.avatar}`]);
+      if (errorUpload || errorDelete) {
+        throw new Error(errorUpload?.message || errorDelete?.message);
+      }
+
+      const { data } = await supabase.storage
+        .from("ai-stagram-bucket")
+        .getPublicUrl(avatarData?.path);
+
+      file = data.publicUrl;
+    }
+
+    const dataToUpdate = { ...(file && { avatar: file }), name: username };
+
+    await supabase
+      .from("profiles")
+      .update(dataToUpdate)
+      .eq("user_id", userProfile?.id);
+
+    addUser({ ...userProfile, ...dataToUpdate });
+    navigate(`/${userProfile?.id}/`);
+  };
+
   if (!userProfile) {
     return null;
   }
@@ -66,17 +100,30 @@ const ProfileForm = () => {
                             setSelectedImage(undefined);
                             return;
                           }
-                          console.log(event.target.files[0]);
-                          onChange(event.target.files[0]);
+                          if (event.target.files[0].size > 10000000) {
+                            setError("avatar", {
+                              type: "custom",
+                              message: "L'image est trop lourde",
+                            });
+                            return;
+                          }
+                          console.log(event.target.files);
+                          onChange(event.target.files);
                           setSelectedImage(event.target.files);
                         }}
                         type="file"
                         id="picture"
                         accept="image/*"
+                        multiple={false}
                       />
                     );
                   }}
                 />
+                {inputErrors.avatar && (
+                  <span className="text-xs text-red-500">
+                    {inputErrors.avatar.message}
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -90,6 +137,11 @@ const ProfileForm = () => {
               type="text"
               defaultValue={userProfile?.name}
             />
+            {inputErrors.username && (
+              <span className="text-xs text-red-500">
+                {inputErrors.username.message}
+              </span>
+            )}
           </div>
         </div>
       </div>

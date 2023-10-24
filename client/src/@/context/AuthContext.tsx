@@ -54,13 +54,38 @@ interface AuthContextProviderProps {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const { addUser } = useAuthStore();
+  const { userProfile, addUser } = useAuthStore();
+
+  supabase
+    .channel("profiles")
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "profiles" },
+      async (payload) => {
+        if (payload.new.user_id === userProfile?.id) {
+          try {
+            const { data: updatedUser } = await supabase
+              .from("profiles")
+              .select(
+                `*,
+                avatar,
+              id:user_id
+              `
+              )
+              .eq("user_id", userProfile?.id)
+              .single();
+
+            console.log("data to update", updatedUser);
+            addUser(updatedUser);
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    )
+    .subscribe();
 
   useEffect(() => {
-    // supabase.auth.getSession().then(({ data: { session } }) => {
-    //   addUser(session?.user ?? null);
-    // });
-
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("event", event);
