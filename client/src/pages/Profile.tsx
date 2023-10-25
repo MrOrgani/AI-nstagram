@@ -8,6 +8,28 @@ import { Icons } from "../@/components/ui/icons";
 import { Link, useParams } from "react-router-dom";
 import supabase from "../supabase";
 import { Button } from "../@/components/ui/button";
+import { ProfilePostDialogTriggerSkeleton } from "../@/components/ProfilePostDialogTriggerSkeleton";
+
+const ProfileHeaderSkeleton = () => {
+  return (
+    <header className="flex h-[182px]">
+      <div className="rounded-full mr-7 flex justify-center grow-[1] items-center ">
+        <div className="flex ">
+          <div className="w-[150px] h-[150px] bg-gray-300 rounded-full"></div>
+        </div>
+      </div>
+      <section className="grow-[2] flex flex-col mt-4">
+        <div className="font-normal text-xl mb-5">
+          <div className="w-24 h-4 bg-gray-300 rounded-full mb-2.5"></div>
+          <div className="w-32 h-4 bg-gray-300 rounded-full"></div>
+        </div>
+        <div className="text-base">
+          <div className="w-16 h-4 bg-gray-300 rounded-full"></div>
+        </div>
+      </section>
+    </header>
+  );
+};
 
 const Profile = () => {
   const { userProfile } = useAuthStore();
@@ -15,6 +37,8 @@ const Profile = () => {
     null
   );
   const [currentUserPosts, setCurrentUserPosts] = useState<PostType[]>([]);
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const { id: userId } = useParams();
 
@@ -69,6 +93,7 @@ const Profile = () => {
       setCurrentUserProfile(userProfile);
 
       const userPosts = userProfile?.posts ?? [];
+      setIsLoading(false);
       setCurrentUserPosts(
         userPosts.sort((a: PostType, b: PostType) =>
           b.created_at.localeCompare(a.created_at)
@@ -83,10 +108,32 @@ const Profile = () => {
   }, [userId]);
 
   if (!currentUserProfile) {
-    return null;
+    return (
+      <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] ">
+        <div className="mt-20 h-full">
+          <ProfileHeaderSkeleton />
+
+          <div className="border-t border-[#dbdbdb] flex justify-center">
+            <a className="flex items-center uppercase h-[52px]">
+              <Icons.grid />
+              <span className="ml-1.5 text-xs font-semibold tracking-wide">
+                posts
+              </span>
+            </a>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {isLoading &&
+              new Array(4)
+                .fill(0)
+                .map((_, i) => <ProfilePostDialogTriggerSkeleton key={i} />)}
+          </div>
+        </div>
+      </main>
+    );
   }
 
   const isMyProfile = userProfile?.id === userId;
+
   return (
     <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] ">
       <div className="mt-20 h-full">
