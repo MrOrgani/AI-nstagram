@@ -18,6 +18,33 @@ const Profile = () => {
 
   const { id: userId } = useParams();
 
+  const postChannel = supabase
+    .channel("posts")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "posts" },
+      async (payload) => {
+        if (payload.new.user_id === userProfile?.id) {
+          try {
+            const { data: newPost } = await supabase
+              .from("posts")
+              .select(
+                `*,
+              user:user_id (*,id:user_id),
+              likedByUser:likes(id:user_id)
+              `
+              )
+              .eq("id", payload.new.id)
+              .single();
+            setCurrentUserPosts([newPost, ...currentUserPosts]);
+          } catch (err) {
+            console.log(err);
+          }
+        }
+      }
+    )
+    .subscribe();
+
   useEffect(() => {
     if (!userId) {
       return;
@@ -42,10 +69,17 @@ const Profile = () => {
       setCurrentUserProfile(userProfile);
 
       const userPosts = userProfile?.posts ?? [];
-      setCurrentUserPosts(userPosts);
+      setCurrentUserPosts(
+        userPosts.sort((a: PostType, b: PostType) =>
+          b.created_at.localeCompare(a.created_at)
+        )
+      );
     };
 
     fetchUserProfile();
+    return () => {
+      supabase.removeChannel(postChannel);
+    };
   }, [userId]);
 
   if (!currentUserProfile) {
