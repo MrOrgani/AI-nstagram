@@ -16,12 +16,7 @@ import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 import useAuthStore from "../../store/authStore";
 import supabase from "../../supabase";
 import LoginModal from "./LoginModal";
-
-async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
-  const res: Response = await fetch(dataUrl);
-  const blob: Blob = await res.blob();
-  return new File([blob], fileName, { type: "image/jpeg" });
-}
+import { dataUrlToFile } from "../lib/utils";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
