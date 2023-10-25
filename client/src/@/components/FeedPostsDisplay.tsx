@@ -16,7 +16,7 @@ const FeedPostsDisplay = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { userProfile } = useAuthStore();
-  supabase
+  const channel = supabase
     .channel("posts")
     .on(
       "postgres_changes",
@@ -86,6 +86,7 @@ const FeedPostsDisplay = () => {
     window.addEventListener("scroll", handleDebouncedScroll);
     return () => {
       window.removeEventListener("scroll", handleDebouncedScroll);
+      supabase.removeChannel(channel);
     };
   }, [isLast, handleScroll, loadMoreTickets]);
 
