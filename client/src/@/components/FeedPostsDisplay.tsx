@@ -7,6 +7,7 @@ import { debounce } from "lodash";
 import { PostType } from "../lib/types";
 import useAuthStore from "../../store/authStore";
 import { PAGE_COUNT, fetchFeedPosts } from "../lib/fetch/utils";
+import { FeedPostSkeleton } from "./FeedPostSkeleton";
 
 const FeedPostsDisplay = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -71,8 +72,10 @@ const FeedPostsDisplay = () => {
 
   useEffect(() => {
     const fetchNewPosts = async () => {
+      setIsLoading(true);
       const { data } = await fetchFeedPosts(0);
       setLoadedPosts(data ?? []);
+      setIsLoading(false);
     };
     fetchNewPosts();
   }, []);
@@ -88,19 +91,29 @@ const FeedPostsDisplay = () => {
       window.removeEventListener("scroll", handleDebouncedScroll);
       supabase.removeChannel(channel);
     };
-  }, [isLast, handleScroll, loadMoreTickets]);
+  }, [isLast, handleScroll, loadMoreTickets, channel]);
 
   return (
     <>
+      {isLoading && loadedPosts.length === 0 ? (
+        <>
+          <FeedPostSkeleton />
+          <FeedPostSkeleton />
+        </>
+      ) : null}
       <div ref={containerRef}>
         {loadedPosts.map((post) => (
           <FeedPost key={`post-${post.id}`} currentPost={post} />
         ))}
       </div>
       {isLoading ? (
-        <div className="flex justify-center">
-          <Loader />
-        </div>
+        <>
+          <div className="flex flex-col  items-center">
+            <Loader />
+          </div>
+          <FeedPostSkeleton />
+          <FeedPostSkeleton />
+        </>
       ) : null}
     </>
   );
