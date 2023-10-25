@@ -43,7 +43,7 @@ const registerUser = async (user: User | undefined) => {
       }
     }
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
 
@@ -56,30 +56,27 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 }) => {
   const { userProfile, addUser } = useAuthStore();
 
-  supabase
+  const profileChannel = supabase
     .channel("profiles")
     .on(
       "postgres_changes",
       { event: "UPDATE", schema: "public", table: "profiles" },
       async (payload) => {
         if (payload.new.user_id === userProfile?.id) {
-          try {
-            const { data: updatedUser } = await supabase
-              .from("profiles")
-              .select(
-                `*,
+          const { data: updatedUser, error } = await supabase
+            .from("profiles")
+            .select(
+              `*,
                 avatar,
               id:user_id
               `
-              )
-              .eq("user_id", userProfile?.id)
-              .single();
-
-            console.log("data to update", updatedUser);
-            addUser(updatedUser);
-          } catch (err) {
-            console.log(err);
+            )
+            .eq("user_id", userProfile?.id)
+            .single();
+          if (error) {
+            return console.log(error.message);
           }
+          addUser(updatedUser);
         }
       }
     )
@@ -88,7 +85,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("event", event);
         if (event === "SIGNED_IN") {
           if (!session?.user?.id) {
             return;
@@ -98,15 +94,12 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             .from("profiles")
             .select("name, avatar, id:user_id, email")
             .eq("user_id", session?.user?.id);
+          if (error) {
+            return console.log(error.message);
+          }
 
           if (!currentUser?.length) {
             const registeredUser = await registerUser(session?.user);
-            console.log(
-              " session?.user?.id",
-              session?.user,
-              currentUser,
-              registeredUser
-            );
             addUser(registeredUser ?? null);
           } else {
             addUser(currentUser?.[0] ?? null);
@@ -119,6 +112,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
     return () => {
       authListener.subscription.unsubscribe();
+      supabase.removeChannel(profileChannel);
     };
   }, [addUser]);
 
