@@ -3,11 +3,13 @@ import { PostType } from "../types";
 
 export const PAGE_COUNT = 2;
 
-const fetchFeedPosts = async (offset: number) => {
+const fetchFeedPosts = async (
+  offset: number
+): Promise<{ data: PostType[]; nextId?: number }> => {
   const from = offset * PAGE_COUNT;
   const to = from + PAGE_COUNT - 1;
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("posts")
     .select(
       `*,
@@ -19,7 +21,20 @@ const fetchFeedPosts = async (offset: number) => {
     .order("created_at", { ascending: false })
     .limit(PAGE_COUNT);
 
-  return { data: data ?? [] };
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return new Promise((resolve) =>
+    setTimeout(
+      () =>
+        resolve({
+          data: data ?? [],
+          nextId: data?.length > 0 ? offset + 1 : undefined,
+        }),
+      1000
+    )
+  );
 };
 
 const getPostsByUserId = async (userId: string) => {
