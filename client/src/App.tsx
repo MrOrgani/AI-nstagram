@@ -3,7 +3,6 @@ import { Home, Profile } from "./pages";
 
 import Navbar from "./@/components/Navbar";
 import { Toaster } from "./@/components/ui/toaster";
-import useAuthStore from "./store/authStore";
 import EditProfile from "./pages/EditProfile";
 
 function App() {
