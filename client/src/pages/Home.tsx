@@ -37,9 +37,9 @@ const Home = () => {
       {isLoading && <FeedPostSkeleton />}
 
       {data?.pages?.map(({ data }) => (
-        <React.Fragment key={data[0].id}>
+        <React.Fragment key={`feed-page-${data[0]?.id}`}>
           {data.map((post) => (
-            <FeedPost key={`post-page-${post.id}`} currentPost={post} />
+            <FeedPost key={`feed-post-${post.id}`} currentPost={post} />
           ))}
         </React.Fragment>
       ))}
