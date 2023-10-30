@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useAuthStore from "../../store/authStore";
+import useAuthStore from "../store/authStore";
 import { Card } from "./ui/card";
 import { cn, createOrGetUser, signInUser, signUpUser } from "../lib/utils";
 import { Label } from "./ui/label";
@@ -46,8 +46,9 @@ const LoginModal = ({
         : await signInUser({ email, password });
       setDiplayModal(false);
     } catch (error) {
-      setError(error.message);
+      setError(error);
     }
+    setIsLoading(false);
 
     //TODO: Do we need Data ?
   }
@@ -60,8 +61,7 @@ const LoginModal = ({
             buttonVariants({ variant: "ghost" }),
             "flex justify-center rounded-md px-3 py-1.5 text-sm font-semibold leading-6  shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           )}
-          onClick={() => setDiplayModal(true)}
-        >
+          onClick={() => setDiplayModal(true)}>
           Sign in
         </Button>
       ) : null}
@@ -78,8 +78,7 @@ const LoginModal = ({
                   if (onClose) {
                     onClose();
                   }
-                }}
-              >
+                }}>
                 <ImCross />
               </div>
               <div className="flex justify-center">
@@ -89,8 +88,7 @@ const LoginModal = ({
                       ? "font-semibold"
                       : "text-muted-foreground"
                   } tracking-tight`}
-                  onClick={() => settMode("signin")}
-                >
+                  onClick={() => settMode("signin")}>
                   Sign in
                 </span>
                 <span className={`text-2xl font-semiboldtracking-tight mx-2`}>
@@ -102,8 +100,7 @@ const LoginModal = ({
                       ? "font-semibold"
                       : "text-muted-foreground"
                   } tracking-tight`}
-                  onClick={() => settMode("signup")}
-                >
+                  onClick={() => settMode("signup")}>
                   Sign up
                 </span>
               </div>
@@ -208,8 +205,7 @@ const LoginModal = ({
                     Already have an account ?{" "}
                     <span
                       onClick={() => settMode("signin")}
-                      className="underline"
-                    >
+                      className="underline">
                       Sign in!
                     </span>
                   </>
@@ -218,8 +214,7 @@ const LoginModal = ({
                     No account ?{" "}
                     <span
                       onClick={() => settMode("signup")}
-                      className="underline"
-                    >
+                      className="underline">
                       Sign up!
                     </span>
                   </>

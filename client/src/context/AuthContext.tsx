@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect } from "react";
 
 import { Session, User } from "@supabase/supabase-js";
 import supabase from "../../supabase";
 import useAuthStore from "../../store/authStore";
+import { updateUserProfile } from "../lib/utils";
 
 export const AuthContext = createContext<{
   user: User | null;
@@ -28,18 +29,19 @@ const registerGoogleUser = async (user: User | null) => {
     .select("name, avatar, id:user_id, email");
 
   if (registerUserError) {
-    throw registerUserError;
+    throw new Error(registerUserError.message);
   }
-  console.log("registerGoogleUser", data);
   return { ...data[0] };
 };
 
 const registerUser = async (user: User | undefined) => {
   try {
-    if (!isRegistering) {
+    if (!isRegistering && user) {
       isRegistering = true;
       if (user?.app_metadata.provider === "google") {
-        return registerGoogleUser(user);
+        return await registerGoogleUser(user);
+      } else {
+        return await updateUserProfile(user);
       }
     }
   } catch (error) {
@@ -83,9 +85,14 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     .subscribe();
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      addUser(session?.user ?? null);
+    });
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("event", event, "session", session);
         if (event === "SIGNED_IN") {
+          // debugger;
           if (!session?.user?.id) {
             return;
           }
@@ -95,7 +102,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
             .select("name, avatar, id:user_id, email")
             .eq("user_id", session?.user?.id);
           if (error) {
-            return console.log(error.message);
+            throw new Error(error.message);
           }
 
           if (!currentUser?.length) {
@@ -118,3 +125,5 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
   return <>{children}</>;
 };
+
+export const useUserContext = () => useContext(AuthContext);

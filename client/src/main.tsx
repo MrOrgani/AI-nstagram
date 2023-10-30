@@ -4,25 +4,22 @@ import App from "./App.tsx";
 import "./index.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { BrowserRouter } from "react-router-dom";
-import { AuthContextProvider } from "./@/context/AuthContext.tsx";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthContextProvider } from "./context/AuthContext.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const queryClient = new QueryClient();
+import QueryProvider from "./lib/react-query/QueryProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <GoogleOAuthProvider
-      clientId={import.meta.env.VITE_PUBLIC_GOOGLE_API_TOKEN}
-    >
-      <QueryClientProvider client={queryClient}>
+      clientId={import.meta.env.VITE_PUBLIC_GOOGLE_API_TOKEN}>
+      <QueryProvider>
         <AuthContextProvider>
           <BrowserRouter>
             <App />
             <ReactQueryDevtools initialIsOpen />
           </BrowserRouter>
         </AuthContextProvider>
-      </QueryClientProvider>
+      </QueryProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>
 );

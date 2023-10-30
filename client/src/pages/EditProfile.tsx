@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { SmallAvatar } from "../@/components/SmallAvatar";
+import { SmallAvatar } from "../components/SmallAvatar";
 import useAuthStore from "../store/authStore";
-import { Label } from "../@/components/ui/label";
-import { Input } from "../@/components/ui/input";
-import { Button } from "../@/components/ui/button";
+import { Label } from "../components/ui/label";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import supabase from "../supabase";
 import { useNavigate } from "react-router-dom";

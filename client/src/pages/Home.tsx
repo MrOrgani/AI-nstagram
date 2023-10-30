@@ -1,17 +1,17 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { FeedPostSkeleton } from "../@/components/FeedPostSkeleton";
+import { FeedPostSkeleton } from "../components/FeedPostSkeleton";
 import { fetchFeedPosts } from "../@/lib/fetch/utils";
-import FeedPost from "../@/components/FeedPost";
+import FeedPost from "../components/FeedPost";
 import React from "react";
 
 const Home = () => {
   const { ref, inView } = useInView();
 
-  const { status, data, error, isFetchingNextPage, fetchNextPage, isLoading } =
+  const { data, error, isFetchingNextPage, fetchNextPage, isLoading, isError } =
     useInfiniteQuery({
-      queryKey: ["projects"],
+      queryKey: ["feed-posts"],
 
       queryFn: async ({ pageParam = 0 }) => {
         const res = await fetchFeedPosts(pageParam);
@@ -28,7 +28,7 @@ const Home = () => {
     }
   }, [fetchNextPage, inView]);
 
-  if (status === "error") {
+  if (isError) {
     return <span>Error: {error.message}</span>;
   }
 

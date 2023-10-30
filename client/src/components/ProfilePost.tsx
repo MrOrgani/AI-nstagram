@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { IoChatbubbleSharp, IoHeartSharp } from "react-icons/io5";
-import supabase from "../../supabase";
+import supabase from "../supabase";
 
 import { PostType } from "../lib/types";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
@@ -8,7 +8,7 @@ import { getDateFromNow } from "../lib/utils";
 import CommentArea from "./CommentArea";
 import { PostProvider, usePostContext } from "../context/PostContext";
 
-import type { User } from "../lib/types";
+import type { ProfileType } from "../lib/types";
 import { PostIconsHeader } from "./PostIconsHeader";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { SmallAvatar } from "./SmallAvatar";
@@ -16,6 +16,11 @@ import CommentsDisplay from "./CommentsDisplay";
 
 const ProfilePostDialogTrigger = () => {
   const { currentPost: post } = usePostContext();
+
+  const imgSrc = post.photo.includes("base64")
+    ? post.photo
+    : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
+        .publicUrl;
   return (
     <DialogTrigger asChild>
       <div key={post.id} className="group p-0 cursor-pointer relative ">
@@ -28,13 +33,7 @@ const ProfilePostDialogTrigger = () => {
           </span>
           <div className=" bg-black opacity-30 absolute left-0 right-0 top-0 bottom-0" />
         </div>
-        <img
-          src={
-            supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo)
-              .data.publicUrl
-          }
-          alt={post.prompt}
-        />
+        <img src={imgSrc} alt={post.prompt} />
       </div>
     </DialogTrigger>
   );
@@ -42,7 +41,7 @@ const ProfilePostDialogTrigger = () => {
 
 interface Props {
   post: PostType;
-  currentUserProfile: User;
+  currentUserProfile: ProfileType;
 }
 
 const ProfilePost = ({ post, currentUserProfile }: Props) => {
@@ -63,6 +62,10 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     user: currentUserProfile,
   };
 
+  const imgSrc = post.photo.includes("base64")
+    ? post.photo
+    : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
+        .publicUrl;
   return (
     <PostProvider post={post}>
       <Dialog>
@@ -73,11 +76,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
               <div className="h-full overflow-hidden">
                 <img
                   className=" h-full object-cover"
-                  src={
-                    supabase.storage
-                      .from("ai-stagram-bucket")
-                      .getPublicUrl(post.photo).data.publicUrl
-                  }
+                  src={imgSrc}
                   alt={post.prompt}
                 />
               </div>

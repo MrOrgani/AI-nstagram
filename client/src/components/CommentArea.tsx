@@ -1,7 +1,7 @@
 import { forwardRef, useState } from "react";
 import { IoHappyOutline } from "react-icons/io5";
-import supabase from "../../supabase";
-import useAuthStore from "../../store/authStore";
+import supabase from "../supabase";
+import useAuthStore from "../store/authStore";
 import LoginModal from "./LoginModal";
 import { auto_grow, cn } from "../lib/utils";
 import { usePostContext } from "../context/PostContext";
@@ -78,8 +78,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
       {comment.length ? (
         <div
           className="text-blue-400 font-bold mr-1 cursor-pointer"
-          onClick={handlePost}
-        >
+          onClick={handlePost}>
           Post
         </div>
       ) : null}

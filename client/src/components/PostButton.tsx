@@ -13,14 +13,19 @@ import Loader from "./Loader";
 import { Textarea } from "./ui/textarea";
 import { RiOpenaiFill } from "react-icons/ri";
 import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
-import useAuthStore from "../../store/authStore";
-import supabase from "../../supabase";
+import useAuthStore from "../store/authStore";
+import supabase from "../supabase";
 import LoginModal from "./LoginModal";
 import { dataUrlToFile } from "../lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "../main";
+import { useLocation } from "react-router-dom";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const PostButton = () => {
+  const location = useLocation();
+  // console.log("location", location);
   const { userProfile } = useAuthStore();
 
   const [open, setOpen] = useState(false);
@@ -47,7 +52,7 @@ const PostButton = () => {
       setGeneratingImg(true);
 
       try {
-        const { data } = await supabase.functions.invoke("openai", {
+        const { data, error } = await supabase.functions.invoke("openai", {
           body: JSON.stringify({
             prompt: form.prompt,
           }),
@@ -57,6 +62,9 @@ const PostButton = () => {
           ...form,
           photoUrl: `data:image/jpeg;base64,${data.photoUrl}`,
         });
+        if (error) {
+          throw new Error(error.message);
+        }
       } catch (err) {
         console.log(err);
       } finally {
@@ -67,17 +75,15 @@ const PostButton = () => {
     }
   };
 
-  const handlePublishPost = async () => {
-    try {
-      if (!userProfile) {
-        setLoginDialog(true);
-        return null;
-      }
+  const mutation = useMutation({
+    mutationFn: async () => {
+      console.log("mutationFn 1️⃣");
       const fileName = `${userProfile?.id}_${Date.now()}`;
       const fileImage = await dataUrlToFile(form.photoUrl, fileName);
       const { data } = await supabase.storage
         .from("ai-stagram-bucket")
         .upload(fileName, fileImage);
+      console.log("mutationFn 2️⃣", data);
       await supabase.from("posts").insert([
         {
           prompt: form.prompt,
@@ -85,11 +91,90 @@ const PostButton = () => {
           photo: data?.path,
         },
       ]);
-      setForm({ ...form, photoUrl: "" });
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    },
+    // When mutate is called:
+    onMutate: async (newPost) => {
+      if (location.pathname === "/") {
+        // Cancel any outgoing refetches
+        // (so they don't overwrite our optimistic update)
+        await queryClient.cancelQueries({ queryKey: ["feed-posts"] });
+
+        // Snapshot the previous value
+        const previousTodos = queryClient.getQueryData(["feed-posts"]);
+
+        // Optimistically update to the new value
+        queryClient.setQueryData(["feed-posts"], (old) => [...old, newPost]);
+
+        // Return a context object with the snapshotted value
+        return { previousTodos };
+      } else {
+        console.log("IN PROFILE, WE OPTIMISTIC UPDATE");
+        // Cancel any outgoing refetches
+        // (so they don't overwrite our optimistic update)
+        await queryClient.cancelQueries({ queryKey: ["user-profile"] });
+
+        // Snapshot the previous value
+        const previousTodos = queryClient.getQueryData(["user-profile"]);
+
+        // Optimistically update to the new value
+        queryClient.setQueryData(["user-profile"], (old) => {
+          console.log(" queryClient.setQueryData(", old, newPost);
+          return {
+            ...old,
+            posts: [
+              ...old.posts,
+              {
+                id: Date.now().toString(),
+                created_at: Date.now().toString(),
+                user_id: userProfile?.id,
+                prompt: form.prompt,
+                comments: 0,
+                likes: 0,
+                photo: form.photoUrl,
+                likedByUser: [],
+              },
+            ],
+          };
+        });
+
+        // Return a context object with the snapshotted value
+        return { previousTodos };
+      }
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["feed-posts"], context?.previousTodos);
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+    },
+  });
+
+  // const handlePublishPost = async () => {
+  //   try {
+  //     if (!userProfile) {
+  //       setLoginDialog(true);
+  //       return null;
+  //     }
+  //     // const fileName = `${userProfile?.id}_${Date.now()}`;
+  //     // const fileImage = await dataUrlToFile(form.photoUrl, fileName);
+  //     // const { data } = await supabase.storage
+  //     //   .from("ai-stagram-bucket")
+  //     //   .upload(fileName, fileImage);
+  //     // await supabase.from("posts").insert([
+  //     //   {
+  //     //     prompt: form.prompt,
+  //     //     user_id: userProfile?.id,
+  //     //     photo: data?.path,
+  //     //   },
+  //     // ]);
+  //     setForm({ ...form, photoUrl: "" });
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const deleteImg = () => {
     setForm({ ...form, photoUrl: "" });
@@ -104,12 +189,19 @@ const PostButton = () => {
           onClose={() => setLoginDialogCallback(false)}
         />
       ) : null}
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(isOpen) => {
+          setOpen(isOpen);
+          if (isOpen === false) {
+            setForm({ ...form, photoUrl: "" });
+            setGeneratingImg(false);
+          }
+        }}>
         <DialogTrigger asChild>
           <Button
             className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md "
-            onClick={() => setOpen(true)}
-          >
+            onClick={() => setOpen(true)}>
             <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
               <span className="mx-1">Post</span>
               <IoOpenOutline />
@@ -145,8 +237,7 @@ const PostButton = () => {
                 <div className="hidden group-hover:block ">
                   <div
                     className="absolute right-1 top-1 bg-gray-500 full-rounded h-6 w-6 rounded-full flex justify-center items-center text-white text-md font-bold"
-                    onClick={deleteImg}
-                  >
+                    onClick={deleteImg}>
                     <IoCloseSharp />
                   </div>
                 </div>
@@ -166,9 +257,11 @@ const PostButton = () => {
           </div>
           <DialogFooter>
             <Button
-              onClick={handleGenerateImg}
-              className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md "
-            >
+              onClick={(e) => {
+                e.preventDefault();
+                handleGenerateImg();
+              }}
+              className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md ">
               <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
@@ -180,13 +273,11 @@ const PostButton = () => {
               onSubmit={(event) => {
                 wait().then(() => setOpen(false));
                 event.preventDefault();
-              }}
-            >
+              }}>
               <Button
                 className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md "
                 disabled={!form.photoUrl}
-                onClick={handlePublishPost}
-              >
+                onClick={() => mutation.mutate()}>
                 Publish
               </Button>
             </form>

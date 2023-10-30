@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Profile } from "./pages";
 
-import Navbar from "./@/components/Navbar";
-import { Toaster } from "./@/components/ui/toaster";
+import Navbar from "./components/Navbar";
+import { Toaster } from "./components/ui/toaster";
 import EditProfile from "./pages/EditProfile";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
       <Toaster />
       <main className=" px-4 w-full bg-white flex flex-col h-screen mt-20">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route index path="/" element={<Home />} />
           <Route path="/:id" element={<Profile />} />
           <Route path="/:id/edit" element={<EditProfile />} />
         </Routes>

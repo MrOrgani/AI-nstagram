@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 import * as FileSaver from "file-saver";
 import jwtDecode from "jwt-decode";
-import { createClient } from "@supabase/supabase-js";
+import { User, createClient } from "@supabase/supabase-js";
 
 import * as dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -22,13 +22,13 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_KEY
 );
 
-const updateUserProfile = async (user: any) => {
+const updateUserProfile = async (user: User) => {
   const { error: registerUserError } = await supabase.from("profiles").insert([
     {
-      name: user.name,
+      name: user.user_metadata.full_name,
       user_id: user?.id,
       email: user?.email,
-      avatar: user?.user_metadata?.avatar_url,
+      avatar: user?.user_metadata?.avatar_url || null,
     },
   ]);
   if (registerUserError) {
@@ -41,30 +41,96 @@ const createOrGetUser = async (response: any) => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
   });
-  const decoded = jwtDecode(response.credential);
+  const decoded: any = jwtDecode(response.credential);
+
+  // const decodeded: {
+  //   iss: "https://accounts.google.com";
+  //   azp: "495858687863-8n5ktg0ehh2skj12kc2e977hqm7ejd3v.apps.googleusercontent.com";
+  //   aud: "495858687863-8n5ktg0ehh2skj12kc2e977hqm7ejd3v.apps.googleusercontent.com";
+  //   sub: "109142397529339876212";
+  //   email: "maxime.organi@gmail.com";
+  //   email_verified: true;
+  //   nbf: 1698679900;
+  //   name: "Maxime Organi";
+  //   picture: "https://lh3.googleusercontent.com/a/ACg8ocL-YDfrUjlDgaeSLT2MwQ8a2SPMk1JStPfj0tJ_fVV3tfE=s96-c";
+  //   given_name: "Maxime";
+  //   family_name: "Organi";
+  //   locale: "fr";
+  //   iat: 1698680200;
+  //   exp: 1698683800;
+  //   jti: "8d644572414ce621e7fa6e6d7d9393b6090ede15";
+  // };
+
+  await updateUserProfile({
+    id: "",
+    user_metadata: {
+      full_name: decoded?.given_name,
+      avatar_url: decoded.picture,
+    },
+    email: decoded.email,
+    app_metadata: { provider: "google" },
+    created_at: "",
+    aud: decoded?.aud,
+  });
+
+  console.log(
+    "Connexion with Google ",
+    JSON.stringify({ data, error, decoded }, null, 2)
+  );
 };
 
-const signUpUser = async ({ email, password, name }) => {
+const signUpUser = async ({
+  email,
+  password,
+  name,
+}: {
+  email: string;
+  password: string;
+  name: string;
+}) => {
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email: email,
     password: password,
   });
 
-  updateUserProfile({
-    name: name,
-    user_id: signUpData?.user?.id,
+  if (signUpError) {
+    throw new Error(signUpError.message);
+  }
+
+  if (!signUpData?.user?.id || !signUpData?.user?.email) {
+    throw new Error("Error while registering a new user");
+  }
+
+  await updateUserProfile({
+    id: signUpData?.user?.id,
+    user_metadata: {
+      full_name: name,
+      avatar_url: signUpData.user.user_metadata.avatar_url,
+    },
     email: signUpData?.user?.email,
-    picture: signUpData?.user?.user_metadata?.avatar_url,
+    app_metadata: { provider: "email" },
+    created_at: signUpData?.user?.created_at,
+    aud: signUpData?.user?.aud,
   });
-  return { data: null, error: signUpError };
+  return { data: null };
 };
 
-const signInUser = async ({ email, password }) => {
+const signInUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
-  return { data, error };
+  if (error) {
+    throw new Error(error.message);
+  }
+  console.log("data", data);
+  return { data };
 };
 
 const getDateFromNow = (referenceDate: string) => {
@@ -140,4 +206,5 @@ export {
   stringToColour,
   getContrastingColor,
   dataUrlToFile,
+  updateUserProfile,
 };

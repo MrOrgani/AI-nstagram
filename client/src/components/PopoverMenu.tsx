@@ -7,8 +7,8 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "./ui/menubar";
-import supabase from "../../supabase";
-import useAuthStore from "../../store/authStore";
+import supabase from "../supabase";
+import useAuthStore from "../store/authStore";
 import { Link, useNavigate } from "react-router-dom";
 import { SmallAvatar } from "./SmallAvatar";
 import { Icons } from "./ui/icons";
@@ -47,8 +47,7 @@ const PopoverMenu = () => {
               }
               logout();
               navigate("/");
-            }}
-          >
+            }}>
             <Icons.logout />
             Log out
           </MenubarItem>

@@ -1,5 +1,5 @@
-import useAuthStore from "../../store/authStore";
-import supabase from "../../supabase";
+import useAuthStore from "../store/authStore";
+import supabase from "../supabase";
 import { IoHeart, IoHeartOutline } from "react-icons/io5";
 import { useState } from "react";
 import LoginModal from "./LoginModal";
