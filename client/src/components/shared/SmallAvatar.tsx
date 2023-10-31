@@ -9,7 +9,8 @@ interface SmallAvatarProps {
   className?: string;
 }
 export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
-  const userName = user.name || user.email;
+  const userName = user.name;
+
   if (!userName) {
     return null;
   }
@@ -25,7 +26,7 @@ export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
         className="object-cover w-full h-full"
       />
       <AvatarFallback
-        className={`text-md font-bold  ${className}`}
+        className={`text-md font-bold  ${className} w-full h-full flex items-center justify-center`}
         style={{ backgroundColor: bgColour, color }}>
         {userName?.[0]}
       </AvatarFallback>

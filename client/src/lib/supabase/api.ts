@@ -92,7 +92,8 @@ export const getUserById = async (userId: string) => {
     .from("profiles")
     .select(
       `
-    *, 
+    *,
+    id:user_id, 
     posts(*,likedByUser:likes(id:user_id))
     `
     )

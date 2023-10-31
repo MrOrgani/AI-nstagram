@@ -1,14 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-// import { User } from "@supabase/supabase-js";
-// import supabase from "@/lib/supabase";
-// import { useUserContext } from "@/context/AuthContext";
-
-// import { useUserContext } from "@/context/AuthContext";
-
-// import { updateUserProfile } from "@/lib/utils";
 import { IUser } from "@/lib/types";
-import { getCurrentUser } from "@/lib/supabase/api";
+import { getCurrentUser, getUserById } from "@/lib/supabase/api";
 import { useSignOut } from "@/lib/react-query/queries";
 
 export const INITIAL_USER = {
@@ -32,7 +24,7 @@ type IContextType = {
   user: IUser | undefined;
   isLoading: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser | undefined>>;
-  logout: React.Dispatch<React.SetStateAction<undefined>>;
+  logout: () => void;
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
@@ -93,16 +85,16 @@ export const AuthProvider: React.FC<AuthContextProviderProps> = ({
   const checkAuthUser = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await getCurrentUser();
-
-      console.log("currentUser", currentUser);
+      const currentUserSession = await getCurrentUser();
+      console.log("currentUserSession?.id ", currentUserSession?.id);
+      const currentUser = await getUserById(currentUserSession?.id ?? "");
 
       if (currentUser) {
         setUser({
           id: currentUser.id,
-          name: currentUser.user_metadata.full_name,
-          email: currentUser.email ?? "",
-          avatar: currentUser.user_metadata.avatar_url,
+          name: currentUser.name,
+          email: currentUser.email,
+          avatar: currentUser.avatar,
         });
 
         setIsAuthenticated(true);
