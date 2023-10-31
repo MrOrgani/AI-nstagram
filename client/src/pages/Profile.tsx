@@ -1,42 +1,21 @@
-import useAuthStore from "../store/authStore";
-import { PostType, ProfileType } from "../@/lib/types";
-
-import ProfilePost from "../components/ProfilePost";
-import { ProfileHeader } from "../components/ProfileHeader";
-import { Icons } from "../components/ui/icons";
+import ProfilePost from "@/components/shared/ProfilePost";
+import { ProfileHeader } from "@/components/shared/ProfileHeader";
+import { Icons } from "@/components/ui/icons";
 import { Link, useParams } from "react-router-dom";
-import supabase from "../supabase";
-import { Button } from "../components/ui/button";
-import { ProfilePostDialogTriggerSkeleton } from "../components/ProfilePostDialogTriggerSkeleton";
-import { ProfileHeaderSkeleton } from "./ProfileHeaderSkeleton";
-import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { ProfilePostDialogTriggerSkeleton } from "@/components/shared/ProfilePostDialogTriggerSkeleton";
+import { ProfileHeaderSkeleton } from "../components/shared/ProfileHeaderSkeleton";
+import { useGetUserById } from "@/lib/react-query/queries";
+import { useUserContext } from "@/context/AuthContext";
 
 const Profile = () => {
-  const { data: currentUserProfile, isLoading } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: async () => {
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select(
-          `
-        *, 
-        posts(*,likedByUser:likes(id:user_id))
-        `
-        )
-        .eq("user_id", userId)
-        .single<ProfileType & { posts: PostType[] }>();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-      return profile;
-    },
-  });
-
-  const { userProfile } = useAuthStore();
-  // const [currentUserPosts, setCurrentUserPosts] = useState<PostType[]>([]);
-
   const { id: userId } = useParams();
+  const { user } = useUserContext();
+
+  const { data: currentUser, isLoading } = useGetUserById(userId ?? "");
+
+  // const { userProfile } = useUserContext();
+  // const [currentUserPosts, setCurrentUserPosts] = useState<PostType[]>([]);
 
   // useEffect(() => {
   //   const postChannel = supabase
@@ -45,7 +24,7 @@ const Profile = () => {
   //       "postgres_changes",
   //       { event: "INSERT", schema: "public", table: "posts" },
   //       async (payload) => {
-  //         if (payload.new.user_id === userProfile?.id) {
+  // if (payload.new.user_id === userProfile?.id) {
   //           try {
   //             const { data: newPost } = await supabase
   //               .from("posts")
@@ -70,7 +49,11 @@ const Profile = () => {
   //   };
   // }, []);
 
-  if (isLoading || !currentUserProfile) {
+  if (!currentUser) {
+    return null;
+  }
+
+  if (isLoading) {
     return (
       <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] ">
         <div className="mt-20 h-full">
@@ -93,19 +76,18 @@ const Profile = () => {
       </main>
     );
   }
-
-  const isMyProfile = userProfile?.id === userId;
+  const isMyProfile = user?.id === userId;
 
   return (
     <main className="py-6 px-4 mx-auto min-w-[320px] w-[832px] ">
       <div className="mt-20 h-full ">
         <ProfileHeader
           {...{
-            user: currentUserProfile,
-            nbOfPosts: currentUserProfile?.posts?.length,
+            user: currentUser,
+            nbOfPosts: user?.posts?.length,
           }}>
           {isMyProfile && (
-            <Link to={`/${userProfile?.id}/edit`}>
+            <Link to={`/${currentUser?.id}/edit`}>
               <Button className="text-sm font-semibold text-black bg-gray-200 ml-5 px-2 h-8 hover:bg-gray-300">
                 Edit Profile
               </Button>
@@ -121,11 +103,11 @@ const Profile = () => {
           </a>
         </div>
         <div className="grid grid-cols-3 gap-2">
-          {currentUserProfile.posts
+          {currentUser.posts
             ?.sort((a, b) => b.created_at.localeCompare(a.created_at))
             .map((post) => (
               <ProfilePost
-                currentUserProfile={currentUserProfile}
+                currentUserProfile={currentUser}
                 key={post.id}
                 post={post}
               />

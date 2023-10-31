@@ -1,14 +1,14 @@
 import { forwardRef, useState } from "react";
 import { IoHappyOutline } from "react-icons/io5";
-import supabase from "../supabase";
-import useAuthStore from "../store/authStore";
+import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
-import { auto_grow, cn } from "../lib/utils";
-import { usePostContext } from "../context/PostContext";
+import { auto_grow, cn } from "@/lib/utils";
+import { usePostContext } from "@/context/PostContext";
+import { useUserContext } from "@/context/AuthContext";
 
 const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const [comment, setComment] = useState("");
-  const { userProfile } = useAuthStore();
+  const { user: userProfile } = useUserContext();
   const { currentPost, update } = usePostContext();
 
   const [loginDialog, setLoginDialog] = useState(false);

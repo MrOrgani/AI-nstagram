@@ -1,9 +1,9 @@
 import React from "react";
 import { SmallAvatar } from "./SmallAvatar";
-import { ProfileType } from "../lib/types";
+import { IUser } from "@/lib/types";
 
 interface Props {
-  user: ProfileType;
+  user: IUser;
   nbOfPosts: number;
   children: React.ReactNode;
 }

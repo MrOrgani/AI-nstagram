@@ -6,15 +6,16 @@ import {
   MenubarMenu,
   MenubarSeparator,
   MenubarTrigger,
-} from "./ui/menubar";
-import supabase from "../supabase";
-import useAuthStore from "../store/authStore";
+} from "@/components/ui/menubar";
+import supabase from "@/lib/supabase";
+import { useUserContext } from "@/context/AuthContext";
+
 import { Link, useNavigate } from "react-router-dom";
-import { SmallAvatar } from "./SmallAvatar";
-import { Icons } from "./ui/icons";
+import { SmallAvatar } from "@/components/shared/SmallAvatar";
+import { Icons } from "@/components/ui/icons";
 
 const PopoverMenu = () => {
-  const { userProfile, logout } = useAuthStore();
+  const { user: userProfile, logout } = useUserContext();
 
   const navigate = useNavigate();
 

@@ -1,14 +1,14 @@
 import { useRef } from "react";
 import { IoChatbubbleSharp, IoHeartSharp } from "react-icons/io5";
-import supabase from "../supabase";
+import supabase from "@/lib/supabase";
 
-import { PostType } from "../lib/types";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { getDateFromNow } from "../lib/utils";
+import { PostType } from "@/lib/types";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { getDateFromNow } from "@/lib/utils";
 import CommentArea from "./CommentArea";
-import { PostProvider, usePostContext } from "../context/PostContext";
+import { PostProvider, usePostContext } from "@/context/PostContext";
 
-import type { ProfileType } from "../lib/types";
+import type { IUser } from "@/lib/types";
 import { PostIconsHeader } from "./PostIconsHeader";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { SmallAvatar } from "./SmallAvatar";
@@ -41,7 +41,7 @@ const ProfilePostDialogTrigger = () => {
 
 interface Props {
   post: PostType;
-  currentUserProfile: ProfileType;
+  currentUserProfile: IUser;
 }
 
 const ProfilePost = ({ post, currentUserProfile }: Props) => {

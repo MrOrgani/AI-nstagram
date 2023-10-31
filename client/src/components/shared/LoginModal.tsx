@@ -1,13 +1,16 @@
 import { useState } from "react";
-import useAuthStore from "../store/authStore";
-import { Card } from "./ui/card";
-import { cn, createOrGetUser, signInUser, signUpUser } from "../lib/utils";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { Button, buttonVariants } from "./ui/button";
-import { Icons } from "./ui/icons";
+// import { useUserContext } from "@/context/AuthContext";
+
+import { Card } from "@/components/ui/card";
+import { cn, createOrGetUser, signInUser, signUpUser } from "@/lib/utils";
+// import { Label } from "@/components/ui/label";
+// import { Input } from "@/components/ui/input";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/ui/icons";
 import { GoogleLogin } from "@react-oauth/google";
 import { ImCross } from "react-icons/im";
+import SignupForm from "../forms/SignupForm";
+import { useUserContext } from "@/context/AuthContext";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -20,38 +23,36 @@ const LoginModal = ({
   displayButton = true,
   onClose,
 }: LoginModalProps) => {
-  const { userProfile } = useAuthStore();
+  const { user } = useUserContext();
   const [diplayModal, setDiplayModal] = useState(initialDisplay);
 
-  const [mode, settMode] = useState<"signup" | "signin">("signin");
+  const [mode, settMode] = useState<"signup" | "signin">("signup");
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [name, setName] = useState("");
+  // const [error, setError] = useState("");
 
-  if (userProfile?.id) {
+  if (user?.id) {
     return null;
   }
 
-  const user = userProfile;
+  // async function onSubmit(event: React.SyntheticEvent) {
+  //   event.preventDefault();
+  //   try {
+  //     mode === "signup"
+  //       ? await signUpUser({ email, password, name })
+  //       : await signInUser({ email, password });
+  //     setDiplayModal(false);
+  //   } catch (error) {
+  //     setError(error);
+  //   }
+  //   setIsLoading(false);
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
-    try {
-      mode === "signup"
-        ? await signUpUser({ email, password, name })
-        : await signInUser({ email, password });
-      setDiplayModal(false);
-    } catch (error) {
-      setError(error);
-    }
-    setIsLoading(false);
-
-    //TODO: Do we need Data ?
-  }
+  //   //TODO: Do we need Data ?
+  // }
 
   return (
     <>
@@ -109,7 +110,9 @@ const LoginModal = ({
               </p>
             </div>
             <div className={cn("grid gap-6")}>
-              <form onSubmit={onSubmit}>
+              {/* {mode === "signup" ? <SignupForm /> : <SigninForm />} */}
+              {mode === "signup" ? <SignupForm /> : null}
+              {/* <form onSubmit={onSubmit}>
                 <div className="grid gap-2">
                   <div className="grid gap-1">
                     <Label className="sr-only" htmlFor="email">
@@ -173,7 +176,7 @@ const LoginModal = ({
                     {mode === "signup" ? `Sign Up` : `Sign In`} with Email
                   </Button>
                 </div>
-              </form>
+              </form> */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />

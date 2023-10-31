@@ -6,19 +6,22 @@ import {
   DialogDescription,
   DialogOverlay,
 } from "@radix-ui/react-dialog";
-import { DialogFooter, DialogHeader } from "./ui/dialog";
-import { Button } from "./ui/button";
-import preview from "../../assets/preview.png";
+import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import preview from "@/assets/preview.png";
 import Loader from "./Loader";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { RiOpenaiFill } from "react-icons/ri";
 import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
-import useAuthStore from "../store/authStore";
-import supabase from "../supabase";
+// import { useUserContext } from "@/context/AuthContext";
+
+import { useUserContext } from "@/context/AuthContext";
+
+import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
-import { dataUrlToFile } from "../lib/utils";
+import { dataUrlToFile } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "../main";
+import { queryClient } from "@/lib/react-query/QueryProvider";
 import { useLocation } from "react-router-dom";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
@@ -26,7 +29,7 @@ const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 const PostButton = () => {
   const location = useLocation();
   // console.log("location", location);
-  const { userProfile } = useAuthStore();
+  const { user: userProfile } = useUserContext();
 
   const [open, setOpen] = useState(false);
   const [loginDialog, setLoginDialog] = useState(false);

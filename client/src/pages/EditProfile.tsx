@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { SmallAvatar } from "../components/SmallAvatar";
-import useAuthStore from "../store/authStore";
+import { SmallAvatar } from "@/components/shared/SmallAvatar";
+// import { useUserContext } from "@/context/AuthContext";
+
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import supabase from "../supabase";
+import supabase from "@/lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "@/context/AuthContext";
 
 interface Inputs {
   username: string;
@@ -14,7 +16,7 @@ interface Inputs {
 }
 
 const ProfileForm = () => {
-  const { userProfile, addUser } = useAuthStore();
+  const { user: userProfile } = useUserContext();
   const navigate = useNavigate();
 
   const {
@@ -61,7 +63,7 @@ const ProfileForm = () => {
       .update(dataToUpdate)
       .eq("user_id", userProfile?.id);
 
-    addUser({ ...userProfile, ...dataToUpdate });
+    // addUser({ ...userProfile, ...dataToUpdate });
     navigate(`/${userProfile?.id}/`);
   };
 

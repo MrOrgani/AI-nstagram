@@ -7,6 +7,7 @@ import { User, createClient } from "@supabase/supabase-js";
 
 import * as dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import supabase from "./supabase";
 dayjs.extend(relativeTime);
 
 function cn(...inputs: ClassValue[]) {
@@ -16,11 +17,6 @@ function cn(...inputs: ClassValue[]) {
 const downloadImage = (_id: number, photo: string) => {
   FileSaver.saveAs(photo, `download-${_id}.jpg`);
 };
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_DB_URL,
-  import.meta.env.VITE_SUPABASE_KEY
-);
 
 const updateUserProfile = async (user: User) => {
   const { error: registerUserError } = await supabase.from("profiles").insert([

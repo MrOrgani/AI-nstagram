@@ -1,26 +1,15 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import { FeedPostSkeleton } from "../components/FeedPostSkeleton";
-import { fetchFeedPosts } from "../@/lib/fetch/utils";
-import FeedPost from "../components/FeedPost";
+import { FeedPostSkeleton } from "@/components/shared/FeedPostSkeleton";
 import React from "react";
+import { useGetPosts } from "@/lib/react-query/queries";
+import FeedPost from "@/components/shared/FeedPost";
 
 const Home = () => {
   const { ref, inView } = useInView();
 
   const { data, error, isFetchingNextPage, fetchNextPage, isLoading, isError } =
-    useInfiniteQuery({
-      queryKey: ["feed-posts"],
-
-      queryFn: async ({ pageParam = 0 }) => {
-        const res = await fetchFeedPosts(pageParam);
-        return res;
-      },
-      getNextPageParam: (lastPage) => {
-        return lastPage?.nextId ?? undefined;
-      },
-    });
+    useGetPosts();
 
   useEffect(() => {
     if (inView) {

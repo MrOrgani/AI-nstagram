@@ -1,4 +1,4 @@
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import LikeIcon from "./LikeIcon";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiArrowDownTray } from "react-icons/hi2";
@@ -7,8 +7,7 @@ export const FeedPostSkeleton = () => {
   return (
     <div
       data-testid="feed-post-skeleton"
-      className=" bg-white  mb-5 border-b border-b-gray-200"
-    >
+      className=" bg-white  mb-5 border-b border-b-gray-200">
       <div className="flex items-center justify-between p-2.5">
         <div className="flex items-center">
           <Skeleton className="w-8 h-8 bg-gray-300 rounded-full mr-2.5"></Skeleton>

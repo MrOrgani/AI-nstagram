@@ -1,4 +1,4 @@
-import { usePostContext } from "../context/PostContext";
+import { usePostContext } from "@/context/PostContext";
 
 const NumberOfLikesDisplay = () => {
   const { currentPost } = usePostContext();

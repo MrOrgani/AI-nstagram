@@ -1,13 +1,13 @@
 import React from "react";
-import { Avatar } from "./ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import {
   getContrastingColor,
   getShortenedDateFromNow,
   stringToColour,
-} from "../lib/utils";
+} from "@/lib/utils";
 
-import type { Comment } from "../lib/types";
+import type { Comment } from "@/lib/types";
 
 interface Props {
   comments: Comment[];
@@ -21,8 +21,7 @@ export const CommentsList = ({ comments }: Props) => {
       <div
         data-testid="comments-on-post"
         className="flex mb-4"
-        key={`post-comment-${comment.comment_id}`}
-      >
+        key={`post-comment-${comment.comment_id}`}>
         <div className={`min-h-10  rounded-full`}>
           <Avatar className="w-8 h-8 flex items-center align-middle">
             <AvatarImage
@@ -31,8 +30,7 @@ export const CommentsList = ({ comments }: Props) => {
             />
             <AvatarFallback
               className={`text-md font-bold w-full h-full flex items-center justify-center text-center`}
-              style={{ backgroundColor: bgColour, color }}
-            >
+              style={{ backgroundColor: bgColour, color }}>
               <span>{comment.user?.name?.[0]}</span>
             </AvatarFallback>
           </Avatar>

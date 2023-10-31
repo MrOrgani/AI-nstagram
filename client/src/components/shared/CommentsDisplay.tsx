@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { usePostContext } from "../context/PostContext";
-import { getCommentsFromPostId } from "../lib/fetch/utils";
+import { usePostContext } from "@/context/PostContext";
+import { getCommentsFromPostId } from "@/lib/supabase/api";
 
-import type { Comment } from "../lib/types";
+import type { Comment } from "@/lib/types";
 import { CommentsList } from "./CommentsList";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -108,8 +108,7 @@ const CommentsDisplay = ({
         <p
           className="text-neutral-500 font-medium text-sm my-2 cursor-pointer"
           onClick={() => setDiplayComments(!diplayComments)}
-          data-testid="view-all-comments"
-        >
+          data-testid="view-all-comments">
           View all {currentPost.comments} comments
         </p>
       )}

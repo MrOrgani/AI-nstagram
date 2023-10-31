@@ -1,12 +1,12 @@
-import type { PostType } from "../lib/types";
+import type { PostType } from "@/lib/types";
 import CommentArea from "./CommentArea";
 import CommentsDisplay from "./CommentsDisplay";
 import { useRef } from "react";
-import { PostProvider } from "../context/PostContext";
+import { PostProvider } from "@/context/PostContext";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { PostIconsHeader } from "./PostIconsHeader";
 import { SmallAvatar } from "./SmallAvatar";
-import { getShortenedDateFromNow } from "../lib/utils";
+import { getShortenedDateFromNow } from "@/lib/utils";
 import { ImgPost } from "./ImgPost";
 import { Link } from "react-router-dom";
 
@@ -22,8 +22,7 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
     <PostProvider post={currentPost}>
       <div
         data-testid="feed-post"
-        className=" bg-white  mb-5 border-b border-b-gray-200"
-      >
+        className=" bg-white  mb-5 border-b border-b-gray-200">
         <div className="flex items-center justify-between p-2.5">
           <div className="flex items-center">
             <Link to={`/${currentPost.user?.id}`} className="flex items-center">

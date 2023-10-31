@@ -1,11 +1,11 @@
 import React from "react";
-import { Avatar } from "./ui/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-import { getContrastingColor, stringToColour } from "../lib/utils";
-import type { ProfileType } from "../lib/types";
+import { getContrastingColor, stringToColour } from "@/lib/utils";
+import type { IUser } from "@/lib/types";
 
 interface SmallAvatarProps {
-  user: ProfileType;
+  user: IUser;
   className?: string;
 }
 export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
@@ -18,8 +18,7 @@ export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
 
   return (
     <Avatar
-      className={`w-8 h-8 flex items-center align-middle -z-1 ${className}`}
-    >
+      className={`w-8 h-8 flex items-center align-middle -z-1 ${className}`}>
       <AvatarImage
         src={user?.avatar}
         alt={user?.name + "_avatar"}
@@ -27,8 +26,7 @@ export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
       />
       <AvatarFallback
         className={`text-md font-bold  ${className}`}
-        style={{ backgroundColor: bgColour, color }}
-      >
+        style={{ backgroundColor: bgColour, color }}>
         {userName?.[0]}
       </AvatarFallback>
     </Avatar>

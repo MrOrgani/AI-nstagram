@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Home, Profile } from "./pages";
 
-import Navbar from "./components/Navbar";
+import Navbar from "./components/shared/Navbar";
 import { Toaster } from "./components/ui/toaster";
 import EditProfile from "./pages/EditProfile";
 

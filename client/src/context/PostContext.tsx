@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { PostType } from "../lib/types";
+import { PostType } from "@/lib/types";
 
 export const PostContext = createContext<{
   currentPost: PostType;

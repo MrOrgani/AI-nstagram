@@ -1,5 +1,5 @@
-import type { PostType } from "../lib/types";
-import supabase from "../supabase";
+import type { PostType } from "@/lib/types";
+import supabase from "@/lib/supabase";
 
 export const ImgPost = (post: PostType) => {
   return (
