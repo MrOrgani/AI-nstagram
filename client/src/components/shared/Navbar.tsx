@@ -18,7 +18,7 @@ const Navbar = () => {
       </Link>
       <PostButton />
 
-      {userProfile ? <PopoverMenu /> : <LoginModal displayButton={true} />}
+      {userProfile?.id ? <PopoverMenu /> : <LoginModal displayButton={true} />}
     </header>
   );
 };
