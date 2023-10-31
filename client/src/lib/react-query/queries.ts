@@ -4,6 +4,7 @@ import {
   // useQueryClient,
   useInfiniteQuery,
   useQuery,
+  useQueryClient,
 } from "@tanstack/react-query";
 import {
   createUserAccount,
@@ -11,8 +12,9 @@ import {
   getUserById,
   signInAccount,
   signOut,
+  updateUser,
 } from "@/lib/supabase/api";
-import { INewUser } from "../types";
+import { INewUser, IUpdateUser } from "../types";
 
 ///////////////////////////////////////////////////////
 // Posts
@@ -40,6 +42,13 @@ export const useCreateUserAccount = () => {
     mutationFn: (user: INewUser) => createUserAccount(user),
   });
 };
+
+export const useGetCurrentUser = (userId: string) => {
+  return useQuery({
+    queryKey: ["current-user"],
+    queryFn: () => getUserById(userId),
+  });
+};
 export const useSignInAccount = () => {
   return useMutation({
     mutationFn: (user: Pick<INewUser, "email" | "password">) =>
@@ -57,5 +66,20 @@ export const useGetUserById = (userId: string) => {
 export const useSignOut = () => {
   return useMutation({
     mutationFn: () => signOut(),
+  });
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (user: IUpdateUser) => updateUser(user),
+    onSuccess: (userInfo) => {
+      queryClient.invalidateQueries({
+        queryKey: ["current-user"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", userInfo.id],
+      });
+    },
   });
 };

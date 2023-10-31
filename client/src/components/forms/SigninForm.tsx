@@ -1,10 +1,9 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignupValidation } from "@/lib/validations";
+import { SigninValidation } from "@/lib/validations";
 import {
   Form,
   FormControl,
@@ -16,43 +15,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Loader from "../shared/Loader";
-import {
-  useCreateUserAccount,
-  useSignInAccount,
-} from "@/lib/react-query/queries";
+import { useSignInAccount } from "@/lib/react-query/queries";
 
-const SignupForm = () => {
+const SigninForm = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
 
-  const form = useForm<z.infer<typeof SignupValidation>>({
-    resolver: zodResolver(SignupValidation),
+  const form = useForm<z.infer<typeof SigninValidation>>({
+    resolver: zodResolver(SigninValidation),
     defaultValues: {
-      name: "",
-      username: "",
       email: "",
       password: "",
     },
   });
 
-  // Queries
-  const { mutateAsync: createUserAccount, isLoading: isCreatingAccount } =
-    useCreateUserAccount();
   const { mutateAsync: signInAccount, isLoading: isSigningInUser } =
     useSignInAccount();
 
   // Handler
-  const handleSignup = async (user: z.infer<typeof SignupValidation>) => {
+  const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
     try {
-      const newUser = await createUserAccount(user);
-
-      if (!newUser) {
-        toast({ title: "Sign up failed. Please try again." });
-
-        return;
-      }
-
       const session = await signInAccount({
         email: user.email,
         password: user.password,
@@ -61,8 +43,6 @@ const SignupForm = () => {
       if (!session) {
         toast({ title: "Something went wrong. Please login your new account" });
 
-        // navigate("/sign-in");
-
         return;
       }
 
@@ -70,8 +50,6 @@ const SignupForm = () => {
 
       if (isLoggedIn) {
         form.reset();
-
-        navigate("/");
       } else {
         toast({ title: "Login failed. Please try again." });
 
@@ -83,35 +61,9 @@ const SignupForm = () => {
   };
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSignup)}>
+      <form onSubmit={form.handleSubmit(handleSignin)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input type="text" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="email"
@@ -125,6 +77,7 @@ const SignupForm = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
@@ -140,7 +93,7 @@ const SignupForm = () => {
             />
           </div>
           <Button type="submit" className="shad-button_primary">
-            {isCreatingAccount || isSigningInUser || isUserLoading ? (
+            {isSigningInUser || isUserLoading ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
@@ -154,4 +107,4 @@ const SignupForm = () => {
   );
 };
 
-export default SignupForm;
+export default SigninForm;

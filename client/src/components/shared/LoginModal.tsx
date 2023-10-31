@@ -1,16 +1,14 @@
 import { useState } from "react";
-// import { useUserContext } from "@/context/AuthContext";
 
 import { Card } from "@/components/ui/card";
-import { cn, createOrGetUser, signInUser, signUpUser } from "@/lib/utils";
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
+import { cn, createOrGetUser } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { GoogleLogin } from "@react-oauth/google";
 import { ImCross } from "react-icons/im";
 import SignupForm from "../forms/SignupForm";
 import { useUserContext } from "@/context/AuthContext";
+import SigninForm from "../forms/SigninForm";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -23,36 +21,14 @@ const LoginModal = ({
   displayButton = true,
   onClose,
 }: LoginModalProps) => {
-  const { user } = useUserContext();
+  const { user, isLoading } = useUserContext();
   const [diplayModal, setDiplayModal] = useState(initialDisplay);
 
   const [mode, settMode] = useState<"signup" | "signin">("signup");
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [name, setName] = useState("");
-  // const [error, setError] = useState("");
-
   if (user?.id) {
     return null;
   }
-
-  // async function onSubmit(event: React.SyntheticEvent) {
-  //   event.preventDefault();
-  //   try {
-  //     mode === "signup"
-  //       ? await signUpUser({ email, password, name })
-  //       : await signInUser({ email, password });
-  //     setDiplayModal(false);
-  //   } catch (error) {
-  //     setError(error);
-  //   }
-  //   setIsLoading(false);
-
-  //   //TODO: Do we need Data ?
-  // }
 
   return (
     <>
@@ -110,73 +86,7 @@ const LoginModal = ({
               </p>
             </div>
             <div className={cn("grid gap-6")}>
-              {/* {mode === "signup" ? <SignupForm /> : <SigninForm />} */}
-              {mode === "signup" ? <SignupForm /> : null}
-              {/* <form onSubmit={onSubmit}>
-                <div className="grid gap-2">
-                  <div className="grid gap-1">
-                    <Label className="sr-only" htmlFor="email">
-                      Email
-                    </Label>
-                    {mode === "signup" ? (
-                      <Input
-                        id="name"
-                        placeholder="John Smith"
-                        type="name"
-                        autoCapitalize="none"
-                        autoComplete="name"
-                        autoCorrect="off"
-                        disabled={isLoading}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    ) : null}
-                    <Input
-                      id="email"
-                      placeholder="name@example.com"
-                      type="email"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      autoCorrect="off"
-                      disabled={isLoading}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Input
-                      id="password"
-                      placeholder="Password"
-                      type="password"
-                      autoCapitalize="none"
-                      autoComplete="password"
-                      autoCorrect="off"
-                      disabled={isLoading}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    {mode === "signup" ? (
-                      <Input
-                        id="confirmPassword"
-                        placeholder="Confirm Password"
-                        type="password"
-                        autoCapitalize="none"
-                        autoComplete="password"
-                        autoCorrect="off"
-                        disabled={isLoading}
-                      />
-                    ) : null}
-                  </div>
-                  {error && (
-                    <div className="flex align-middle justify-center">
-                      <p className="text-xs text-muted-foreground text-red-600 justify-center">
-                        {error}
-                      </p>
-                    </div>
-                  )}
-                  <Button disabled={isLoading}>
-                    {isLoading && (
-                      <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {mode === "signup" ? `Sign Up` : `Sign In`} with Email
-                  </Button>
-                </div>
-              </form> */}
+              {mode === "signup" ? <SignupForm /> : <SigninForm />}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />

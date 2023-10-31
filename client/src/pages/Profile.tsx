@@ -14,41 +14,6 @@ const Profile = () => {
 
   const { data: currentUser, isLoading } = useGetUserById(userId ?? "");
 
-  // const { userProfile } = useUserContext();
-  // const [currentUserPosts, setCurrentUserPosts] = useState<PostType[]>([]);
-
-  // useEffect(() => {
-  //   const postChannel = supabase
-  //     .channel("posts")
-  //     .on(
-  //       "postgres_changes",
-  //       { event: "INSERT", schema: "public", table: "posts" },
-  //       async (payload) => {
-  // if (payload.new.user_id === userProfile?.id) {
-  //           try {
-  //             const { data: newPost } = await supabase
-  //               .from("posts")
-  //               .select(
-  //                 `*,
-  //             user:user_id (*,id:user_id),
-  //             likedByUser:likes(id:user_id)
-  //             `
-  //               )
-  //               .eq("id", payload.new.id)
-  //               .single();
-  //             // setCurrentUserPosts([newPost, ...currentUserPosts]);
-  //           } catch (err) {
-  //             console.log(err);
-  //           }
-  //         }
-  //       }
-  //     )
-  //     .subscribe();
-  //   return () => {
-  //     supabase.removeChannel(postChannel);
-  //   };
-  // }, []);
-
   if (!currentUser) {
     return null;
   }
@@ -84,7 +49,7 @@ const Profile = () => {
         <ProfileHeader
           {...{
             user: currentUser,
-            nbOfPosts: user?.posts?.length,
+            nbOfPosts: currentUser?.posts?.length,
           }}>
           {isMyProfile && (
             <Link to={`/${currentUser?.id}/edit`}>

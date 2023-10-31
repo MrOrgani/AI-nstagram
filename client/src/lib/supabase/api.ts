@@ -1,5 +1,5 @@
 import supabase from "@/lib/supabase";
-import { INewUser, IUser, PostType } from "../types";
+import { INewUser, IUpdateUser, IUser, PostType } from "../types";
 
 export const PAGE_COUNT = 2;
 
@@ -158,4 +158,81 @@ export const signOut = async () => {
     console.log(error.message);
   }
   return;
+};
+
+const deleteCurrentAvatar = async (avatarId: string) => {
+  const { error: errorDelete } = await supabase.storage
+    .from("ai-stagram-bucket")
+    .remove([avatarId]);
+
+  if (errorDelete) {
+    throw new Error(errorDelete.message);
+  }
+};
+
+const uploadNewAvatar = async ({
+  file,
+  fileName,
+}: {
+  file: File;
+  fileName: string;
+}) => {
+  const { data: avatarData, error: errorUpload } = await supabase.storage
+    .from("ai-stagram-bucket")
+    .upload(`/avatar/${fileName}`, file, {
+      upsert: true,
+    });
+  if (errorUpload) {
+    throw new Error(errorUpload.message);
+  }
+
+  const { data } = await supabase.storage
+    .from("ai-stagram-bucket")
+    .getPublicUrl(avatarData?.path);
+
+  return data.publicUrl;
+};
+
+export const updateUser = async (userInfo: IUpdateUser) => {
+  let avatarPath = "";
+
+  // if New avatar is present, upload it and delete the old one
+  if (userInfo.newAvatar) {
+    const fileName = `${userInfo?.id}_${Date.now()}`;
+
+    const newAvatarPath = await uploadNewAvatar({
+      file: userInfo.newAvatar,
+      fileName,
+    });
+    avatarPath = newAvatarPath;
+  }
+
+  // if old avatar is present, delete it
+  if (userInfo.currentAvatarName) {
+    await deleteCurrentAvatar(userInfo.currentAvatarName);
+  }
+
+  // update user profile
+  const dataToUpdate = {
+    ...(avatarPath && { avatar: avatarPath }),
+    name: userInfo.username, // TODO: change to username
+  };
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .update(dataToUpdate)
+    .eq("user_id", userInfo?.id)
+    .select(
+      `
+      *,
+      id:user_id, 
+      posts(*,likedByUser:likes(id:user_id))
+      `
+    );
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data[0];
 };

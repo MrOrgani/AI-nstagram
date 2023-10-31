@@ -33,3 +33,13 @@ export type INewUser = {
   username: string;
   password: string;
 };
+
+export type IUpdateUser = {
+  id: string;
+  name: string;
+  email: string;
+  username: string;
+  // password: string;
+  currentAvatarName: string;
+  newAvatar: File | undefined;
+};
