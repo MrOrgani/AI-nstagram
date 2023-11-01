@@ -1,7 +1,5 @@
 import {
-  // useQuery,
   useMutation,
-  // useQueryClient,
   useInfiniteQuery,
   useQuery,
   useQueryClient,
@@ -10,11 +8,12 @@ import {
   createUserAccount,
   fetchFeedPosts,
   getUserById,
+  publishPost,
   signInAccount,
   signOut,
   updateUser,
 } from "@/lib/supabase/api";
-import { INewUser, IUpdateUser } from "../types";
+import { INewPost, INewUser, IUpdateUser, PostType } from "../types";
 
 ///////////////////////////////////////////////////////
 // Posts
@@ -29,6 +28,21 @@ export const useGetPosts = () => {
     },
     getNextPageParam: (lastPage) => {
       return lastPage?.nextId ?? undefined;
+    },
+  });
+};
+
+export const usePublishPost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (newPost: INewPost) => publishPost(newPost),
+    onSuccess: (data: PostType) => {
+      queryClient.invalidateQueries({
+        queryKey: ["feed-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", data.user_id],
+      });
     },
   });
 };

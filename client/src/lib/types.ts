@@ -16,6 +16,7 @@ export type Comment = {
   user: IUser;
 };
 export type PostType = {
+  user_id: string;
   id: number;
   prompt: string;
   photo: string;
@@ -25,6 +26,12 @@ export type PostType = {
   likes: number;
   user: IUser;
   likedByUser: Array<{ id: User["id"] }>;
+};
+
+export type INewPost = {
+  prompt: string;
+  authorId: string;
+  photo: string;
 };
 
 export type INewUser = {
