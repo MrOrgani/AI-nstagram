@@ -68,11 +68,6 @@ const createOrGetUser = async (response: any) => {
     created_at: "",
     aud: decoded?.aud,
   });
-
-  console.log(
-    "Connexion with Google ",
-    JSON.stringify({ data, error, decoded }, null, 2)
-  );
 };
 
 const getDateFromNow = (referenceDate: string) => {

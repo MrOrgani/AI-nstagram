@@ -89,7 +89,6 @@ const PostButton = () => {
         open={open}
         onOpenChange={(isOpen) => {
           setOpen(isOpen);
-          console.log("onOpenChange", isOpen);
 
           if (isOpen === false) {
             setForm({ ...form, photo: "" });

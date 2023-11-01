@@ -48,7 +48,6 @@ export const AuthProvider: React.FC<AuthContextProviderProps> = ({
     setIsLoading(true);
     try {
       const currentUserSession = await getCurrentUser();
-      console.log("currentUserSession?.id ", currentUserSession?.id);
       const currentUser = await getUserById(currentUserSession?.id ?? "");
 
       if (currentUser) {
