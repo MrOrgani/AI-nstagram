@@ -1,5 +1,3 @@
-// import { useUserContext } from "@/context/AuthContext";
-
 import supabase from "@/lib/supabase";
 import { IoHeart, IoHeartOutline } from "react-icons/io5";
 import { useState } from "react";
