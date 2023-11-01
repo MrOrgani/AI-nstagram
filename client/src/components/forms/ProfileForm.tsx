@@ -89,7 +89,6 @@ export const ProfileForm = () => {
                             });
                             return;
                           }
-                          console.log(event.target.files);
                           onChange(event.target.files);
                           setSelectedImage(event.target.files);
                         }}
