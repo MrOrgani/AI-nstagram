@@ -75,60 +75,6 @@ const createOrGetUser = async (response: any) => {
   );
 };
 
-const signUpUser = async ({
-  email,
-  password,
-  name,
-}: {
-  email: string;
-  password: string;
-  name: string;
-}) => {
-  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-  });
-
-  if (signUpError) {
-    throw new Error(signUpError.message);
-  }
-
-  if (!signUpData?.user?.id || !signUpData?.user?.email) {
-    throw new Error("Error while registering a new user");
-  }
-
-  await updateUserProfile({
-    id: signUpData?.user?.id,
-    user_metadata: {
-      full_name: name,
-      avatar_url: signUpData.user.user_metadata.avatar_url,
-    },
-    email: signUpData?.user?.email,
-    app_metadata: { provider: "email" },
-    created_at: signUpData?.user?.created_at,
-    aud: signUpData?.user?.aud,
-  });
-  return { data: null };
-};
-
-const signInUser = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  if (error) {
-    throw new Error(error.message);
-  }
-  console.log("data", data);
-  return { data };
-};
-
 const getDateFromNow = (referenceDate: string) => {
   return dayjs(referenceDate).fromNow(true);
 };
@@ -191,8 +137,6 @@ async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
 
 export {
   auto_grow,
-  signUpUser,
-  signInUser,
   cn,
   downloadImage,
   createOrGetUser,
