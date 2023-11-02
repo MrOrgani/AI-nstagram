@@ -13,6 +13,7 @@ import { PostIconsHeader } from "./PostIconsHeader";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { SmallAvatar } from "./SmallAvatar";
 import CommentsDisplay from "./CommentsDisplay";
+import { useGetPostById } from "@/lib/react-query/queries";
 
 const ProfilePostDialogTrigger = () => {
   const { currentPost: post } = usePostContext();
@@ -66,11 +67,17 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     ? post.photo
     : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
         .publicUrl;
+
+  const { data: currentPost } = useGetPostById(post.id);
+
+  if (!currentPost) {
+    return null;
+  }
   return (
-    <PostProvider post={post}>
+    <PostProvider post={currentPost}>
       <Dialog>
         <ProfilePostDialogTrigger />
-        <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-full">
+        <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-[500px]">
           <article className=" flex overflow-auto">
             <div className="w-1/2 grow flex content-center justify-center items-center">
               <div className="h-full overflow-hidden">
@@ -97,9 +104,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                   />
                 </div>
                 <div className="  border-t border-[#EFEFEF] px-3 mt-1 ">
-                  <PostIconsHeader
-                    {...{ handleIconClick, currentPost: post }}
-                  />
+                  <PostIconsHeader {...{ handleIconClick }} />
                   <div className="flex items-center space-x-2 -mb-2 ">
                     <NumberOfLikesDisplay />
                   </div>

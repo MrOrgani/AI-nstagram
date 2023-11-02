@@ -42,6 +42,23 @@ export const fetchFeedPosts = async (
   );
 };
 
+export const getPostById = async (postId: number): Promise<PostType> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(
+      `
+        *,
+        user:user_id (*,id:user_id),
+        likedByUser:likes(id:user_id)
+    `
+    )
+    .eq("id", postId);
+  if (error) {
+    throw new Error(error.message);
+  }
+  return data[0];
+};
+
 export const getPostsByUserId = async (userId: string) => {
   const { data: posts, error } = await supabase
     .from("posts")
@@ -111,6 +128,7 @@ export const likePost = async ({
   postId: number;
   userId: string;
 }) => {
+  console.log("like post id", postId);
   // We verify if the user already liked the post
   const { data: alreadyExistingLike } = await supabase
     .from("likes")

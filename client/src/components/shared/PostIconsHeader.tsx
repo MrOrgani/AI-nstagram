@@ -1,13 +1,11 @@
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiArrowDownTray } from "react-icons/hi2";
 import { downloadImage } from "@/lib/utils";
-import type { PostType } from "@/lib/types";
 import { LikeIcon } from "./LikeIcon";
 import { usePostContext } from "@/context/PostContext";
 
 interface Props {
   handleIconClick: () => void;
-  currentPost: PostType;
 }
 export const PostIconsHeader = ({ handleIconClick }: Props) => {
   const { currentPost } = usePostContext();

@@ -9,6 +9,7 @@ import { SmallAvatar } from "./SmallAvatar";
 import { getShortenedDateFromNow } from "@/lib/utils";
 import { ImgPost } from "./ImgPost";
 import { Link } from "react-router-dom";
+import { useGetPostById } from "@/lib/react-query/queries";
 
 const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -18,8 +19,13 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
       textareaRef.current.focus();
     }
   };
+  const { data } = useGetPostById(currentPost.id);
+
+  if (!data) {
+    return null;
+  }
   return (
-    <PostProvider post={currentPost}>
+    <PostProvider post={data}>
       <div
         data-testid="feed-post"
         className=" bg-white  mb-5 border-b border-b-gray-200">
@@ -41,7 +47,7 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
           <ImgPost {...currentPost} />
         </div>
         <div className="">
-          <PostIconsHeader {...{ handleIconClick, currentPost }} />
+          <PostIconsHeader {...{ handleIconClick }} />
           <NumberOfLikesDisplay />
           <div className="text-sm pb-3">
             <span className=" font-semibold inline-block mr-2">

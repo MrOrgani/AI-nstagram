@@ -8,6 +8,7 @@ import {
   createUserAccount,
   dislikePost,
   fetchFeedPosts,
+  getPostById,
   getUserById,
   likePost,
   publishPost,
@@ -31,6 +32,12 @@ export const useGetPosts = () => {
     getNextPageParam: (lastPage) => {
       return lastPage?.nextId ?? undefined;
     },
+  });
+};
+export const useGetPostById = (postId: number) => {
+  return useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPostById(postId),
   });
 };
 
@@ -60,6 +67,9 @@ export const useLikePost = () => {
       queryClient.invalidateQueries({
         queryKey: ["user-profile", data.user_id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["post", data.id],
+      });
     },
   });
 };
@@ -74,6 +84,9 @@ export const useDislikePost = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ["user-profile", data.user_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["post", data.id],
       });
     },
   });
