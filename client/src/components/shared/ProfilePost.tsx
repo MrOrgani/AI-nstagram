@@ -6,7 +6,7 @@ import { PostType } from "@/lib/types";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getDateFromNow } from "@/lib/utils";
 import CommentArea from "./CommentArea";
-import { PostProvider, usePostContext } from "@/context/PostContext";
+import { PostProvider } from "@/context/PostContext";
 
 import type { IUser } from "@/lib/types";
 import { PostIconsHeader } from "./PostIconsHeader";
@@ -15,9 +15,7 @@ import { SmallAvatar } from "./SmallAvatar";
 import CommentsDisplay from "./CommentsDisplay";
 import { useGetPostById } from "@/lib/react-query/queries";
 
-const ProfilePostDialogTrigger = () => {
-  const { currentPost: post } = usePostContext();
-
+const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
   const imgSrc = post.photo.includes("base64")
     ? post.photo
     : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
@@ -73,10 +71,13 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
   if (!currentPost) {
     return null;
   }
+  if (post.id === 48) {
+    console.log("currentPost", currentPost.comments, post.comments);
+  }
   return (
     <PostProvider post={currentPost}>
       <Dialog>
-        <ProfilePostDialogTrigger />
+        <ProfilePostDialogTrigger post={currentPost} />
         <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-[500px]">
           <article className=" flex overflow-auto">
             <div className="w-1/2 grow flex content-center justify-center items-center">

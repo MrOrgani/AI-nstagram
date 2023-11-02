@@ -5,9 +5,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import {
+  commentPost,
   createUserAccount,
   dislikePost,
   fetchFeedPosts,
+  getCommentsFromPostId,
   getPostById,
   getUserById,
   likePost,
@@ -16,7 +18,13 @@ import {
   signOut,
   updateUser,
 } from "@/lib/supabase/api";
-import { INewPost, INewUser, IUpdateUser, PostType } from "../types";
+import {
+  INewComment,
+  INewPost,
+  INewUser,
+  IUpdateUser,
+  PostType,
+} from "../types";
 
 ///////////////////////////////////////////////////////
 // Posts
@@ -73,6 +81,7 @@ export const useLikePost = () => {
     },
   });
 };
+
 export const useDislikePost = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -87,6 +96,33 @@ export const useDislikePost = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ["post", data.id],
+      });
+    },
+  });
+};
+
+export const useGetCommentsFromPostId = (postId: number) => {
+  return useQuery({
+    queryKey: ["comments", postId],
+    queryFn: () => getCommentsFromPostId(postId),
+  });
+};
+export const useCommentPost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (props: INewComment) => commentPost(props),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["feed-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", data.user_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["post", data.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", data.id],
       });
     },
   });

@@ -1,5 +1,12 @@
 import supabase from "@/lib/supabase";
-import { INewPost, INewUser, IUpdateUser, IUser, PostType } from "../types";
+import {
+  INewComment,
+  INewPost,
+  INewUser,
+  IUpdateUser,
+  IUser,
+  PostType,
+} from "../types";
 import { dataUrlToFile } from "../utils";
 
 export const PAGE_COUNT = 2;
@@ -79,18 +86,20 @@ export const getPostsByUserId = async (userId: string) => {
 };
 
 export const getCommentsFromPostId = async (postId: number) => {
-  const { data: comments, error } = await supabase.functions.invoke(
-    "getPostComments",
-    {
-      body: JSON.stringify({
-        post_id: postId,
-      }),
-    }
-  );
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `*,
+      user:user_id(*)
+    `
+    )
+    .eq("post_id", postId)
+    .order("created_at", { ascending: true });
+
   if (error) {
     throw new Error(error.message);
   }
-  return comments;
+  return data;
 };
 
 export const publishPost = async (newPost: INewPost) => {
@@ -194,19 +203,49 @@ export const dislikePost = async ({
     .select("likes")
     .eq("id", postId);
 
-  const { data: updatedPost, error: updatedDislikedPost } = await supabase
+  const { data: updatedPost, error: updatedPostError } = await supabase
     .from("posts")
     .update({ likes: Math.max(0, parseInt(currentPostLikes?.[0].likes) - 1) })
     .eq("id", postId)
     .select();
 
-  if (updatedDislikedPost) {
-    throw new Error(updatedDislikedPost.message);
+  if (updatedPostError) {
+    throw new Error(updatedPostError.message);
   }
 
   return updatedPost[0];
 };
 
+export const commentPost = async ({ postId, userId, text }: INewComment) => {
+  const { error: addedCommentError } = await supabase.from("comments").insert([
+    {
+      post_id: postId,
+      user_id: userId,
+      text,
+    },
+  ]);
+
+  if (addedCommentError) {
+    throw new Error(addedCommentError.message);
+  }
+
+  const { data: currentPostComments } = await supabase
+    .from("posts")
+    .select("comments")
+    .eq("id", postId);
+
+  const { data: updatedPost, error: updatedPostError } = await supabase
+    .from("posts")
+    .update({ comments: parseInt(currentPostComments?.[0].comments) + 1 })
+    .eq("id", postId)
+    .select();
+
+  if (updatedPostError) {
+    throw new Error(updatedPostError.message);
+  }
+
+  return updatedPost[0];
+};
 ////////////////////////////////////////////////////////////////////////
 //  USER
 ////////////////////////////////////////////////////////////////////////

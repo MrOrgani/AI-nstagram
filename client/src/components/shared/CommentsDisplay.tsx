@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePostContext } from "@/context/PostContext";
-import { getCommentsFromPostId } from "@/lib/supabase/api";
 
 import type { Comment } from "@/lib/types";
 import { CommentsList } from "./CommentsList";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
+import { useGetCommentsFromPostId } from "@/lib/react-query/queries";
 
 const SkeletonComment = () => {
   return (
@@ -35,31 +33,13 @@ const CommentsDisplay = ({
   defaultDisplayComments = false,
 }: CommentsDisplayProps) => {
   const [diplayComments, setDiplayComments] = useState(defaultDisplayComments);
-  const { currentPost, update } = usePostContext();
+  const { currentPost } = usePostContext();
   const [currentComments, setCurrentComments] =
     useState<Comment[]>(defaultComments);
 
-  const [loading, setLoading] = useState(false);
-
-  const fetchComments = useCallback(async () => {
-    try {
-      if (!currentPost) {
-        return;
-      }
-
-      setLoading(true);
-      const comments = await getCommentsFromPostId(currentPost?.id);
-
-      update((prev) => ({
-        ...prev,
-        commentsByUser: [...defaultComments, ...comments],
-      }));
-      setCurrentComments(comments ?? []);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [currentPost]);
+  const { data, isLoading, isFetching } = useGetCommentsFromPostId(
+    currentPost?.id
+  );
 
   useEffect(() => {
     const existingCommentsAreEmpty =
@@ -67,14 +47,7 @@ const CommentsDisplay = ({
       currentPost.comments > 0 &&
       !currentPost?.commentsByUser;
     if (existingCommentsAreEmpty) {
-      fetchComments();
-    }
-
-    const currentUserAddedAComment =
-      currentPost?.commentsByUser &&
-      currentPost?.commentsByUser.length > currentComments.length;
-    if (currentUserAddedAComment) {
-      setCurrentComments(currentPost?.commentsByUser);
+      setCurrentComments([...defaultComments, ...(data || [])] ?? []);
     }
 
     return;
@@ -83,19 +56,21 @@ const CommentsDisplay = ({
     currentPost.comments,
     currentPost?.commentsByUser,
     diplayComments,
-    fetchComments,
+    isLoading,
+    isFetching,
   ]);
 
   const feedPostWithNoComments =
     !defaultDisplayComments && currentPost.comments === 0;
 
+  console.log("data", data, feedPostWithNoComments);
   if (!currentPost || feedPostWithNoComments) {
     return null;
   }
 
   return (
     <>
-      {diplayComments && loading && (
+      {diplayComments && (isLoading || isFetching) && (
         <div data-testid="comments-from-post">
           {new Array(currentPost.comments)
             .fill(<SkeletonComment key={0} />)

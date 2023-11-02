@@ -1,15 +1,17 @@
 import { forwardRef, useState } from "react";
 import { IoHappyOutline } from "react-icons/io5";
-import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
 import { auto_grow, cn } from "@/lib/utils";
 import { usePostContext } from "@/context/PostContext";
 import { useUserContext } from "@/context/AuthContext";
+import { useCommentPost } from "@/lib/react-query/queries";
 
 const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const [comment, setComment] = useState("");
   const { user: userProfile } = useUserContext();
   const { currentPost, update } = usePostContext();
+
+  const { mutate: commentPost } = useCommentPost();
 
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
@@ -22,27 +24,10 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
 
     try {
       if (!currentPost) return;
-      await supabase.functions.invoke("commentPost", {
-        body: JSON.stringify({
-          post_id: currentPost.id,
-          user_id: userProfile?.id,
-          text: comment,
-        }),
-      });
-      update({
-        ...currentPost,
-        commentsByUser: [
-          ...(currentPost?.commentsByUser || []),
-          {
-            comment_id: crypto.randomUUID(),
-            created_at: Date.toString(),
-            post_id: currentPost.id,
-            text: comment,
-            user: userProfile,
-            user_id: userProfile.id,
-          },
-        ],
-        comments: currentPost.comments + 1,
+      commentPost({
+        postId: currentPost.id,
+        userId: userProfile?.id,
+        text: comment,
       });
       setComment("");
     } catch (error) {

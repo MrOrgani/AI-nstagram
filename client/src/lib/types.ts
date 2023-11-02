@@ -34,6 +34,12 @@ export type INewPost = {
   photo: string;
 };
 
+export type INewComment = {
+  postId: number;
+  userId: string;
+  text: string;
+};
+
 export type INewUser = {
   name: string;
   email: string;
