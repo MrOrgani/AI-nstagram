@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import LikeIcon from "./LikeIcon";
+import { LikeIcon } from "./LikeIcon";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import { HiArrowDownTray } from "react-icons/hi2";
 

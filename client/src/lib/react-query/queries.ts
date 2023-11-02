@@ -6,8 +6,10 @@ import {
 } from "@tanstack/react-query";
 import {
   createUserAccount,
+  dislikePost,
   fetchFeedPosts,
   getUserById,
+  likePost,
   publishPost,
   signInAccount,
   signOut,
@@ -47,6 +49,35 @@ export const usePublishPost = () => {
   });
 };
 
+export const useLikePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (props: { postId: number; userId: string }) => likePost(props),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["feed-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", data.user_id],
+      });
+    },
+  });
+};
+export const useDislikePost = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (props: { postId: number; userId: string }) =>
+      dislikePost(props),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["feed-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", data.user_id],
+      });
+    },
+  });
+};
 ///////////////////////////////////////////////////////
 // Users
 ///////////////////////////////////////////////////////

@@ -1,13 +1,16 @@
-import supabase from "@/lib/supabase";
 import { IoHeart, IoHeartOutline } from "react-icons/io5";
 import { useState } from "react";
 import LoginModal from "./LoginModal";
 import { usePostContext } from "@/context/PostContext";
 import { useUserContext } from "@/context/AuthContext";
+import { useDislikePost, useLikePost } from "@/lib/react-query/queries";
 
-const LikeIcon = () => {
+export const LikeIcon = () => {
   const { user: userProfile } = useUserContext();
   const { currentPost, update } = usePostContext();
+
+  const { mutate: likePost } = useLikePost();
+  const { mutate: dislikePost } = useDislikePost();
 
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
@@ -16,7 +19,10 @@ const LikeIcon = () => {
     (user) => user.id === userProfile?.id
   );
 
-  const likePost = async (post_id: number) => {
+  const handleLikePost = (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
     if (!userProfile) {
       setLoginDialog(true);
       return null;
@@ -30,18 +36,19 @@ const LikeIcon = () => {
           ...(currentPost?.likedByUser || []),
         ],
       });
-      const { error } = await supabase.functions.invoke("likePost", {
-        body: JSON.stringify({
-          post_id,
-          user_id: userProfile?.id,
-        }),
-      });
-      if (error) {
-        console.log(error.message);
-      }
+      likePost({ postId: currentPost.id, userId: userProfile?.id });
     }
   };
-  const unlikePost = async (post_id: number) => {
+
+  const handleDislikePost = async (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>
+  ) => {
+    e.stopPropagation();
+    if (!userProfile) {
+      setLoginDialog(true);
+      return null;
+    }
+
     if (currentPost) {
       const currentUserLikeIndex = currentPost.likedByUser.findIndex(
         (user) => user.id === userProfile?.id
@@ -52,15 +59,7 @@ const LikeIcon = () => {
         ...currentPost,
         likes: Math.max(currentPost.likes - 1, 0),
       });
-      const { error } = await supabase.functions.invoke("unlikePost", {
-        body: JSON.stringify({
-          post_id,
-          user_id: userProfile?.id,
-        }),
-      });
-      if (error) {
-        console.log(error.message);
-      }
+      dislikePost({ postId: currentPost.id, userId: userProfile?.id });
     }
   };
 
@@ -80,16 +79,14 @@ const LikeIcon = () => {
       {isLikedByUser ? (
         <IoHeart
           className="cursor-pointer text-red-500 transition-all active:scale-75"
-          onClick={() => unlikePost(currentPost.id)}
+          onClick={handleDislikePost}
         />
       ) : (
         <IoHeartOutline
           className="cursor-pointer transition-all hover:opacity-50 active:scale-75"
-          onClick={() => likePost(currentPost.id)}
+          onClick={handleLikePost}
         />
       )}
     </div>
   );
 };
-
-export default LikeIcon;

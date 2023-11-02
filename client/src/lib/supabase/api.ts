@@ -104,6 +104,91 @@ export const publishPost = async (newPost: INewPost) => {
   return postData[0];
 };
 
+export const likePost = async ({
+  postId,
+  userId,
+}: {
+  postId: number;
+  userId: string;
+}) => {
+  // We verify if the user already liked the post
+  const { data: alreadyExistingLike } = await supabase
+    .from("likes")
+    .select("*")
+    .eq("post_id", postId)
+    .eq("user_id", userId);
+
+  if (alreadyExistingLike && alreadyExistingLike.length > 0) {
+    throw new Error("You already liked this post");
+  }
+
+  // We add the new likes to the table
+  const { error: addedLikeError } = await supabase.from("likes").insert([
+    {
+      post_id: postId,
+      user_id: userId,
+    },
+  ]);
+
+  if (addedLikeError) {
+    throw new Error(addedLikeError.message);
+  }
+
+  // We get the current likes of the liked post and increment it by one
+  const { data: currentPostLikes, error: getLikedPostError } = await supabase
+    .from("posts")
+    .select("likes")
+    .eq("id", postId);
+  if (getLikedPostError) {
+    throw new Error(getLikedPostError.message);
+  }
+
+  // debugger;
+
+  const { data: updatedPost, error: updatedLikedPost } = await supabase
+    .from("posts")
+    .update({ likes: parseInt(currentPostLikes?.[0].likes) + 1 })
+    .eq("id", postId)
+    .select();
+
+  if (updatedLikedPost) {
+    throw new Error(updatedLikedPost.message);
+  }
+
+  return updatedPost[0];
+};
+export const dislikePost = async ({
+  postId,
+  userId,
+}: {
+  postId: number;
+  userId: string;
+}) => {
+  await supabase
+    .from("likes")
+    .delete()
+    .eq("post_id", postId)
+    .eq("user_id", userId);
+
+  // We get the current likes of the liked post and decrement it by one
+  const { data: currentPostLikes } = await supabase
+    .from("posts")
+    .select("likes")
+    .eq("id", postId);
+
+  const { data: updatedPost, error: updatedDislikedPost } = await supabase
+    .from("posts")
+    .update({ likes: Math.max(0, parseInt(currentPostLikes?.[0].likes) - 1) })
+    .eq("id", postId)
+    .select();
+
+  if (updatedDislikedPost) {
+    throw new Error(updatedDislikedPost.message);
+  }
+
+  return updatedPost[0];
+};
+
 ////////////////////////////////////////////////////////////////////////
 //  USER
 ////////////////////////////////////////////////////////////////////////

@@ -8,8 +8,15 @@ import FeedPost from "@/components/shared/FeedPost";
 const Home = () => {
   const { ref, inView } = useInView();
 
-  const { data, error, isFetchingNextPage, fetchNextPage, isLoading, isError } =
-    useGetPosts();
+  const {
+    data,
+    error,
+    isFetchingNextPage,
+    fetchNextPage,
+    isLoading,
+    isError,
+    isFetching,
+  } = useGetPosts();
 
   useEffect(() => {
     if (inView) {
@@ -23,8 +30,7 @@ const Home = () => {
 
   return (
     <main className="py-6 px-4 mx-auto w-[560px] ">
-      {isLoading && <FeedPostSkeleton />}
-
+      {(isLoading || isFetching) && <FeedPostSkeleton />}
       {data?.pages?.map(({ data }) => (
         <React.Fragment key={`feed-page-${data[0]?.id}`}>
           {data.map((post) => (
