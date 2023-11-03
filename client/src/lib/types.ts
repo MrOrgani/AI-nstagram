@@ -7,7 +7,7 @@ export type IUser = {
   email: string;
 };
 
-export type Comment = {
+export type IComment = {
   comment_id: string;
   created_at: string;
   user_id: string;

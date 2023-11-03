@@ -1,30 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { usePostContext } from "@/context/PostContext";
 
-import type { Comment } from "@/lib/types";
-import { CommentsList } from "./CommentsList";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { IComment } from "@/lib/types";
+import { Comment } from "./Comment";
 import { useGetCommentsFromPostId } from "@/lib/react-query/queries";
+import { SkeletonComment } from "./SkeletonComment";
 
-const SkeletonComment = () => {
-  return (
-    <div data-testid="comments-on-post" className="flex mb-4">
-      <div className={`min-h-10  rounded-full`}>
-        <Skeleton className="w-8 h-8  rounded-full" />
-      </div>
-      <div className="ml-3">
-        <div className="flex">
-          <Skeleton className="h-4 w-[50px] mr-1 mb-1" />
-          <Skeleton className="h-4 w-[200px] mb-1" />
-        </div>
-        <Skeleton className="h-4 w-[20px]" />
-      </div>
-    </div>
-  );
-};
 interface CommentsDisplayProps {
-  defaultComments?: Comment[];
+  defaultComments?: IComment[];
   defaultDisplayComments?: boolean;
 }
 
@@ -34,36 +18,16 @@ const CommentsDisplay = ({
 }: CommentsDisplayProps) => {
   const [diplayComments, setDiplayComments] = useState(defaultDisplayComments);
   const { currentPost } = usePostContext();
-  const [currentComments, setCurrentComments] =
-    useState<Comment[]>(defaultComments);
 
-  const { data, isLoading, isFetching } = useGetCommentsFromPostId(
-    currentPost?.id
-  );
-
-  useEffect(() => {
-    const existingCommentsAreEmpty =
-      diplayComments &&
-      currentPost.comments > 0 &&
-      !currentPost?.commentsByUser;
-    if (existingCommentsAreEmpty) {
-      setCurrentComments([...defaultComments, ...(data || [])] ?? []);
-    }
-
-    return;
-  }, [
-    currentComments.length,
-    currentPost.comments,
-    currentPost?.commentsByUser,
-    diplayComments,
+  const {
+    data: comments,
     isLoading,
     isFetching,
-  ]);
+  } = useGetCommentsFromPostId(currentPost?.id);
 
   const feedPostWithNoComments =
     !defaultDisplayComments && currentPost.comments === 0;
 
-  console.log("data", data, feedPostWithNoComments);
   if (!currentPost || feedPostWithNoComments) {
     return null;
   }
@@ -89,7 +53,9 @@ const CommentsDisplay = ({
       )}
       {diplayComments && (
         <div data-testid="comments-from-post">
-          <CommentsList comments={currentComments} />
+          {[...defaultComments, ...(comments || [])].map((comment) => {
+            return <Comment key={comment.comment_id} comment={comment} />;
+          })}
         </div>
       )}
     </>

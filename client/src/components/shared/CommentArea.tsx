@@ -9,7 +9,7 @@ import { useCommentPost } from "@/lib/react-query/queries";
 const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const [comment, setComment] = useState("");
   const { user: userProfile } = useUserContext();
-  const { currentPost, update } = usePostContext();
+  const { currentPost } = usePostContext();
 
   const { mutate: commentPost } = useCommentPost();
 

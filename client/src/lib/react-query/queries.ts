@@ -7,6 +7,7 @@ import {
 import {
   commentPost,
   createUserAccount,
+  deleteComment,
   dislikePost,
   fetchFeedPosts,
   getCommentsFromPostId,
@@ -111,6 +112,31 @@ export const useCommentPost = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (props: INewComment) => commentPost(props),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["feed-posts"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-profile", data.user_id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["post", data.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["comments", data.id],
+      });
+    },
+  });
+};
+
+export const useDeleteComment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (props: {
+      commentId: string;
+      postId: number;
+      userId: string;
+    }) => deleteComment(props),
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: ["feed-posts"],

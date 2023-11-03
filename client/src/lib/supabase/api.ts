@@ -55,8 +55,13 @@ export const getPostById = async (postId: number): Promise<PostType> => {
     .select(
       `
         *,
-        user:user_id (*,id:user_id),
-        likedByUser:likes(id:user_id)
+        user:user_id (
+          *,
+          id:user_id
+          ),
+        likedByUser:likes(
+          id:user_id
+          )
     `
     )
     .eq("id", postId);
@@ -90,7 +95,10 @@ export const getCommentsFromPostId = async (postId: number) => {
     .from("comments")
     .select(
       `*,
-      user:user_id(*)
+      user:user_id(
+        *,
+        id:user_id
+      )
     `
     )
     .eq("post_id", postId)
@@ -246,6 +254,44 @@ export const commentPost = async ({ postId, userId, text }: INewComment) => {
 
   return updatedPost[0];
 };
+
+export const deleteComment = async ({
+  commentId,
+  postId,
+  userId,
+}: {
+  commentId: string;
+  postId: number;
+  userId: string;
+}) => {
+  const { error } = await supabase
+    .from("comments")
+    .delete()
+    .eq("comment_id", commentId)
+    .eq("user_id", userId)
+    .eq("post_id", postId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const { data: currentPostComments } = await supabase
+    .from("posts")
+    .select("comments")
+    .eq("id", postId);
+
+  const { data: updatedPost, error: updatedPostError } = await supabase
+    .from("posts")
+    .update({ comments: parseInt(currentPostComments?.[0].comments) - 1 })
+    .eq("id", postId)
+    .select();
+
+  if (updatedPostError) {
+    throw new Error(updatedPostError.message);
+  }
+  return updatedPost[0];
+};
+
 ////////////////////////////////////////////////////////////////////////
 //  USER
 ////////////////////////////////////////////////////////////////////////

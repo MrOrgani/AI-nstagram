@@ -71,9 +71,6 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
   if (!currentPost) {
     return null;
   }
-  if (post.id === 48) {
-    console.log("currentPost", currentPost.comments, post.comments);
-  }
   return (
     <PostProvider post={currentPost}>
       <Dialog>
