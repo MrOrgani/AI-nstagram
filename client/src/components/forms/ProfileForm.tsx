@@ -55,10 +55,23 @@ export const ProfileForm = () => {
     ? URL.createObjectURL(selectedImage[0])
     : userProfile?.avatar;
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="grow h-full flex flex-col my-8">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight my-3 grid-rows-3 flex-grow-0">
+          Settings
+        </h2>
+        <div>
+          <h3 className="text-lg font-medium">Edit Profile</h3>
+          <p className="text-sm text-muted-foreground">
+            This is how others will see you on the site.
+          </p>
+        </div>
+      </div>
       <div className="grow flex flex-col items-center justify-center">
-        <div className="gap-x-8 mx-20">
-          <div className="flex flex-col items-end justify-center h-full">
+        <div className="mx-20">
+          <div className="flex flex-col items-end justify-center h-full gap-8">
             <div className="flex">
               <SmallAvatar
                 user={{ ...userProfile, avatar: imgSrc }}

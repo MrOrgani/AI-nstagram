@@ -10,7 +10,7 @@ function App() {
     <>
       <Navbar />
       <Toaster />
-      <main className=" px-4 w-full bg-white flex flex-col h-screen mt-20">
+      <main className=" px-4 w-full bg-white flex flex-col  mt-20">
         <Routes>
           <Route index path="/" element={<Home />} />
           <Route path="/:id" element={<Profile />} />
