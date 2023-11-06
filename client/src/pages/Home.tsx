@@ -23,7 +23,12 @@ const Home = () => {
 
   return (
     <main className="py-6 px-4 mx-auto w-[560px] ">
-      {isLoading && <FeedPostSkeleton />}
+      {isLoading && (
+        <>
+          <FeedPostSkeleton />
+          <FeedPostSkeleton />
+        </>
+      )}
       {data?.pages?.map(({ data }) => (
         <React.Fragment key={`feed-page-${data[0]?.id}`}>
           {data.map((post) => (
