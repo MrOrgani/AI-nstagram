@@ -145,7 +145,6 @@ export const likePost = async ({
   postId: number;
   userId: string;
 }) => {
-  console.log("like post id", postId);
   // We verify if the user already liked the post
   const { data: alreadyExistingLike } = await supabase
     .from("likes")
@@ -177,8 +176,6 @@ export const likePost = async ({
   if (getLikedPostError) {
     throw new Error(getLikedPostError.message);
   }
-
-  // debugger;
 
   const { data: updatedPost, error: updatedLikedPost } = await supabase
     .from("posts")
@@ -297,12 +294,9 @@ export const deleteComment = async ({
 ////////////////////////////////////////////////////////////////////////
 
 export const getCurrentUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    console.log(error.message);
-    return;
-  }
-  return data.user;
+  // const { data } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getSession();
+  return data.session;
 };
 export const getUserById = async (userId: string) => {
   const { data: profile, error } = await supabase
@@ -314,13 +308,13 @@ export const getUserById = async (userId: string) => {
     posts(*,likedByUser:likes(id:user_id))
     `
     )
-    .eq("user_id", userId)
-    .single<IUser & { posts: PostType[] }>();
+    .eq("user_id", userId);
 
   if (error) {
     throw new Error(error.message);
   }
-  return profile;
+
+  return profile.length ? profile[0] : null;
 };
 
 export const signInAccount = async (
@@ -331,11 +325,36 @@ export const signInAccount = async (
     password: user.password,
   });
 
-  if (error) {
-    throw new Error(error.message);
+  return { data, error };
+};
+
+export const addUserToDB = async (user: {
+  name: string;
+  id: string;
+  email: string;
+  avatar: string;
+}) => {
+  const { data: registeredUser, error: registerUserError } = await supabase
+    .from("profiles")
+    .insert([
+      {
+        name: user.name,
+        user_id: user?.id,
+        email: user?.email,
+        avatar: user?.avatar || null,
+      },
+    ])
+    .select(
+      `*,
+      id:user_id
+    `
+    );
+
+  if (registerUserError) {
+    throw new Error(registerUserError.message);
   }
 
-  return data;
+  return registeredUser[0];
 };
 
 export const createUserAccount = async (user: INewUser) => {
@@ -348,25 +367,14 @@ export const createUserAccount = async (user: INewUser) => {
     throw new Error(error.message);
   }
 
-  // debugger;
+  const registeredUser = addUserToDB({
+    name: user.name,
+    id: data?.user?.id || "",
+    email: data?.user?.email || "",
+    avatar: data?.user_metadata?.avatar_url || null,
+  });
 
-  const { data: registeredUser, error: registerUserError } = await supabase
-    .from("profiles")
-    .insert([
-      {
-        name: user.name,
-        user_id: data?.user?.id,
-        email: data?.user?.email,
-        avatar: data?.user_metadata?.avatar_url || null,
-      },
-    ])
-    .select();
-
-  if (registerUserError) {
-    console.log(registerUserError.message);
-    return;
-  }
-  return registeredUser[0];
+  return registeredUser;
 };
 
 export const signOut = async () => {

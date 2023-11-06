@@ -2,12 +2,9 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 import * as FileSaver from "file-saver";
-import jwtDecode from "jwt-decode";
-import { User, createClient } from "@supabase/supabase-js";
 
 import * as dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import supabase from "./supabase";
 dayjs.extend(relativeTime);
 
 function cn(...inputs: ClassValue[]) {
@@ -16,58 +13,6 @@ function cn(...inputs: ClassValue[]) {
 
 const downloadImage = (_id: number, photo: string) => {
   FileSaver.saveAs(photo, `download-${_id}.jpg`);
-};
-
-const updateUserProfile = async (user: User) => {
-  const { error: registerUserError } = await supabase.from("profiles").insert([
-    {
-      name: user.user_metadata.full_name,
-      user_id: user?.id,
-      email: user?.email,
-      avatar: user?.user_metadata?.avatar_url || null,
-    },
-  ]);
-  if (registerUserError) {
-    throw new Error(registerUserError.message);
-  }
-  return;
-};
-
-const createOrGetUser = async (response: any) => {
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-  });
-  const decoded: any = jwtDecode(response.credential);
-
-  // const decodeded: {
-  //   iss: "https://accounts.google.com";
-  //   azp: "495858687863-8n5ktg0ehh2skj12kc2e977hqm7ejd3v.apps.googleusercontent.com";
-  //   aud: "495858687863-8n5ktg0ehh2skj12kc2e977hqm7ejd3v.apps.googleusercontent.com";
-  //   sub: "109142397529339876212";
-  //   email: "maxime.organi@gmail.com";
-  //   email_verified: true;
-  //   nbf: 1698679900;
-  //   name: "Maxime Organi";
-  //   picture: "https://lh3.googleusercontent.com/a/ACg8ocL-YDfrUjlDgaeSLT2MwQ8a2SPMk1JStPfj0tJ_fVV3tfE=s96-c";
-  //   given_name: "Maxime";
-  //   family_name: "Organi";
-  //   locale: "fr";
-  //   iat: 1698680200;
-  //   exp: 1698683800;
-  //   jti: "8d644572414ce621e7fa6e6d7d9393b6090ede15";
-  // };
-
-  await updateUserProfile({
-    id: "",
-    user_metadata: {
-      full_name: decoded?.given_name,
-      avatar_url: decoded.picture,
-    },
-    email: decoded.email,
-    app_metadata: { provider: "google" },
-    created_at: "",
-    aud: decoded?.aud,
-  });
 };
 
 const getDateFromNow = (referenceDate: string) => {
@@ -134,12 +79,10 @@ export {
   auto_grow,
   cn,
   downloadImage,
-  createOrGetUser,
   getDateFromNow,
   getFormatedDate,
   getShortenedDateFromNow,
   stringToColour,
   getContrastingColor,
   dataUrlToFile,
-  updateUserProfile,
 };

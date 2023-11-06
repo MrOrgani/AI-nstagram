@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { IUser } from "@/lib/types";
-import { getCurrentUser, getUserById } from "@/lib/supabase/api";
+import { addUserToDB, getCurrentUser, getUserById } from "@/lib/supabase/api";
 import { useSignOut } from "@/lib/react-query/queries";
 
 export const INITIAL_USER = {
@@ -48,7 +48,9 @@ export const AuthProvider: React.FC<AuthContextProviderProps> = ({
     setIsLoading(true);
     try {
       const currentUserSession = await getCurrentUser();
-      const currentUser = await getUserById(currentUserSession?.id ?? "");
+      if (!currentUserSession) return false;
+
+      const currentUser = await getUserById(currentUserSession?.user.id ?? "");
 
       if (currentUser) {
         setUser({
@@ -61,6 +63,24 @@ export const AuthProvider: React.FC<AuthContextProviderProps> = ({
         setIsAuthenticated(true);
         localStorage.setItem("user", JSON.stringify(currentUser));
         return true;
+      } else {
+        try {
+          const createdUser = await addUserToDB({
+            id: currentUserSession.user.id,
+            email: currentUserSession.user.email || "",
+            name: currentUserSession.user.user_metadata.full_name,
+            avatar: currentUserSession.user.user_metadata.avatar_url,
+          });
+          setUser({
+            id: createdUser.id,
+            email: createdUser.email || "",
+            name: createdUser.name,
+            avatar: createdUser.avatar,
+          });
+          return true;
+        } catch (error) {
+          console.log(error);
+        }
       }
       return false;
     } catch (error) {
