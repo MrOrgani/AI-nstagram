@@ -23,9 +23,9 @@ export const Comment = ({ comment }: Props) => {
   const color = getContrastingColor(bgColour);
 
   const { mutate: deleteComment } = useDeleteComment();
-  if (!currentUser || !currentPost) return null;
+  if (!currentPost) return null;
 
-  const isAuthor = comment?.user_id === currentUser.id;
+  const isAuthor = comment?.user_id === currentUser?.id;
   return (
     <div
       data-testid="comments-on-post"

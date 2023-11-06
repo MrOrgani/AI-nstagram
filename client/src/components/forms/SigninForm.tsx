@@ -34,30 +34,25 @@ const SigninForm = () => {
 
   // Handler
   const handleSignin = async (user: z.infer<typeof SigninValidation>) => {
-    try {
-      const session = await signInAccount({
-        email: user.email,
-        password: user.password,
-      });
+    const { error } = await signInAccount({
+      email: user.email,
+      password: user.password,
+    });
 
-      if (!session) {
-        toast({ title: "Something went wrong. Please login your new account" });
-
-        return;
-      }
-
-      const isLoggedIn = await checkAuthUser();
-
-      if (isLoggedIn) {
-        form.reset();
-      } else {
-        toast({ title: "Login failed. Please try again." });
-
-        return;
-      }
-    } catch (error) {
-      console.log({ error });
+    if (error) {
+      toast({ title: error.message, variant: "destructive" });
+      return;
     }
+
+    const isLoggedIn = await checkAuthUser();
+
+    if (isLoggedIn) {
+      form.reset();
+    } else {
+      toast({ title: "Login failed. Please try again." });
+    }
+
+    return;
   };
   return (
     <Form {...form}>
@@ -71,7 +66,7 @@ const SigninForm = () => {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} />
+                    <Input type="text" autoComplete="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -85,7 +80,12 @@ const SigninForm = () => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" {...field} />
+                    <Input
+                      id="current-password"
+                      type="password"
+                      autoComplete="current-password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

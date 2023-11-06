@@ -1,14 +1,14 @@
 import { useState } from "react";
 
 import { Card } from "@/components/ui/card";
-import { cn, createOrGetUser } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Icons } from "@/components/ui/icons";
-import { GoogleLogin } from "@react-oauth/google";
+
 import { ImCross } from "react-icons/im";
 import SignupForm from "../forms/SignupForm";
 import { useUserContext } from "@/context/AuthContext";
 import SigninForm from "../forms/SigninForm";
+import { GoogleForm } from "../forms/GoogleForm";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -24,7 +24,7 @@ const LoginModal = ({
   const { user, isLoading } = useUserContext();
   const [diplayModal, setDiplayModal] = useState(initialDisplay);
 
-  const [mode, settMode] = useState<"signup" | "signin">("signup");
+  const [mode, settMode] = useState<"signup" | "signin">("signin");
 
   if (user?.id) {
     return null;
@@ -97,21 +97,8 @@ const LoginModal = ({
                   </span>
                 </div>
               </div>
-              <Button variant="outline" type="button" disabled={isLoading}>
-                {isLoading ? (
-                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Icons.gitHub className="mr-2 h-4 w-4" />
-                )}
-                Github
-              </Button>
-              {user ? (
-                <div>Logged In</div>
-              ) : (
-                <GoogleLogin
-                  onSuccess={(response) => createOrGetUser(response)}
-                />
-              )}
+
+              <GoogleForm />
               <p className="px-8 text-center text-sm text-muted-foreground">
                 {mode === "signup" ? (
                   <>

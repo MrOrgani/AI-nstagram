@@ -10,6 +10,7 @@ export const ImgPost = (post: PostType) => {
       }
       alt={post.prompt}
       className="w-full h-full"
+      loading="lazy"
     />
   );
 };
