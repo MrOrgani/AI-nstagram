@@ -9,7 +9,7 @@ interface SmallAvatarProps {
   className?: string;
 }
 export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
-  const userName = user.name;
+  const userName = user.name ?? user.email;
 
   if (!userName) {
     return null;
