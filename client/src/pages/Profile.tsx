@@ -8,6 +8,7 @@ import { ProfileHeaderSkeleton } from "../components/shared/ProfileHeaderSkeleto
 import { useGetUserById } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
 import { Card } from "@/components/ui/card";
+import { Settings } from "lucide-react";
 
 const SkeletonProfile = () => {
   return (
@@ -49,8 +50,8 @@ const Profile = () => {
   const isMyProfile = user?.id === userId;
 
   return (
-    <Card className="py-6 px-4 mx-auto min-w-[320px] w-[832px] shadow-feed-post bg-white">
-      <div className="h-full ">
+    <Card className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] sm:w-full shadow-feed-post bg-white">
+      <div className="h-full">
         <ProfileHeader
           {...{
             user: currentUser,
@@ -58,8 +59,11 @@ const Profile = () => {
           }}>
           {isMyProfile && (
             <Link to={`/${currentUser?.id}/edit`}>
-              <Button className="text-sm font-semibold text-black bg-gray-200 ml-5 px-2 h-8 hover:bg-gray-300">
+              <Button className="hidden sm:block text-sm font-semibold text-black bg-gray-200 sm:ml-5 px-2 h-8 hover:bg-gray-300">
                 Edit Profile
+              </Button>
+              <Button className=" sm:hidden text-sm font-semibold text-black bg-gray-200 sm:ml-5 px-2 h-8 hover:bg-gray-300 flex items-center justify-center">
+                <Settings />
               </Button>
             </Link>
           )}

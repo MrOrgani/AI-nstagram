@@ -337,7 +337,8 @@ export const getUserById = async (userId: string) => {
     posts(*,likedByUser:likes(id:user_id))
     `
     )
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .returns<Array<IUser & { posts: PostType[] }>>();
 
   if (error) {
     throw new Error(error.message);
