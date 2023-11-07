@@ -2,7 +2,7 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   getContrastingColor,
-  getShortenedDateFromNow,
+  getDateFromNow,
   stringToColour,
 } from "@/lib/utils";
 
@@ -66,7 +66,7 @@ export const Comment = ({ comment }: Props) => {
           </div>
         </div>
         <p className="text-xs text-[#737373]">
-          {getShortenedDateFromNow(comment.created_at)}
+          {getDateFromNow(comment.created_at)}
         </p>
       </div>
     </div>

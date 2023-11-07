@@ -6,7 +6,7 @@ import { PostProvider } from "@/context/PostContext";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { PostIconsHeader } from "./PostIconsHeader";
 import { SmallAvatar } from "./SmallAvatar";
-import { getShortenedDateFromNow } from "@/lib/utils";
+import { getDateFromNow } from "@/lib/utils";
 import { ImgPost } from "./ImgPost";
 import { Link } from "react-router-dom";
 import { useGetPostById } from "@/lib/react-query/queries";
@@ -40,7 +40,7 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
             </Link>
             <span className="text-neutral-500 text-sm mx-1">•</span>
             <time className=" text-neutral-500 text-sm font-normal">
-              {getShortenedDateFromNow(currentPost.created_at)}
+              {getDateFromNow(currentPost.created_at)}
             </time>
           </div>
         </div>

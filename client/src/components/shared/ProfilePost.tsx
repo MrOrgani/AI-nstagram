@@ -77,7 +77,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
         <ProfilePostDialogTrigger post={currentPost} />
         <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-[500px] bg-white shadow-feed-post">
           <article className=" flex overflow-auto">
-            <div className="w-1/2 grow flex content-center justify-center items-center">
+            <div className="w-1/2 grow flex content-center justify-center items-center  border-r-2 border-[#EFEFEF] ">
               <div className="h-full overflow-hidden flex items-center justify-center">
                 <img
                   className=" h-full object-cover"
