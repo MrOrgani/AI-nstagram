@@ -12,5 +12,5 @@ export const GoogleForm = () => {
     }
   };
 
-  return <GoogleLogin onSuccess={(response) => createOrGetUser(response)} />;
+  return <GoogleLogin onSuccess={createOrGetUser} />;
 };

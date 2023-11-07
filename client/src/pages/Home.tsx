@@ -30,7 +30,7 @@ const Home = () => {
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ ease: "easeIn", duration: 0.5, delay: 0.5 }}>
-                <h1 className="base-regular max-w-[600px] text-zinc-500 md:text-xl dark:text-zinc-400">
+                <h1 className="base-regular max-w-[600px] text-[#D0DFFF] font-normal tracking-widest		md:text-xl dark:text-zinc-400">
                   The first social media platform where all posts are created by
                   generative AI. Explore the limitless creativity of artificial
                   intelligence.
@@ -50,7 +50,7 @@ const Home = () => {
                 </span>
               </Link>
               <Link
-                className=" p-1 rounded-md  bg-gradient-to-r  from-gradient-blue to-gradient-purple text-sm font-medium shadow-sm transition-colors hover:bg-[#58a6ff] hover:text-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#58a6ff] disabled:pointer-events-none disabled:opacity-50 dark:border-zinc-800 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-300"
+                className=" p-1 rounded-md  bg-gradient-to-r  from-gradient-blue to-gradient-purple text-sm font-medium shadow-sm transition-colors hover:bg-[#58a6ff] hover:text-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#58a6ff] disabled:pointer-events-none disabled:opacity-50 dark:border-zinc-800  dark:bg-zinc-950 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 dark:focus-visible:ring-zinc-300"
                 to="">
                 <span className="block text-white px-10 py-2  font-semibold rounded-md bg-[#0d1117] hover:bg-transparent hover:text-white transition">
                   Learn More

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { SmallAvatar } from "@/components/shared/SmallAvatar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";

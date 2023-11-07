@@ -73,6 +73,7 @@ const getFormatedDate = (referenceDate: string, format: string) => {
 };
 
 function auto_grow(event: React.ChangeEvent<HTMLTextAreaElement>) {
+  if (!event.target) return;
   const element = document.getElementById(event.target.id);
   if (!element) return;
 

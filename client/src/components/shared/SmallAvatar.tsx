@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { getContrastingColor, stringToColour } from "@/lib/utils";
