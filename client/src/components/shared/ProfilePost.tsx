@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { IoChatbubbleSharp, IoHeartSharp } from "react-icons/io5";
 import supabase from "@/lib/supabase";
 
 import { PostType } from "@/lib/types";
@@ -14,6 +13,7 @@ import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { SmallAvatar } from "./SmallAvatar";
 import CommentsDisplay from "./CommentsDisplay";
 import { useGetPostById } from "@/lib/react-query/queries";
+import { Heart, MessageCircle } from "lucide-react";
 
 const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
   const imgSrc = post.photo.includes("base64")
@@ -25,9 +25,9 @@ const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
       <div key={post.id} className="group p-0 cursor-pointer relative ">
         <div className="hidden group-hover:flex absolute align-middle justify-center items-center left-0 right-0 top-0 bottom-0">
           <span className="z-10  text-white flex  items-center">
-            <IoHeartSharp className=" w-11  " color={"white"} />
+            <Heart className=" w-11  " color={"white"} />
             {post.likes}
-            <IoChatbubbleSharp className=" w-11 z-10 " color={"white"} />
+            <MessageCircle className=" w-11 z-10 " color={"white"} />
             {post.comments}
           </span>
           <div className=" bg-black opacity-30 absolute left-0 right-0 top-0 bottom-0" />

@@ -1,5 +1,4 @@
 import { forwardRef, useState } from "react";
-import { IoHappyOutline } from "react-icons/io5";
 import LoginModal from "./LoginModal";
 import { auto_grow, cn } from "@/lib/utils";
 import { usePostContext } from "@/context/PostContext";
@@ -59,7 +58,6 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         onInput={(e: React.ChangeEvent<HTMLTextAreaElement>) => auto_grow(e)}
         ref={ref}
       />
-      <IoHappyOutline className="text-2xl" />
       {comment.length ? (
         <div
           className="text-blue-400 font-bold mr-1 cursor-pointer"

@@ -1,7 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { LikeIcon } from "./LikeIcon";
-import { IoChatbubbleOutline } from "react-icons/io5";
-import { HiArrowDownTray } from "react-icons/hi2";
+import { MessageCircle, MoreVertical } from "lucide-react";
 
 export const FeedPostSkeleton = () => {
   return (
@@ -25,11 +24,11 @@ export const FeedPostSkeleton = () => {
             </span>
             <div className="block">
               <div className="p-2">
-                <IoChatbubbleOutline className="  " />
+                <MessageCircle className="  " />
               </div>
             </div>
           </div>
-          <HiArrowDownTray className=" " />
+          <MoreVertical />
         </div>
         <div className="max-h-80 flex">
           <Skeleton className="w-[70px] mr-2 h-4 bg-gray-300 rounded-full"></Skeleton>

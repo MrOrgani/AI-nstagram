@@ -11,8 +11,6 @@ import { Button } from "@/components/ui/button";
 import preview from "@/assets/preview.png";
 import Loader from "./Loader";
 import { Textarea } from "@/components/ui/textarea";
-import { RiOpenaiFill } from "react-icons/ri";
-import { IoCloseSharp, IoOpenOutline } from "react-icons/io5";
 
 import { useUserContext } from "@/context/AuthContext";
 
@@ -20,6 +18,8 @@ import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
 import { usePublishPost } from "@/lib/react-query/queries";
 import { INewPost } from "@/lib/types";
+import { PlusSquare, X } from "lucide-react";
+import { Icons } from "../ui/icons";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -101,7 +101,7 @@ const PostButton = () => {
             onClick={() => setOpen(true)}>
             <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
               <span className="mx-1">Post</span>
-              <IoOpenOutline />
+              <PlusSquare />
             </div>
           </Button>
         </DialogTrigger>
@@ -135,7 +135,7 @@ const PostButton = () => {
                   <div
                     className="absolute right-1 top-1 bg-gray-500 full-rounded h-6 w-6 rounded-full flex justify-center items-center text-white text-md font-bold"
                     onClick={deleteImg}>
-                    <IoCloseSharp />
+                    <X />
                   </div>
                 </div>
               </div>
@@ -163,7 +163,7 @@ const PostButton = () => {
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
                 </span>
-                <RiOpenaiFill />
+                <Icons.openai />
               </div>
             </Button>
             <form

@@ -1,14 +1,11 @@
-import { IoChatbubbleOutline } from "react-icons/io5";
-import { HiArrowDownTray } from "react-icons/hi2";
-import { downloadImage } from "@/lib/utils";
 import { LikeIcon } from "./LikeIcon";
-import { usePostContext } from "@/context/PostContext";
+import { PostTreeDotsMenu } from "./PostTreeDotsMenu";
+import { MessageCircle } from "lucide-react";
 
 interface Props {
   handleIconClick: () => void;
 }
 export const PostIconsHeader = ({ handleIconClick }: Props) => {
-  const { currentPost } = usePostContext();
   return (
     <div className="flex items-center justify-between text-2xl mt-1 mb-[6px]">
       <div className="flex items-center">
@@ -17,17 +14,16 @@ export const PostIconsHeader = ({ handleIconClick }: Props) => {
         </span>
         <div className="block">
           <div className="p-2">
-            <IoChatbubbleOutline
+            <MessageCircle
               className="cursor-pointer hover:opacity-50 "
               onClick={handleIconClick}
             />
           </div>
         </div>
       </div>
-      <HiArrowDownTray
-        className="cursor-pointer hover:opacity-50"
-        onClick={() => downloadImage(currentPost.id, currentPost.photo)}
-      />
+      <div className="flex gap-4">
+        <PostTreeDotsMenu />
+      </div>
     </div>
   );
 };

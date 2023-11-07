@@ -4,11 +4,11 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 
-import { ImCross } from "react-icons/im";
 import SignupForm from "../forms/SignupForm";
 import { useUserContext } from "@/context/AuthContext";
 import SigninForm from "../forms/SigninForm";
 import { GoogleForm } from "../forms/GoogleForm";
+import { X } from "lucide-react";
 
 interface LoginModalProps {
   initialDisplay?: boolean;
@@ -21,7 +21,7 @@ const LoginModal = ({
   displayButton = true,
   onClose,
 }: LoginModalProps) => {
-  const { user, isLoading } = useUserContext();
+  const { user } = useUserContext();
   const [diplayModal, setDiplayModal] = useState(initialDisplay);
 
   const [mode, settMode] = useState<"signup" | "signin">("signin");
@@ -56,7 +56,7 @@ const LoginModal = ({
                     onClose();
                   }
                 }}>
-                <ImCross />
+                <X />
               </div>
               <div className="flex justify-center">
                 <span

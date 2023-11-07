@@ -5,12 +5,12 @@ import {
   getShortenedDateFromNow,
   stringToColour,
 } from "@/lib/utils";
-import { AiOutlineDelete } from "react-icons/ai";
 
 import type { IComment } from "@/lib/types";
 import { usePostContext } from "@/context/PostContext";
 import { useDeleteComment } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   comment: IComment;
@@ -50,9 +50,10 @@ export const Comment = ({ comment }: Props) => {
             {comment.user.name}
           </span>
           <span className="text-black text-sm break-words">{comment.text}</span>
-          <div className="invisible group-hover/edit:visible  w-6 h-6 ml-auto">
+          <div className="invisible group-hover/edit:visible ml-auto ">
             {isAuthor ? (
-              <AiOutlineDelete
+              <Trash2
+                className=" w-4 h-4 "
                 onClick={() =>
                   deleteComment({
                     commentId: comment.comment_id,
