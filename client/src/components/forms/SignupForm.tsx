@@ -61,8 +61,6 @@ const SignupForm = () => {
       if (!session) {
         toast({ title: "Something went wrong. Please login your new account" });
 
-        // navigate("/sign-in");
-
         return;
       }
 
@@ -71,7 +69,7 @@ const SignupForm = () => {
       if (isLoggedIn) {
         form.reset();
 
-        navigate("/");
+        navigate("/feed");
       } else {
         toast({ title: "Login failed. Please try again." });
 

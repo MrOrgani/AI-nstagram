@@ -12,6 +12,7 @@ import {
   dislikePost,
   fetchFeedPosts,
   getCommentsFromPostId,
+  getImgFromStorage,
   getPostById,
   getUserById,
   likePost,
@@ -48,6 +49,13 @@ export const useGetPostById = (postId: number) => {
   return useQuery({
     queryKey: ["post", postId],
     queryFn: () => getPostById(postId),
+  });
+};
+
+export const useGetPostImg = (imgPath: string) => {
+  return useQuery({
+    queryKey: ["post-img", imgPath],
+    queryFn: () => getImgFromStorage(imgPath),
   });
 };
 

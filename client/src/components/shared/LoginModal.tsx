@@ -45,8 +45,17 @@ const LoginModal = ({
 
       {diplayModal ? (
         <div className="fixed inset-0 flex justify-center items-center">
-          <div className="fixed inset-0 bg-black opacity-50 z-50" />
-          <Card className="fixed flex flex-col items-center justify-center mx-auto my-auto z-50 p-10">
+          <div
+            className="fixed inset-0 bg-black opacity-50 z-40"
+            onClick={() => {
+              setDiplayModal(false);
+              if (onClose) {
+                onClose();
+              }
+            }}
+          />
+
+          <Card className="fixed flex flex-col items-center justify-center mx-auto my-auto z-50 p-10 bg-white">
             <div className="flex flex-col space-y-2 text-center">
               <div
                 className="absolute top-0 right-0 p-4 cursor-pointer"
@@ -60,7 +69,7 @@ const LoginModal = ({
               </div>
               <div className="flex justify-center">
                 <span
-                  className={`text-2xl ${
+                  className={`text-2xl cursor-pointer ${
                     mode === "signin"
                       ? "font-semibold"
                       : "text-muted-foreground"
@@ -72,7 +81,7 @@ const LoginModal = ({
                   |
                 </span>
                 <span
-                  className={`text-2xl ${
+                  className={`text-2xl cursor-pointer ${
                     mode === "signup"
                       ? "font-semibold"
                       : "text-muted-foreground"
