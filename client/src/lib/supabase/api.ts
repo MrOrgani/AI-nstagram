@@ -289,6 +289,27 @@ export const deleteComment = async ({
   return updatedPost[0];
 };
 
+export const deletePost = async ({
+  postId,
+  userId,
+}: {
+  postId: number;
+  userId: string;
+}) => {
+  const { data: deletedPost, error } = await supabase
+    .from("posts")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", postId)
+    .select();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return deletedPost[0];
+};
+
 ////////////////////////////////////////////////////////////////////////
 //  USER
 ////////////////////////////////////////////////////////////////////////

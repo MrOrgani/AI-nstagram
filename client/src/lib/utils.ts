@@ -5,14 +5,23 @@ import * as FileSaver from "file-saver";
 
 import * as dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import supabase from "./supabase";
 dayjs.extend(relativeTime);
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const downloadImage = (_id: number, photo: string) => {
-  FileSaver.saveAs(photo, `download-${_id}.jpg`);
+const downloadImage = async (_id: string, photo: string) => {
+  const { data, error } = await supabase.storage
+    .from("ai-stagram-bucket")
+    .download(photo);
+
+  if (error) {
+    throw error;
+  }
+
+  FileSaver.saveAs(data, `${photo}.jpg`);
 };
 
 const getDateFromNow = (referenceDate: string) => {
