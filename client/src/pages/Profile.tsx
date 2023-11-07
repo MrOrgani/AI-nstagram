@@ -7,6 +7,31 @@ import { ProfilePostDialogTriggerSkeleton } from "@/components/shared/ProfilePos
 import { ProfileHeaderSkeleton } from "../components/shared/ProfileHeaderSkeleton";
 import { useGetUserById } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
+import { Card } from "@/components/ui/card";
+
+const SkeletonProfile = () => {
+  return (
+    <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px]">
+      <div className="mt-20 h-full">
+        <ProfileHeaderSkeleton />
+
+        <div className="border-t border-[#dbdbdb] flex justify-center">
+          <a className="flex items-center uppercase h-[52px]">
+            <Icons.grid />
+            <span className="ml-1.5 text-xs font-semibold tracking-wide">
+              posts
+            </span>
+          </a>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {new Array(4).fill(0).map((_, i) => (
+            <ProfilePostDialogTriggerSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    </main>
+  );
+};
 
 const Profile = () => {
   const { id: userId } = useParams();
@@ -19,33 +44,13 @@ const Profile = () => {
   }
 
   if (isLoading) {
-    return (
-      <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] ">
-        <div className="mt-20 h-full">
-          <ProfileHeaderSkeleton />
-
-          <div className="border-t border-[#dbdbdb] flex justify-center">
-            <a className="flex items-center uppercase h-[52px]">
-              <Icons.grid />
-              <span className="ml-1.5 text-xs font-semibold tracking-wide">
-                posts
-              </span>
-            </a>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {new Array(4).fill(0).map((_, i) => (
-              <ProfilePostDialogTriggerSkeleton key={i} />
-            ))}
-          </div>
-        </div>
-      </main>
-    );
+    <SkeletonProfile />;
   }
   const isMyProfile = user?.id === userId;
 
   return (
-    <main className="py-6 px-4 mx-auto min-w-[320px] w-[832px] ">
-      <div className="mt-20 h-full ">
+    <Card className="py-6 px-4 mx-auto min-w-[320px] w-[832px] shadow-feed-post bg-white">
+      <div className="h-full ">
         <ProfileHeader
           {...{
             user: currentUser,
@@ -79,7 +84,7 @@ const Profile = () => {
             )) ?? []}
         </div>
       </div>
-    </main>
+    </Card>
   );
 };
 export default Profile;
