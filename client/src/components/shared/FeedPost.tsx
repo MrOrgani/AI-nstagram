@@ -10,6 +10,7 @@ import { getShortenedDateFromNow } from "@/lib/utils";
 import { ImgPost } from "./ImgPost";
 import { Link } from "react-router-dom";
 import { useGetPostById } from "@/lib/react-query/queries";
+import { Card } from "../ui/card";
 
 const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -26,14 +27,14 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
   }
   return (
     <PostProvider post={data}>
-      <div
+      <Card
         data-testid="feed-post"
-        className=" bg-white  mb-5 border-b border-b-gray-200">
+        className=" overflow-hidden bg-white mb-5 border-b border-b-gray-200 shadow-feed-post ">
         <div className="flex items-center justify-between p-2.5">
           <div className="flex items-center">
             <Link to={`/${currentPost.user?.id}`} className="flex items-center">
               <SmallAvatar user={currentPost.user} />
-              <span className="font-medium text-sm ml-2.5">
+              <span className="font-medium text-sm ml-2.5 ">
                 {currentPost.user?.name}
               </span>
             </Link>
@@ -60,7 +61,7 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
           </div>
         </div>
         <CommentArea ref={textareaRef} />
-      </div>
+      </Card>
     </PostProvider>
   );
 };

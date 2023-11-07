@@ -15,15 +15,23 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    boxShadow: {
+      navbar: "0px 0px 8px 0px #b573f8",
+      "feed-post": "0 0px 10px 0px #4ca5ff",
+    },
     extend: {
       extend: {
         display: ["group-hover"],
       },
       colors: {
+        "gradient-blue": "#4ca5ff",
+        "gradient-purple": "#b573f8",
+        "blue-purple": "linear-gradient(90deg,#4ca5ff,#b573f8)",
+        "black-pearl": "#0D1117",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: "black-pearl",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -50,7 +58,7 @@ module.exports = {
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
+          DEFAULT: "var(--card)",
           foreground: "hsl(var(--card-foreground))",
         },
       },
@@ -72,6 +80,10 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "spin-slow": "spin 25s linear infinite",
+      },
+      gradientColorStops: {
+        "blue-purple": "linear-gradient(90deg,#4ca5ff,#b573f8)",
       },
     },
   },

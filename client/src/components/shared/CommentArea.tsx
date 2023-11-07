@@ -39,7 +39,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <div className=" text-sm flex items-center justify-between space-x-3 ">
+    <div className=" text-sm flex items-center justify-between mx-2 py-2 ">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}

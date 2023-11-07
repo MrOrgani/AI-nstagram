@@ -1,5 +1,4 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import PostButton from "./PostButton";
 
 import AInstagramLogo from "@/assets/AInstagramLogo.svg";
@@ -10,16 +9,17 @@ import { useUserContext } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { user: userProfile } = useUserContext();
+  const location = useLocation();
 
   return (
-    <header className="w-full flex justify-between items-center bg-white sm:px-8 px-4 py-4  top-0 fixed z-50 border-b border-b-gray-300">
+    <nav className="flex-center fixed top-0 z-30 w-full shadow-navbar bg-black-pearl flex justify-between items-center sm:px-8 px-4 py-4   ">
       <Link to="/">
-        <img src={AInstagramLogo} alt={"logo"} className="w-20" />
+        <img src={AInstagramLogo} alt={"logo"} className="w-20 invert" />
       </Link>
-      <PostButton />
+      {location.pathname !== "/" && <PostButton />}
 
       {userProfile?.id ? <PopoverMenu /> : <LoginModal displayButton={true} />}
-    </header>
+    </nav>
   );
 };
 

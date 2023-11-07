@@ -1,12 +1,13 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { LikeIcon } from "./LikeIcon";
 import { MessageCircle, MoreVertical } from "lucide-react";
+import { Card } from "../ui/card";
 
 export const FeedPostSkeleton = () => {
   return (
-    <div
+    <Card
       data-testid="feed-post-skeleton"
-      className=" bg-white  mb-5 border-b border-b-gray-200">
+      className=" bg-white  mb-5 border-b border-b-gray-200 shadow-feed-post">
       <div className="flex items-center justify-between p-2.5">
         <div className="flex items-center">
           <Skeleton className="w-8 h-8 bg-gray-300 rounded-full mr-2.5"></Skeleton>
@@ -37,6 +38,6 @@ export const FeedPostSkeleton = () => {
         <Skeleton className="w-full h-4 bg-gray-300 rounded-full mb-2.5"></Skeleton>
       </div>
       <Skeleton className="w-full h-5 bg-gray-300 rounded-full mb-2"></Skeleton>
-    </div>
+    </Card>
   );
 };

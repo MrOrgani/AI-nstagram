@@ -78,4 +78,7 @@ textarea {
   body {
     @apply bg-background text-foreground;
   }
+  html {
+    @apply bg-black-pearl;
+  }
 }
