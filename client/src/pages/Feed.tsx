@@ -22,7 +22,7 @@ const Feed = () => {
   }
 
   return (
-    <main className="py-6 px-4 mx-auto w-[560px]">
+    <main className="py-6 px-4 mx-auto md:max-w-[560px] max-w-full">
       {isLoading && (
         <>
           <FeedPostSkeleton />

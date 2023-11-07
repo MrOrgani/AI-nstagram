@@ -106,7 +106,7 @@ const PostButton = () => {
           </Button>
         </DialogTrigger>
         <DialogOverlay className="fixed bg-black w-screen h-screen top-0 left-0 z-49 opacity-50" />
-        <DialogContent className="bg-white shadow-feed-post fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full sm:max-w-[425px]">
+        <DialogContent className=" bg-white shadow-feed-post fixed z-50 w-full md:w-3/4 lg:w-1/2 xl:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col p-5 rounded-md space-x-4 space-y-4">
           <DialogHeader>
             <DialogDescription>
               <span className="font-semibold text-black-pearl">
@@ -114,22 +114,22 @@ const PostButton = () => {
               </span>
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-4 gap-4 place-items-stretch  ">
+          <div className="grid grid-cols-4 gap-4 place-items-stretch">
             <Textarea
               name="prompt"
               placeholder="Type your text here."
-              className=" items-center col-start-1 col-end-5 "
+              className="items-center col-start-1 col-end-5"
               onChange={(e) => handleChange(e)}
             />
           </div>
 
-          <div className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-64 p-3 h-64 place-self-center relative">
+          <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-full md:w-64 p-3 h-64 place-self-center relative">
             {form.photo ? (
               <div className="group flex">
                 <img
                   src={form.photo}
                   alt={form.prompt}
-                  className="block w-full  h-full object-contain"
+                  className="block w-full h-full object-contain"
                 />
                 <div className="hidden group-hover:block ">
                   <div
@@ -143,7 +143,7 @@ const PostButton = () => {
               <img
                 src={preview}
                 alt="preview"
-                className="w-full  h-full object-contain opacity-40"
+                className="w-full h-full object-contain opacity-40"
               />
             )}
             {generatingImg && (
@@ -152,40 +152,39 @@ const PostButton = () => {
               </div>
             )}
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-1 flex-col">
             <Button
               onClick={(e) => {
                 e.preventDefault();
                 handleGenerateImg();
               }}
               className="bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md ">
-              <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
+              <div className="flex h-full w-full items-center justify-center bg-white rounded-md p-4 text-md text-[#262626]">
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
                 </span>
                 <Icons.openai />
               </div>
             </Button>
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
+            <Button
+              onClick={() => {
                 wait().then(() => setOpen(false));
                 setForm({ ...form, photo: "" });
                 publishNewPost({ ...form, authorId: userProfile?.id ?? "" });
-              }}>
-              <Button
-                disabled={!form.prompt || !form.photo}
-                type="submit"
-                className="bg-gradient-to-r from-gradient-blue   to-gradient-purple rounded-md ">
+              }}
+              disabled={!form.prompt || !form.photo}
+              type="submit"
+              className=" bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md ">
+              <div className="flex-center p-4 ">
                 {isLoading ? (
-                  <div className="flex-center gap-2">
+                  <>
                     <Loader /> Loading...
-                  </div>
+                  </>
                 ) : (
                   "Publish"
                 )}
-              </Button>
-            </form>
+              </div>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
