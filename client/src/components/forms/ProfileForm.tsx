@@ -57,7 +57,7 @@ export const ProfileForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="grow h-full flex flex-col my-8">
+      className="grow h-full flex flex-col my-2">
       <div>
         <h2 className="text-2xl font-bold tracking-tight my-3 grid-rows-3 flex-grow-0">
           Settings
@@ -70,14 +70,14 @@ export const ProfileForm = () => {
         </div>
       </div>
       <div className="grow flex flex-col items-center justify-center">
-        <div className="mx-20">
+        <div className="mx-5">
           <div className="flex flex-col items-end justify-center h-full gap-8">
-            <div className="flex">
+            <div className="flex flex-col justify-center items-center md:flex-row">
               <SmallAvatar
                 user={{ ...userProfile, avatar: imgSrc }}
                 className="h-20 w-20"
               />
-              <div className="ml-10">
+              <div className="md:ml-10">
                 <Label htmlFor="picture">Changer ma photo de profil</Label>
                 <Controller
                   control={control}
