@@ -97,19 +97,19 @@ const PostButton = () => {
         }}>
         <DialogTrigger asChild>
           <Button
-            className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md "
+            className="bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md bg-black-pearl"
             onClick={() => setOpen(true)}>
-            <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
+            <div className="flex h-full w-full items-center justify-center  rounded-md p-4 text-md  text-white">
               <span className="mx-1">Post</span>
               <PlusSquare />
             </div>
           </Button>
         </DialogTrigger>
         <DialogOverlay className="fixed bg-black w-screen h-screen top-0 left-0 z-49 opacity-50" />
-        <DialogContent className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full sm:max-w-[425px]">
+        <DialogContent className="bg-white shadow-feed-post fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg md:w-full sm:max-w-[425px]">
           <DialogHeader>
             <DialogDescription>
-              <span className="font-semibold">
+              <span className="font-semibold text-black-pearl">
                 Write down a prompt to generate a picture
               </span>
             </DialogDescription>
@@ -158,7 +158,7 @@ const PostButton = () => {
                 e.preventDefault();
                 handleGenerateImg();
               }}
-              className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 p-0.5 rounded-md ">
+              className="bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md ">
               <div className="flex h-full w-full items-center justify-center bg-white back rounded-md p-4 text-md  text-[#262626]">
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
@@ -174,8 +174,9 @@ const PostButton = () => {
                 publishNewPost({ ...form, authorId: userProfile?.id ?? "" });
               }}>
               <Button
+                disabled={!form.prompt || !form.photo}
                 type="submit"
-                className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rounded-md ">
+                className="bg-gradient-to-r from-gradient-blue   to-gradient-purple rounded-md ">
                 {isLoading ? (
                   <div className="flex-center gap-2">
                     <Loader /> Loading...
