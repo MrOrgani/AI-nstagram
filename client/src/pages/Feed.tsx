@@ -3,7 +3,7 @@ import { useInView } from "react-intersection-observer";
 import { FeedPostSkeleton } from "@/components/shared/FeedPostSkeleton";
 import React from "react";
 import { useGetPosts } from "@/lib/react-query/queries";
-import FeedPost from "@/components/shared/FeedPost";
+import { FeedPost } from "@/components/shared/FeedPost";
 
 const Feed = () => {
   const { ref, inView } = useInView();

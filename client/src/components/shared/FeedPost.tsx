@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useGetPostById } from "@/lib/react-query/queries";
 import { Card } from "../ui/card";
 
-const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
+export const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleIconClick = () => {
@@ -65,5 +65,3 @@ const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
     </PostProvider>
   );
 };
-
-export default FeedPost;
