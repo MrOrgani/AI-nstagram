@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<AuthContextProviderProps> = ({
         try {
           const createdUser = await addUserToDB({
             id: currentUserSession.user.id,
-            email: currentUserSession.user.email || "",
+            email: currentUserSession.user.email!,
             name: currentUserSession.user.user_metadata.full_name,
             avatar: currentUserSession.user.user_metadata.avatar_url,
           });

@@ -401,7 +401,7 @@ export const createUserAccount = async (user: INewUser) => {
     name: user.name,
     id: data?.user?.id || "",
     email: data?.user?.email || "",
-    avatar: data?.user_metadata?.avatar_url || null,
+    avatar: "",
   });
 
   return registeredUser;
