@@ -20,8 +20,8 @@ export const ProfileHeader: React.FC<Props> = ({
           <SmallAvatar user={user} className="h-[150px] w-[150px]" />
         </div>
       </div>
-      <section className="grow-[2] flex flex-col mt-4">
-        <div className="font-normal text-xl mb-5">
+      <section className="grow-[2] flex flex-col mt-4 ">
+        <div className="font-normal text-xl mb-5 flex  flex-col md:flex-row">
           <span>{user.name}</span>
           {children}
         </div>
