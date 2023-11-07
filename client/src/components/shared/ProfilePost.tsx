@@ -11,7 +11,7 @@ import type { IUser } from "@/lib/types";
 import { PostIconsHeader } from "./PostIconsHeader";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
 import { SmallAvatar } from "./SmallAvatar";
-import CommentsDisplay from "./CommentsDisplay";
+import { CommentsDisplay } from "./CommentsDisplay";
 import { useGetPostById } from "@/lib/react-query/queries";
 import { Heart, MessageCircle } from "lucide-react";
 

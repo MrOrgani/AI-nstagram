@@ -12,7 +12,7 @@ interface CommentsDisplayProps {
   defaultDisplayComments?: boolean;
 }
 
-const CommentsDisplay = ({
+export const CommentsDisplay = ({
   defaultComments = [],
   defaultDisplayComments = false,
 }: CommentsDisplayProps) => {
@@ -61,5 +61,3 @@ const CommentsDisplay = ({
     </>
   );
 };
-
-export default CommentsDisplay;

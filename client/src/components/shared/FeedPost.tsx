@@ -1,6 +1,6 @@
 import type { PostType } from "@/lib/types";
 import CommentArea from "./CommentArea";
-import CommentsDisplay from "./CommentsDisplay";
+import { CommentsDisplay } from "./CommentsDisplay";
 import { useRef } from "react";
 import { PostProvider } from "@/context/PostContext";
 import NumberOfLikesDisplay from "./NumberOfLikesDisplay";
