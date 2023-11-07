@@ -7,7 +7,7 @@ export const FeedPostSkeleton = () => {
   return (
     <Card
       data-testid="feed-post-skeleton"
-      className=" bg-white  mb-5 border-b border-b-gray-200 shadow-feed-post">
+      className=" overflow-hidden bg-white mb-5 border-b border-b-gray-200 shadow-feed-post ">
       <div className="flex items-center justify-between p-2.5">
         <div className="flex items-center">
           <Skeleton className="w-8 h-8 bg-gray-300 rounded-full mr-2.5"></Skeleton>
@@ -16,7 +16,7 @@ export const FeedPostSkeleton = () => {
           <Skeleton className="w-[25px] h-4 bg-gray-300 rounded-full"></Skeleton>
         </div>
       </div>
-      <Skeleton className="w-full h-[528px] bg-gray-300"></Skeleton>
+      <Skeleton className="w-full aspect-square	 bg-gray-300"></Skeleton>
       <div className="text-gray-300">
         <div className="flex items-center justify-between text-2xl mt-1 mb-[6px]">
           <div className="flex items-center">

@@ -75,42 +75,42 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     <PostProvider post={currentPost}>
       <Dialog>
         <ProfilePostDialogTrigger post={currentPost} />
-        <DialogContent className="w-56 max-w-6xl p-0 overflow-hidden h-[500px] bg-white shadow-feed-post">
-          <article className=" flex overflow-auto">
-            <div className="w-1/2 grow flex content-center justify-center items-center  border-r-2 border-[#EFEFEF] ">
+        <DialogContent className="w-full max-w-6xl p-0 overflow-hidden h-[500px] bg-white shadow-feed-post">
+          <article className="flex flex-col md:flex-row overflow-auto">
+            <div className="md:w-1/2 grow flex content-center justify-center items-center border-r-0 md:border-r-2 border-b-2 md:border-b-0 border-[#EFEFEF]">
               <div className="h-full overflow-hidden flex items-center justify-center">
                 <img
-                  className=" h-full object-cover"
+                  className="h-full object-cover w-full md:w-auto"
                   src={imgSrc}
                   alt={post.prompt}
                 />
               </div>
             </div>
-            <div className=" contents">
-              <div className="flex flex-col w-[475px]  mx-0 my-0 relative ">
-                <header className="flex p-3 content-center items-center border-b border-[#EFEFEF] ">
+            <div className="contents md:w-1/2">
+              <div className="flex flex-col w-full mx-0 my-0 relative">
+                <header className="flex p-3 content-center items-center border-b border-[#EFEFEF]">
                   <SmallAvatar user={currentUserProfile} />
                   <div className="font-semibold text-sm ml-3 b">
                     {currentUserProfile.name}
                   </div>
                 </header>
 
-                <div className="grow overflow-auto  p-3 ">
+                <div className="grow overflow-auto p-3">
                   <CommentsDisplay
                     defaultComments={[postDecription]}
                     defaultDisplayComments={true}
                   />
                 </div>
-                <div className="  border-t border-[#EFEFEF] px-3 mt-1 ">
+                <div className="border-t border-[#EFEFEF] px-3 mt-1">
                   <PostIconsHeader {...{ handleIconClick }} />
-                  <div className="flex items-center space-x-2 -mb-2 ">
+                  <div className="flex items-center space-x-2 -mb-2">
                     <NumberOfLikesDisplay />
                   </div>
-                  <p className=" text-neutral-400 text-xs mb-2 ">
+                  <p className="text-neutral-400 text-xs mb-2">
                     {getDateFromNow(post.created_at)}
                   </p>
                 </div>
-                <div className=" border-t px-2 py-3">
+                <div className="border-t px-2 py-3">
                   <CommentArea ref={textareaRef} />
                 </div>
               </div>
