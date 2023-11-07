@@ -18,7 +18,8 @@ const Feed = () => {
   }, [fetchNextPage, inView]);
 
   if (isError) {
-    return <span>Error: {error.message}</span>;
+    console.error("Error fetching posts", error);
+    return;
   }
 
   return (
