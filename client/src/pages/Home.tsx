@@ -24,7 +24,7 @@ const Home = () => {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ ease: "easeIn", duration: 0.5, delay: 0.2 }} // Add delay here
                   className="bg-gradient-to-r from-[#4ca5ff] to-[#b573f8] bg-clip-text text-transparent">
-                  AI-stagram
+                  AI-nstagram
                 </motion.span>
               </motion.h1>
               <motion.div

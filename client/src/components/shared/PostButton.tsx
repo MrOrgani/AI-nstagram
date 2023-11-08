@@ -45,6 +45,11 @@ const PostButton = () => {
   };
 
   const handleGenerateImg = async () => {
+    if (!userProfile?.id) {
+      setOpen(false);
+      setLoginDialogCallback(true);
+      return;
+    }
     if (form.prompt) {
       setGeneratingImg(true);
 
@@ -105,8 +110,8 @@ const PostButton = () => {
             </div>
           </Button>
         </DialogTrigger>
-        <DialogOverlay className="fixed bg-black w-screen h-screen top-0 left-0 z-49 opacity-50" />
-        <DialogContent className=" bg-white shadow-feed-post fixed z-50 w-full md:w-3/4 lg:w-1/2 xl:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col p-5 rounded-md space-x-4 space-y-4">
+        <DialogOverlay className="fixed bg-black w-screen h-screen top-0 left-0 z-30 opacity-50" />
+        <DialogContent className=" bg-white shadow-feed-post fixed z-40 w-full md:w-3/4 lg:w-1/2 xl:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col p-5 rounded-md space-x-4 space-y-4">
           <DialogHeader>
             <DialogDescription>
               <span className="font-semibold text-black-pearl">
