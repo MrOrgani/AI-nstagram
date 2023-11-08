@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
-import Lottie from "lottie-react";
 import robotAnimation from "@/assets/robotAnimation.json";
 import { Icons } from "@/components/ui/icons";
 import { motion } from "framer-motion";
+import { lazy } from "react";
+
+const LottieAnimation = lazy(() => import("lottie-react"));
 
 const Home = () => {
   return (
@@ -64,7 +66,7 @@ const Home = () => {
             animate={{ x: 0, opacity: 1 }}
             transition={{ ease: "easeIn", duration: 0.5, delay: 0.7 }}>
             <Icons.spinninCircles />
-            <Lottie
+            <LottieAnimation
               animationData={robotAnimation}
               loop={true}
               className="absolute z-10 max-w-[400px] h-max-md md:w-[600px] md:h-[600px] lg:w-[800px] lg:h-[800px] "

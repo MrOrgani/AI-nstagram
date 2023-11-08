@@ -1,10 +1,13 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Feed, Profile } from "./pages";
 
 import Navbar from "./components/shared/Navbar";
 import { Toaster } from "./components/ui/toaster";
-import EditProfile from "./pages/EditProfile";
-import Home from "./pages/Home";
+
+const Home = lazy(() => import("./pages/Home"));
+const EditProfile = lazy(() => import("./pages/EditProfile"));
+const Feed = lazy(() => import("./pages/Feed"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 function App() {
   return (
@@ -14,10 +17,40 @@ function App() {
         <Navbar />
         <div className="h-screen pt-24">
           <Routes>
-            <Route index path="/" element={<Home />} />
-            <Route index path="/feed" element={<Feed />} />
-            <Route path="/:id" element={<Profile />} />
-            <Route path="/:id/edit" element={<EditProfile />} />
+            <Route
+              index
+              path="/"
+              element={
+                <Suspense fallback={"Loading..."}>
+                  <Home />
+                </Suspense>
+              }
+            />
+            <Route
+              index
+              path="/feed"
+              element={
+                <Suspense fallback={"Loading..."}>
+                  <Feed />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/:id"
+              element={
+                <Suspense fallback={"Loading..."}>
+                  <Profile />
+                </Suspense>
+              }
+            />
+            <Route
+              path="/:id/edit"
+              element={
+                <Suspense fallback={"Loading..."}>
+                  <EditProfile />
+                </Suspense>
+              }
+            />
           </Routes>
         </div>
       </main>
