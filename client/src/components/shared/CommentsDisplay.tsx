@@ -45,7 +45,7 @@ export const CommentsDisplay = ({
       )}
       {!diplayComments && (
         <p
-          className="text-neutral-500 font-medium text-sm my-2 cursor-pointer"
+          className="my-2 cursor-pointer text-sm font-medium text-neutral-500"
           onClick={() => setDiplayComments(!diplayComments)}
           data-testid="view-all-comments">
           View all {currentPost.comments} comments

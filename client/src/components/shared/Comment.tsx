@@ -10,6 +10,7 @@ import { usePostContext } from "@/context/PostContext";
 import { useDeleteComment } from "@/lib/react-query/queries";
 import { useUserContext } from "@/context/AuthContext";
 import { Trash2 } from "lucide-react";
+import { SmallAvatar } from "./SmallAvatar";
 
 interface Props {
   comment: IComment;
@@ -18,8 +19,6 @@ interface Props {
 export const Comment = ({ comment }: Props) => {
   const { currentPost } = usePostContext();
   const { user: currentUser } = useUserContext();
-  const bgColour = stringToColour(comment.user.name);
-  const color = getContrastingColor(bgColour);
 
   const { mutate: deleteComment } = useDeleteComment();
   if (!currentPost) return null;
@@ -28,31 +27,21 @@ export const Comment = ({ comment }: Props) => {
   return (
     <div
       data-testid="comments-on-post"
-      className="flex mb-4"
+      className="mb-4 flex"
       key={`post-comment-${comment.comment_id}`}>
       <div className={`min-h-10  rounded-full`}>
-        <Avatar className="w-8 h-8 flex items-center align-middle">
-          <AvatarImage
-            src={comment.user.avatar}
-            alt={comment.user?.name + "_avatar"}
-          />
-          <AvatarFallback
-            className={`text-md font-bold w-full h-full flex items-center justify-center text-center`}
-            style={{ backgroundColor: bgColour, color }}>
-            <span>{comment.user?.name?.[0]}</span>
-          </AvatarFallback>
-        </Avatar>
+        <SmallAvatar user={comment.user} />
       </div>
       <div className="ml-3 w-full">
-        <div className="flex group/edit">
-          <span className="text-sm font-semibold text-gray-800 mr-1">
+        <div className="group/edit flex">
+          <span className="mr-1 text-sm font-semibold text-gray-800">
             {comment.user.name}
           </span>
-          <span className="text-black text-sm break-words">{comment.text}</span>
-          <div className="invisible group-hover/edit:visible ml-auto ">
+          <span className="break-words text-sm text-black">{comment.text}</span>
+          <div className="invisible ml-auto group-hover/edit:visible ">
             {isAuthor ? (
               <Trash2
-                className=" w-4 h-4 "
+                className=" h-4 w-4 "
                 onClick={() =>
                   deleteComment({
                     commentId: comment.comment_id,
