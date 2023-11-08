@@ -10,31 +10,37 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  try {
-    const ai = new openai.OpenAI(apiKey ?? "");
+  console.info("Request received: ", req.url);
+  const ai = new openai.OpenAI(apiKey ?? "");
 
-    const { prompt } = await req.json();
+  const { prompt } = await req.json();
+  console.info("1️⃣ prompt", prompt);
 
-    const { data: aiResponse } = await ai.createImage({
-      prompt,
-      n: 1,
-      size: "1024x1024",
-      responseFormat: "b64_json",
-    });
+  const aiResponse = await ai.createImage({
+    prompt,
+    n: 1,
+    size: "1024x1024",
+    responseFormat: "b64_json",
+  });
+  console.info("2️⃣ aiResponse", aiResponse);
 
-    const res = new Response(
-      JSON.stringify({ photoUrl: aiResponse["0"].b64_json }),
+  if (aiResponse.error) {
+    console.info("3️⃣ aiResponse.error", aiResponse.error.message);
+    return new Response(
+      JSON.stringify({ message: "There was an error on OpenAI server" }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
+        status: 400,
       }
     );
-    return res;
-  } catch (error) {
-    const res = new Response(JSON.stringify({ error }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
-    });
-    return res;
   }
+
+  const res = new Response(
+    JSON.stringify({ photoUrl: aiResponse.data["0"].b64_json }),
+    {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 200,
+    }
+  );
+  return res;
 });

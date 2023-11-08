@@ -171,6 +171,7 @@ const PostButton = () => {
                 e.preventDefault();
                 handleGenerateImg();
               }}
+              disabled={!form.prompt || generatingImg}
               className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
               <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
                 <span className="mx-1">
