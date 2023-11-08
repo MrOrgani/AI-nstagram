@@ -20,10 +20,12 @@ import { usePublishPost } from "@/lib/react-query/queries";
 import { INewPost } from "@/lib/types";
 import { PlusSquare, X } from "lucide-react";
 import { Icons } from "../ui/icons";
+import { useToast } from "../ui/use-toast";
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
 
 const PostButton = () => {
+  const { toast } = useToast();
   const { user: userProfile } = useUserContext();
 
   const { mutateAsync: publishNewPost, isLoading } = usePublishPost();
@@ -60,13 +62,19 @@ const PostButton = () => {
           }),
         });
 
-        setForm({
-          ...form,
-          photo: `data:image/jpeg;base64,${data.photoUrl}`,
-        });
+        console.log("handleGenerateImg", data, error);
+
         if (error) {
+          toast({
+            title: "Your prompt could not be generated",
+            variant: "destructive",
+          });
           throw new Error(error.message);
         }
+        setForm({
+          ...form,
+          photo: `data:image/jpeg;base64,${data?.photoUrl}`,
+        });
       } catch (err) {
         console.log(err);
       } finally {
@@ -102,16 +110,16 @@ const PostButton = () => {
         }}>
         <DialogTrigger asChild>
           <Button
-            className="bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md bg-black-pearl"
+            className="rounded-md bg-black-pearl bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5"
             onClick={() => setOpen(true)}>
-            <div className="flex h-full w-full items-center justify-center  rounded-md p-4 text-md  text-white">
+            <div className="text-md flex h-full w-full items-center  justify-center rounded-md p-4  text-white">
               <span className="mx-1">Post</span>
               <PlusSquare />
             </div>
           </Button>
         </DialogTrigger>
-        <DialogOverlay className="fixed bg-black w-screen h-screen top-0 left-0 z-30 opacity-50" />
-        <DialogContent className=" bg-white shadow-feed-post fixed z-40 w-full md:w-3/4 lg:w-1/2 xl:w-1/3 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col p-5 rounded-md space-x-4 space-y-4">
+        <DialogOverlay className="fixed left-0 top-0 z-30 h-screen w-screen bg-black opacity-50" />
+        <DialogContent className="fixed left-1/2 top-1/2 z-40 flex w-full -translate-x-1/2 -translate-y-1/2 transform flex-col space-x-4 space-y-4 rounded-md bg-white p-5 shadow-feed-post md:w-3/4 lg:w-1/2 xl:w-1/3">
           <DialogHeader>
             <DialogDescription>
               <span className="font-semibold text-black-pearl">
@@ -119,26 +127,26 @@ const PostButton = () => {
               </span>
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-4 gap-4 place-items-stretch">
+          <div className="grid grid-cols-4 place-items-stretch gap-4">
             <Textarea
               name="prompt"
               placeholder="Type your text here."
-              className="items-center col-start-1 col-end-5"
+              className="col-start-1 col-end-5 items-center"
               onChange={(e) => handleChange(e)}
             />
           </div>
 
-          <div className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 foxus:border-blue-500 w-full md:w-64 p-3 h-64 place-self-center relative">
+          <div className="foxus:border-blue-500 relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:ring-blue-500 md:w-64">
             {form.photo ? (
               <div className="group flex">
                 <img
                   src={form.photo}
                   alt={form.prompt}
-                  className="block w-full h-full object-contain"
+                  className="block h-full w-full object-contain"
                 />
                 <div className="hidden group-hover:block ">
                   <div
-                    className="absolute right-1 top-1 bg-gray-500 full-rounded h-6 w-6 rounded-full flex justify-center items-center text-white text-md font-bold"
+                    className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
                     onClick={deleteImg}>
                     <X />
                   </div>
@@ -148,23 +156,23 @@ const PostButton = () => {
               <img
                 src={preview}
                 alt="preview"
-                className="w-full h-full object-contain opacity-40"
+                className="h-full w-full object-contain opacity-40"
               />
             )}
             {generatingImg && (
-              <div className="absolute inset-0 z-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] rounded-lg">
+              <div className="absolute inset-0 z-0 flex items-center justify-center rounded-lg bg-[rgba(0,0,0,0.5)]">
                 <Loader />
               </div>
             )}
           </div>
-          <DialogFooter className="gap-1 flex-col">
+          <DialogFooter className="flex-col gap-1">
             <Button
               onClick={(e) => {
                 e.preventDefault();
                 handleGenerateImg();
               }}
-              className="bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md ">
-              <div className="flex h-full w-full items-center justify-center bg-white rounded-md p-4 text-md text-[#262626]">
+              className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
+              <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
                 </span>
@@ -179,7 +187,7 @@ const PostButton = () => {
               }}
               disabled={!form.prompt || !form.photo}
               type="submit"
-              className=" bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 rounded-md ">
+              className=" rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
               <div className="flex-center p-4 ">
                 {isLoading ? (
                   <>
