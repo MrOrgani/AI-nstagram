@@ -57,9 +57,9 @@ export const ProfileForm = () => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="grow h-full flex flex-col my-2">
+      className="my-2 flex h-full grow flex-col">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight my-3 grid-rows-3 flex-grow-0">
+        <h2 className="my-3 flex-grow-0 grid-rows-3 text-2xl font-bold tracking-tight">
           Settings
         </h2>
         <div>
@@ -69,16 +69,16 @@ export const ProfileForm = () => {
           </p>
         </div>
       </div>
-      <div className="grow flex flex-col items-center justify-center">
+      <div className="flex grow flex-col items-center justify-center">
         <div className="mx-5">
-          <div className="flex flex-col items-end justify-center h-full gap-8">
-            <div className="flex flex-col justify-center items-center md:flex-row">
+          <div className="flex h-full flex-col items-end justify-center gap-8">
+            <div className="flex flex-col items-center justify-center md:flex-row">
               <SmallAvatar
                 user={{ ...userProfile, avatar: imgSrc }}
                 className="h-20 w-20"
               />
               <div className="md:ml-10">
-                <Label htmlFor="picture">Changer ma photo de profil</Label>
+                <Label htmlFor="picture">Change your profile picture</Label>
                 <Controller
                   control={control}
                   name={"avatar"}
@@ -98,7 +98,7 @@ export const ProfileForm = () => {
                           if (event.target.files[0].size > 10000000) {
                             setError("avatar", {
                               type: "custom",
-                              message: "L'image est trop lourde",
+                              message: "The file is too big",
                             });
                             return;
                           }
