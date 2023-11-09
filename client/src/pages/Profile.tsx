@@ -12,12 +12,12 @@ import { Settings } from "lucide-react";
 
 const SkeletonProfile = () => {
   return (
-    <main className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px]">
+    <main className="mx-auto min-w-[320px] max-w-[832px] px-4 py-6">
       <div className="mt-20 h-full">
         <ProfileHeaderSkeleton />
 
-        <div className="border-t border-[#dbdbdb] flex justify-center">
-          <a className="flex items-center uppercase h-[52px]">
+        <div className="flex justify-center border-t border-[#dbdbdb]">
+          <a className="flex h-[52px] items-center uppercase">
             <Icons.grid />
             <span className="ml-1.5 text-xs font-semibold tracking-wide">
               posts
@@ -50,7 +50,7 @@ const Profile = () => {
   const isMyProfile = user?.id === userId;
 
   return (
-    <Card className="py-6 px-4 mx-auto min-w-[320px] max-w-[832px] sm:w-full shadow-feed-post bg-white">
+    <Card className="mx-auto min-w-[320px] max-w-[832px] bg-white px-4 py-6 shadow-feed-post sm:w-full">
       <div className="h-full">
         <ProfileHeader
           {...{
@@ -59,17 +59,17 @@ const Profile = () => {
           }}>
           {isMyProfile && (
             <Link to={`/${currentUser?.id}/edit`}>
-              <Button className="hidden sm:block text-sm font-semibold text-black bg-gray-200 sm:ml-5 px-2 h-8 hover:bg-gray-300">
+              <Button className="hidden h-8 bg-gray-200 px-2 text-sm font-semibold text-black hover:bg-gray-300 sm:ml-5 sm:block">
                 Edit Profile
               </Button>
-              <Button className=" sm:hidden text-sm font-semibold text-black bg-gray-200 sm:ml-5 px-2 h-8 hover:bg-gray-300 flex items-center justify-center">
+              <Button className=" flex h-8 items-center justify-center bg-gray-200 px-2 text-sm font-semibold text-black hover:bg-gray-300 sm:ml-5 sm:hidden">
                 <Settings />
               </Button>
             </Link>
           )}
         </ProfileHeader>
-        <div className="border-t border-[#dbdbdb] flex justify-center">
-          <a className="flex items-center uppercase h-[52px]">
+        <div className="flex justify-center border-t border-[#dbdbdb]">
+          <a className="flex h-[52px] items-center uppercase">
             <Icons.grid />
             <span className="ml-1.5 text-xs font-semibold tracking-wide">
               posts
