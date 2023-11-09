@@ -32,6 +32,8 @@ const PostButton = () => {
 
   const [open, setOpen] = useState(false);
   const [loginDialog, setLoginDialog] = useState(false);
+
+  const [generatingImg, setGeneratingImg] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
   const [form, setForm] = useState<{
@@ -42,10 +44,17 @@ const PostButton = () => {
     generatedImages: [],
   });
 
-  const [generatingImg, setGeneratingImg] = useState(false);
-
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleDialogOnOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+
+    if (isOpen === false) {
+      setForm({ ...form, generatedImages: [] });
+      setGeneratingImg(false);
+    }
   };
 
   const handleGenerateImg = async () => {
@@ -94,6 +103,20 @@ const PostButton = () => {
     setForm({ ...form, generatedImages: [] });
   };
 
+  const handlePublishPost = async () => {
+    if (!userProfile?.id) {
+      setOpen(false);
+      setLoginDialogCallback(true);
+      return;
+    }
+    wait().then(() => setOpen(false));
+    setForm({ generatedImages: [], prompt: "" });
+    publishNewPost({
+      prompt: form.generatedImages[0].revised_prompt,
+      b64_json: `data:image/jpeg;base64,${form.generatedImages[0].b64_json}`,
+      authorId: userProfile?.id,
+    });
+  };
   return (
     <>
       {loginDialog ? (
@@ -103,25 +126,9 @@ const PostButton = () => {
           onClose={() => setLoginDialogCallback(false)}
         />
       ) : null}
-      <Dialog
-        open={open}
-        onOpenChange={(isOpen) => {
-          setOpen(isOpen);
-
-          if (isOpen === false) {
-            setForm({ ...form, generatedImages: [] });
-            setGeneratingImg(false);
-          }
-        }}>
+      <Dialog open={open} onOpenChange={handleDialogOnOpenChange}>
         <DialogTrigger asChild>
-          <Button
-            className="rounded-md bg-black-pearl bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5"
-            onClick={() => setOpen(true)}>
-            <div className="text-md flex h-full w-full items-center  justify-center rounded-md p-4  text-white">
-              <span className="mx-1">Post</span>
-              <PlusSquare />
-            </div>
-          </Button>
+          <OpenDialogButton onClick={() => setOpen(true)}></OpenDialogButton>
         </DialogTrigger>
         <DialogOverlay className="fixed left-0 top-0 z-30 h-screen w-screen bg-black opacity-50" />
         <DialogContent className="fixed left-1/2 top-1/2 z-40 flex w-full -translate-x-1/2 -translate-y-1/2 transform flex-col space-x-4 space-y-4 rounded-md bg-white p-5 shadow-feed-post md:w-3/4 lg:w-1/2 xl:w-1/3">
@@ -137,30 +144,21 @@ const PostButton = () => {
               name="prompt"
               placeholder="Type your text here."
               className="col-start-1 col-end-5 items-center"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               value={form.prompt}
             />
           </div>
 
           <div className="relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 md:w-64">
-            {form.generatedImages.length > 0 ? (
-              form.generatedImages.map((img, i) => (
-                <div className="group flex" key={`generated-image-${i}`}>
-                  <img
-                    src={`data:image/jpeg;base64,${img.b64_json}`}
-                    alt={form.prompt}
-                    className="block h-full w-full object-contain"
-                  />
-                  <div className="hidden group-hover:block ">
-                    <div
-                      className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
-                      onClick={deleteImg}>
-                      <X />
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
+            {form.generatedImages.length > 0 &&
+              form.generatedImages.map((image) => (
+                <ImagePreviewDidsplay
+                  img={image}
+                  key={image.revised_prompt}
+                  onClick={deleteImg}
+                />
+              ))}
+            {form.generatedImages.length === 0 && (
               <img
                 src={preview}
                 alt="preview"
@@ -173,67 +171,141 @@ const PostButton = () => {
               </div>
             )}
           </div>
+
           <DialogFooter className="flex-col gap-1">
-            <Button
+            <EraseButton
               onClick={() => {
                 setForm({ generatedImages: [], prompt: "" });
               }}
               disabled={!form.generatedImages.length && !form.prompt}
-              className="rounded-md bg-gradient-to-r from-[#FF0000] to-red-300 p-0.5 ">
-              <div className="text-md flex h-full w-full items-center justify-center rounded-md p-4 text-white">
-                <span className="mx-1">Erase</span>
-                <Eraser className="h-5 w-8" />
-              </div>
-            </Button>
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                handleGenerateImg();
-              }}
+            />
+            <GenerateImageButton
+              onClick={handleGenerateImg}
               disabled={
                 !form.prompt || generatingImg || form.generatedImages.length > 0
               }
-              className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
-              <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
-                <span className="mx-1">
-                  {generatingImg ? "Generating..." : "Generate"}
-                </span>
-                <Icons.openai className="h-5 w-8" />
-              </div>
-            </Button>
-            <Button
-              onClick={() => {
-                if (!userProfile?.id) {
-                  setOpen(false);
-                  setLoginDialogCallback(true);
-                  return;
-                }
-                wait().then(() => setOpen(false));
-                setForm({ generatedImages: [], prompt: "" });
-                publishNewPost({
-                  prompt: form.generatedImages[0].revised_prompt,
-                  b64_json: `data:image/jpeg;base64,${form.generatedImages[0].b64_json}`,
-                  authorId: userProfile?.id,
-                });
-              }}
+              generatingImg={generatingImg}
+            />
+            <PublishButton
+              onClick={handlePublishPost}
               disabled={!form.prompt || !form.generatedImages.length}
-              type="submit"
-              className=" rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
-              <div className="flex-center p-4 ">
-                {isLoading ? (
-                  <>
-                    <Loader /> Loading...
-                  </>
-                ) : (
-                  "Publish"
-                )}
-              </div>
-            </Button>
+              isLoading={isLoading}
+            />
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
 };
+
+function OpenDialogButton({ onClick }: { onClick: () => void }) {
+  return (
+    <Button
+      onClick={onClick}
+      className="rounded-md bg-black-pearl bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5">
+      <div className="text-md flex h-full w-full items-center  justify-center rounded-md p-4  text-white">
+        <span className="mx-1">Post</span>
+        <PlusSquare />
+      </div>
+    </Button>
+  );
+}
+
+function PublishButton({
+  onClick,
+  disabled,
+  isLoading,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  isLoading: boolean;
+}) {
+  return (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      type="submit"
+      className=" rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
+      <div className="flex-center p-4 ">
+        {isLoading ? (
+          <>
+            <Loader /> Loading...
+          </>
+        ) : (
+          "Publish"
+        )}
+      </div>
+    </Button>
+  );
+}
+
+function GenerateImageButton({
+  onClick,
+  disabled,
+  generatingImg,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  generatingImg: boolean;
+}) {
+  return (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
+      <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
+        <span className="mx-1">
+          {generatingImg ? "Generating..." : "Generate"}
+        </span>
+        <Icons.openai className="h-5 w-8" />
+      </div>
+    </Button>
+  );
+}
+
+function EraseButton({
+  disabled,
+  onClick,
+}: {
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      className="rounded-md bg-gradient-to-r from-[#FF0000] to-red-300 p-0.5 ">
+      <div className="text-md flex h-full w-full items-center justify-center rounded-md p-4 text-white">
+        <span className="mx-1">Erase</span>
+        <Eraser className="h-5 w-8" />
+      </div>
+    </Button>
+  );
+}
+
+function ImagePreviewDidsplay({
+  img,
+  onClick: deleteImg,
+}: {
+  img: GenerateImg;
+  onClick: () => void;
+}) {
+  return (
+    <div className="group flex">
+      <img
+        src={`data:image/jpeg;base64,${img.b64_json}`}
+        alt={img.revised_prompt}
+        className="block h-full w-full object-contain"
+      />
+      <div className="hidden group-hover:block ">
+        <div
+          className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
+          onClick={deleteImg}>
+          <X />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default PostButton;
