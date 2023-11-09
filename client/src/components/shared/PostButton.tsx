@@ -211,7 +211,7 @@ const PostButton = () => {
                 wait().then(() => setOpen(false));
                 setForm({ generatedImages: [], prompt: "" });
                 publishNewPost({
-                  prompt: form.prompt,
+                  prompt: form.generatedImages[0].revised_prompt,
                   b64_json: `data:image/jpeg;base64,${form.generatedImages[0].b64_json}`,
                   authorId: userProfile?.id,
                 });
