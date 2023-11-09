@@ -18,7 +18,7 @@ import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
 import { usePublishPost } from "@/lib/react-query/queries";
 import { GenerateImg } from "@/lib/types";
-import { Eraser, PlusSquare, X } from "lucide-react";
+import { Eraser, PlusSquare } from "lucide-react";
 import { Icons } from "../ui/icons";
 import { useToast } from "../ui/use-toast";
 
