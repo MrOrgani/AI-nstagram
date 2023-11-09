@@ -127,9 +127,9 @@ const getContrastingColor = (color: string) => {
 };
 
 async function dataUrlToFile(dataUrl: string, fileName: string): Promise<File> {
-  const res: Response = await fetch(dataUrl);
+  const res: Response = await fetch(dataUrl, { mode: "no-cors" });
   const blob: Blob = await res.blob();
-  return new File([blob], fileName, { type: "image/jpeg" });
+  return new File([blob], fileName, { type: blob.type });
 }
 
 export {

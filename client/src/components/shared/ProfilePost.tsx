@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import supabase from "@/lib/supabase";
 
 import { PostType } from "@/lib/types";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -16,23 +15,19 @@ import { useGetPostById } from "@/lib/react-query/queries";
 import { Heart, MessageCircle } from "lucide-react";
 
 const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
-  const imgSrc = post.photo.includes("base64")
-    ? post.photo
-    : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
-        .publicUrl;
   return (
     <DialogTrigger asChild>
-      <div key={post.id} className="group p-0 cursor-pointer relative ">
-        <div className="hidden group-hover:flex absolute align-middle justify-center items-center left-0 right-0 top-0 bottom-0">
-          <span className="z-10  text-white flex  items-center">
+      <div key={post.id} className="group relative cursor-pointer p-0 ">
+        <div className="absolute bottom-0 left-0 right-0 top-0 hidden items-center justify-center align-middle group-hover:flex">
+          <span className="z-10  flex items-center  text-white">
             <Heart className=" w-11  " color={"white"} />
             {post.likes}
-            <MessageCircle className=" w-11 z-10 " color={"white"} />
+            <MessageCircle className=" z-10 w-11 " color={"white"} />
             {post.comments}
           </span>
-          <div className=" bg-black opacity-30 absolute left-0 right-0 top-0 bottom-0" />
+          <div className=" absolute bottom-0 left-0 right-0 top-0 bg-black opacity-30" />
         </div>
-        <img src={imgSrc} alt={post.prompt} loading="lazy" />
+        <img src={post.photo} alt={post.prompt} loading="lazy" />
       </div>
     </DialogTrigger>
   );
@@ -61,11 +56,6 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     user: currentUserProfile,
   };
 
-  const imgSrc = post.photo.includes("base64")
-    ? post.photo
-    : supabase.storage.from("ai-stagram-bucket").getPublicUrl(post.photo).data
-        .publicUrl;
-
   const { data: currentPost } = useGetPostById(post.id);
 
   if (!currentPost) {
@@ -75,22 +65,22 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     <PostProvider post={currentPost}>
       <Dialog>
         <ProfilePostDialogTrigger post={currentPost} />
-        <DialogContent className="w-full max-w-6xl p-0 overflow-hidden h-[500px] bg-white shadow-feed-post">
-          <article className="flex flex-col md:flex-row overflow-auto">
-            <div className="md:w-1/2 grow flex content-center justify-center items-center border-r-0 md:border-r-2 border-b-2 md:border-b-0 border-[#EFEFEF]">
-              <div className="h-full overflow-hidden flex items-center justify-center">
+        <DialogContent className="h-[500px] w-full max-w-6xl overflow-hidden bg-white p-0 shadow-feed-post">
+          <article className="flex flex-col overflow-auto md:flex-row">
+            <div className="flex grow content-center items-center justify-center border-b-2 border-r-0 border-[#EFEFEF] md:w-1/2 md:border-b-0 md:border-r-2">
+              <div className="flex h-full items-center justify-center overflow-hidden">
                 <img
-                  className="h-full object-cover w-full md:w-auto"
-                  src={imgSrc}
+                  className="h-full w-full object-cover md:w-auto"
+                  src={post.photo}
                   alt={post.prompt}
                 />
               </div>
             </div>
             <div className="contents md:w-1/2">
-              <div className="flex flex-col w-full mx-0 my-0 relative">
-                <header className="flex p-3 content-center items-center border-b border-[#EFEFEF]">
+              <div className="relative mx-0 my-0 flex w-full flex-col">
+                <header className="flex content-center items-center border-b border-[#EFEFEF] p-3">
                   <SmallAvatar user={currentUserProfile} />
-                  <div className="font-semibold text-sm ml-3 b">
+                  <div className="b ml-3 text-sm font-semibold">
                     {currentUserProfile.name}
                   </div>
                 </header>
@@ -101,12 +91,12 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                     defaultDisplayComments={true}
                   />
                 </div>
-                <div className="border-t border-[#EFEFEF] px-3 mt-1">
+                <div className="mt-1 border-t border-[#EFEFEF] px-3">
                   <PostIconsHeader {...{ handleIconClick }} />
-                  <div className="flex items-center space-x-2 -mb-2">
+                  <div className="-mb-2 flex items-center space-x-2">
                     <NumberOfLikesDisplay />
                   </div>
-                  <p className="text-neutral-400 text-xs mb-2">
+                  <p className="mb-2 text-xs text-neutral-400">
                     {getDateFromNow(post.created_at)}
                   </p>
                 </div>

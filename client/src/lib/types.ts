@@ -28,10 +28,15 @@ export type PostType = {
   likedByUser: Array<{ id: User["id"] }>;
 };
 
+export type GenerateImg = {
+  b64_json: string;
+  revised_prompt: string;
+};
+
 export type INewPost = {
   prompt: string;
   authorId: string;
-  photo: string;
+  b64_json: string;
 };
 
 export type INewComment = {

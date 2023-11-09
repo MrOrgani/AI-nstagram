@@ -17,8 +17,8 @@ import { useUserContext } from "@/context/AuthContext";
 import supabase from "@/lib/supabase";
 import LoginModal from "./LoginModal";
 import { usePublishPost } from "@/lib/react-query/queries";
-import { INewPost } from "@/lib/types";
-import { PlusSquare, X } from "lucide-react";
+import { GenerateImg } from "@/lib/types";
+import { Eraser, PlusSquare, X } from "lucide-react";
 import { Icons } from "../ui/icons";
 import { useToast } from "../ui/use-toast";
 
@@ -34,10 +34,12 @@ const PostButton = () => {
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
-  const [form, setForm] = useState<INewPost>({
+  const [form, setForm] = useState<{
+    prompt: string;
+    generatedImages: GenerateImg[];
+  }>({
     prompt: "",
-    photo: "",
-    authorId: "",
+    generatedImages: [],
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
@@ -52,41 +54,44 @@ const PostButton = () => {
       setLoginDialogCallback(true);
       return;
     }
-    if (form.prompt) {
-      setGeneratingImg(true);
+    if (!form.prompt) {
+      toast({
+        title: "Please entre a prompt",
+        variant: "destructive",
+      });
+    }
 
-      try {
-        const { data, error } = await supabase.functions.invoke("openai", {
-          body: JSON.stringify({
-            prompt: form.prompt,
-          }),
+    setGeneratingImg(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke<{
+        generatedImages: Array<GenerateImg>;
+      }>("openai", {
+        body: JSON.stringify({
+          prompt: form.prompt,
+        }),
+      });
+
+      if (error || !data) {
+        toast({
+          title: "Your prompt could not be generated",
+          variant: "destructive",
         });
-
-        console.log("handleGenerateImg", data, error);
-
-        if (error) {
-          toast({
-            title: "Your prompt could not be generated",
-            variant: "destructive",
-          });
-          throw new Error(error.message);
-        }
-        setForm({
-          ...form,
-          photo: `data:image/jpeg;base64,${data?.photoUrl}`,
-        });
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setGeneratingImg(false);
+        throw new Error(error.message);
       }
-    } else {
-      alert("Please entre a prompt");
+      setForm({
+        ...form,
+        generatedImages: data?.generatedImages,
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setGeneratingImg(false);
     }
   };
 
   const deleteImg = () => {
-    setForm({ ...form, photo: "" });
+    setForm({ ...form, generatedImages: [] });
   };
 
   return (
@@ -104,7 +109,7 @@ const PostButton = () => {
           setOpen(isOpen);
 
           if (isOpen === false) {
-            setForm({ ...form, photo: "" });
+            setForm({ ...form, generatedImages: [] });
             setGeneratingImg(false);
           }
         }}>
@@ -133,25 +138,28 @@ const PostButton = () => {
               placeholder="Type your text here."
               className="col-start-1 col-end-5 items-center"
               onChange={(e) => handleChange(e)}
+              value={form.prompt}
             />
           </div>
 
-          <div className="foxus:border-blue-500 relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:ring-blue-500 md:w-64">
-            {form.photo ? (
-              <div className="group flex">
-                <img
-                  src={form.photo}
-                  alt={form.prompt}
-                  className="block h-full w-full object-contain"
-                />
-                <div className="hidden group-hover:block ">
-                  <div
-                    className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
-                    onClick={deleteImg}>
-                    <X />
+          <div className="relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 md:w-64">
+            {form.generatedImages.length > 0 ? (
+              form.generatedImages.map((img, i) => (
+                <div className="group flex" key={`generated-image-${i}`}>
+                  <img
+                    src={`data:image/jpeg;base64,${img.b64_json}`}
+                    alt={form.prompt}
+                    className="block h-full w-full object-contain"
+                  />
+                  <div className="hidden group-hover:block ">
+                    <div
+                      className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
+                      onClick={deleteImg}>
+                      <X />
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))
             ) : (
               <img
                 src={preview}
@@ -167,26 +175,48 @@ const PostButton = () => {
           </div>
           <DialogFooter className="flex-col gap-1">
             <Button
+              onClick={() => {
+                setForm({ generatedImages: [], prompt: "" });
+              }}
+              disabled={!form.generatedImages.length && !form.prompt}
+              className="rounded-md bg-gradient-to-r from-[#FF0000] to-red-300 p-0.5 ">
+              <div className="text-md flex h-full w-full items-center justify-center rounded-md p-4 text-white">
+                <span className="mx-1">Erase</span>
+                <Eraser className="h-5 w-8" />
+              </div>
+            </Button>
+            <Button
               onClick={(e) => {
                 e.preventDefault();
                 handleGenerateImg();
               }}
-              disabled={!form.prompt || generatingImg}
+              disabled={
+                !form.prompt || generatingImg || form.generatedImages.length > 0
+              }
               className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
               <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
                 <span className="mx-1">
                   {generatingImg ? "Generating..." : "Generate"}
                 </span>
-                <Icons.openai />
+                <Icons.openai className="h-5 w-8" />
               </div>
             </Button>
             <Button
               onClick={() => {
+                if (!userProfile?.id) {
+                  setOpen(false);
+                  setLoginDialogCallback(true);
+                  return;
+                }
                 wait().then(() => setOpen(false));
-                setForm({ ...form, photo: "" });
-                publishNewPost({ ...form, authorId: userProfile?.id ?? "" });
+                setForm({ generatedImages: [], prompt: "" });
+                publishNewPost({
+                  prompt: form.prompt,
+                  b64_json: `data:image/jpeg;base64,${form.generatedImages[0].b64_json}`,
+                  authorId: userProfile?.id,
+                });
               }}
-              disabled={!form.prompt || !form.photo}
+              disabled={!form.prompt || !form.generatedImages.length}
               type="submit"
               className=" rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
               <div className="flex-center p-4 ">

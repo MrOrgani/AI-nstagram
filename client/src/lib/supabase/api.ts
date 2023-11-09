@@ -120,15 +120,22 @@ export const getCommentsFromPostId = async (postId: number) => {
 
 export const publishPost = async (newPost: INewPost) => {
   const fileName = `${newPost.authorId}_${Date.now()}`;
-  const fileImage = await dataUrlToFile(newPost.photo, fileName);
+  const fileImage = await dataUrlToFile(newPost.b64_json, fileName);
 
   const { data: uploadData, error: errorUpload } = await supabase.storage
     .from("ai-stagram-bucket")
-    .upload(fileName, fileImage);
+    .upload(`/${newPost.authorId}/${fileName}`, fileImage, {
+      contentType: "image/*",
+    });
+  console.log("New post uploadData", uploadData);
 
   if (errorUpload) {
     throw new Error(errorUpload.message);
   }
+
+  const { data } = await supabase.storage
+    .from("ai-stagram-bucket")
+    .getPublicUrl(uploadData.path);
 
   const { data: postData, error } = await supabase
     .from("posts")
@@ -136,7 +143,7 @@ export const publishPost = async (newPost: INewPost) => {
       {
         prompt: newPost.prompt,
         user_id: newPost.authorId,
-        photo: uploadData.path,
+        photo: data.publicUrl,
       },
     ])
     .select("*");
