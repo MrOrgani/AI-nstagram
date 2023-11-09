@@ -1,5 +1,3 @@
-import { User } from "@supabase/supabase-js";
-
 export type IUser = {
   id: string;
   name: string;
@@ -21,11 +19,9 @@ export type PostType = {
   prompt: string;
   photo: string;
   created_at: string;
-  comments: number;
-  commentsByUser: Comment[];
-  likes: number;
+  comments: Array<IComment>;
+  likes: Array<{ user_id: IUser["id"] }>;
   user: IUser;
-  likedByUser: Array<{ id: User["id"] }>;
 };
 
 export type GenerateImg = {

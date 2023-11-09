@@ -58,10 +58,11 @@ export const getPostById = async (postId: number): Promise<PostType> => {
         user:user_id (
           *,
           id:user_id
-          ),
-        likedByUser:likes(
-          id:user_id
-          )
+        ),
+        likes:likes(
+          user_id
+        ),
+        comments:comments(*)
     `
     )
     .eq("id", postId);
@@ -76,8 +77,8 @@ export const getPostsByUserId = async (userId: string) => {
     .from("posts")
     .select(
       `*,
-    user:user_id (*),
-    likedByUser:likes(id:user_id)
+      user:user_id (*),
+      likedByUser:likes(id:user_id)
     `
     )
     .eq("user_id", userId)
@@ -174,26 +175,7 @@ export const likePost = async ({
     throw new Error(addedLikeError.message);
   }
 
-  // We get the current likes of the liked post and increment it by one
-  const { data: currentPostLikes, error: getLikedPostError } = await supabase
-    .from("posts")
-    .select("likes")
-    .eq("id", postId);
-  if (getLikedPostError) {
-    throw new Error(getLikedPostError.message);
-  }
-
-  const { data: updatedPost, error: updatedLikedPost } = await supabase
-    .from("posts")
-    .update({ likes: parseInt(currentPostLikes?.[0].likes) + 1 })
-    .eq("id", postId)
-    .select();
-
-  if (updatedLikedPost) {
-    throw new Error(updatedLikedPost.message);
-  }
-
-  return updatedPost[0];
+  return { postId };
 };
 export const dislikePost = async ({
   postId,
@@ -208,23 +190,7 @@ export const dislikePost = async ({
     .eq("post_id", postId)
     .eq("user_id", userId);
 
-  // We get the current likes of the liked post and decrement it by one
-  const { data: currentPostLikes } = await supabase
-    .from("posts")
-    .select("likes")
-    .eq("id", postId);
-
-  const { data: updatedPost, error: updatedPostError } = await supabase
-    .from("posts")
-    .update({ likes: Math.max(0, parseInt(currentPostLikes?.[0].likes) - 1) })
-    .eq("id", postId)
-    .select();
-
-  if (updatedPostError) {
-    throw new Error(updatedPostError.message);
-  }
-
-  return updatedPost[0];
+  return { postId };
 };
 
 export const commentPost = async ({ postId, userId, text }: INewComment) => {
@@ -240,22 +206,7 @@ export const commentPost = async ({ postId, userId, text }: INewComment) => {
     throw new Error(addedCommentError.message);
   }
 
-  const { data: currentPostComments } = await supabase
-    .from("posts")
-    .select("comments")
-    .eq("id", postId);
-
-  const { data: updatedPost, error: updatedPostError } = await supabase
-    .from("posts")
-    .update({ comments: parseInt(currentPostComments?.[0].comments) + 1 })
-    .eq("id", postId)
-    .select();
-
-  if (updatedPostError) {
-    throw new Error(updatedPostError.message);
-  }
-
-  return updatedPost[0];
+  return { postId };
 };
 
 export const deleteComment = async ({
@@ -277,22 +228,7 @@ export const deleteComment = async ({
   if (error) {
     throw new Error(error.message);
   }
-
-  const { data: currentPostComments } = await supabase
-    .from("posts")
-    .select("comments")
-    .eq("id", postId);
-
-  const { data: updatedPost, error: updatedPostError } = await supabase
-    .from("posts")
-    .update({ comments: parseInt(currentPostComments?.[0].comments) - 1 })
-    .eq("id", postId)
-    .select();
-
-  if (updatedPostError) {
-    throw new Error(updatedPostError.message);
-  }
-  return updatedPost[0];
+  return { postId };
 };
 
 export const deletePost = async ({
@@ -330,11 +266,14 @@ export const getUserById = async (userId: string) => {
     .from("profiles")
     .select(
       `
-    *,
-    id:user_id, 
-    posts(
       *,
-      likedByUser:likes(id:user_id))
+      id:user_id, 
+      posts(
+        *,
+        likedByUser:likes(
+          id:user_id
+        )
+      )
     `
     )
     .eq("user_id", userId)

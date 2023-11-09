@@ -15,8 +15,8 @@ export const LikeIcon = () => {
   const [loginDialog, setLoginDialog] = useState(false);
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
-  const isLikedByUser = currentPost?.likedByUser?.find(
-    (user) => user.id === userProfile?.id
+  const isLikedByUser = currentPost?.likes?.find(
+    (user) => user.user_id === userProfile?.id
   );
 
   const handleLikePost = () => {
@@ -27,11 +27,7 @@ export const LikeIcon = () => {
     if (currentPost) {
       update({
         ...currentPost,
-        likes: currentPost.likes + 1,
-        likedByUser: [
-          { id: userProfile?.id },
-          ...(currentPost?.likedByUser || []),
-        ],
+        likes: [{ user_id: userProfile?.id }, ...(currentPost?.likes || [])],
       });
       likePost({ postId: currentPost.id, userId: userProfile?.id });
     }
@@ -44,14 +40,14 @@ export const LikeIcon = () => {
     }
 
     if (currentPost) {
-      const currentUserLikeIndex = currentPost.likedByUser.findIndex(
-        (user) => user.id === userProfile?.id
+      const currentUserLikeIndex = currentPost.likes.findIndex(
+        (user) => user.user_id === userProfile?.id
       );
 
-      currentPost.likedByUser.splice(currentUserLikeIndex, 1);
+      currentPost.likes.splice(currentUserLikeIndex, 1);
       update({
         ...currentPost,
-        likes: Math.max(currentPost.likes - 1, 0),
+        likes: currentPost.likes,
       });
       dislikePost({ postId: currentPost.id, userId: userProfile?.id });
     }
@@ -62,7 +58,7 @@ export const LikeIcon = () => {
   }
 
   return (
-    <div className="p-2 -m-2">
+    <div className="-m-2 p-2">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}

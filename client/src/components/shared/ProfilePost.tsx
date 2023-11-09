@@ -15,15 +15,16 @@ import { useGetPostById } from "@/lib/react-query/queries";
 import { Heart, MessageCircle } from "lucide-react";
 
 const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
+  const { comments } = post;
   return (
     <DialogTrigger asChild>
       <div key={post.id} className="group relative cursor-pointer p-0 ">
         <div className="absolute bottom-0 left-0 right-0 top-0 hidden items-center justify-center align-middle group-hover:flex">
           <span className="z-10  flex items-center  text-white">
             <Heart className=" w-11  " color={"white"} />
-            {post.likes}
+            {post.likes.length}
             <MessageCircle className=" z-10 w-11 " color={"white"} />
-            {post.comments}
+            {comments.length}
           </span>
           <div className=" absolute bottom-0 left-0 right-0 top-0 bg-black opacity-30" />
         </div>

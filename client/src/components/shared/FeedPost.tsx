@@ -29,17 +29,17 @@ export const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
     <PostProvider post={data}>
       <Card
         data-testid="feed-post"
-        className=" overflow-hidden bg-white mb-5 border-b border-b-gray-200 shadow-feed-post ">
+        className=" mb-5 overflow-hidden border-b border-b-gray-200 bg-white shadow-feed-post ">
         <div className="flex items-center justify-between p-2.5">
           <div className="flex items-center">
             <Link to={`/${currentPost.user?.id}`} className="flex items-center">
               <SmallAvatar user={currentPost.user} />
-              <span className="font-medium text-sm ml-2.5 ">
+              <span className="ml-2.5 text-sm font-medium ">
                 {currentPost.user?.name}
               </span>
             </Link>
-            <span className="text-neutral-500 text-sm mx-1">•</span>
-            <time className=" text-neutral-500 text-sm font-normal">
+            <span className="mx-1 text-sm text-neutral-500">•</span>
+            <time className=" text-sm font-normal text-neutral-500">
               {getDateFromNow(currentPost.created_at)}
             </time>
           </div>
@@ -50,8 +50,8 @@ export const FeedPost = ({ currentPost }: { currentPost: PostType }) => {
         <div className="">
           <PostIconsHeader {...{ handleIconClick }} />
           <NumberOfLikesDisplay />
-          <div className="text-sm pb-3">
-            <span className=" font-semibold inline-block mr-2">
+          <div className="pb-3 text-sm">
+            <span className=" mr-2 inline-block font-semibold">
               {currentPost.user?.name}
             </span>
             <span>{currentPost.prompt}</span>

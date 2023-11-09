@@ -12,7 +12,6 @@ import {
   dislikePost,
   fetchFeedPosts,
   getCommentsFromPostId,
-  getImgFromStorage,
   getPostById,
   getUserById,
   likePost,
@@ -76,10 +75,7 @@ export const useLikePost = () => {
         queryKey: ["feed-posts"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["user-profile", data.user_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["post", data.id],
+        queryKey: ["post", data.postId],
       });
     },
   });
@@ -95,10 +91,7 @@ export const useDislikePost = () => {
         queryKey: ["feed-posts"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["user-profile", data.user_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["post", data.id],
+        queryKey: ["post", data.postId],
       });
     },
   });
@@ -119,13 +112,10 @@ export const useCommentPost = () => {
         queryKey: ["feed-posts"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["user-profile", data.user_id],
+        queryKey: ["post", data.postId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["post", data.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["comments", data.id],
+        queryKey: ["comments", data.postId],
       });
     },
   });
@@ -144,13 +134,10 @@ export const useDeleteComment = () => {
         queryKey: ["feed-posts"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["user-profile", data.user_id],
+        queryKey: ["post", data.postId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["post", data.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["comments", data.id],
+        queryKey: ["comments", data.postId],
       });
     },
   });

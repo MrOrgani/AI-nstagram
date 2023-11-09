@@ -26,7 +26,7 @@ export const CommentsDisplay = ({
   } = useGetCommentsFromPostId(currentPost?.id);
 
   const feedPostWithNoComments =
-    !defaultDisplayComments && currentPost.comments === 0;
+    !defaultDisplayComments && currentPost.comments.length === 0;
 
   if (!currentPost || feedPostWithNoComments) {
     return null;
@@ -36,7 +36,7 @@ export const CommentsDisplay = ({
     <>
       {diplayComments && (isLoading || isFetching) && (
         <div data-testid="comments-from-post">
-          {new Array(currentPost.comments)
+          {new Array(currentPost.comments.length)
             .fill(<SkeletonComment key={0} />)
             .map((_, i) => (
               <SkeletonComment key={i} />
@@ -48,7 +48,7 @@ export const CommentsDisplay = ({
           className="my-2 cursor-pointer text-sm font-medium text-neutral-500"
           onClick={() => setDiplayComments(!diplayComments)}
           data-testid="view-all-comments">
-          View all {currentPost.comments} comments
+          View all {currentPost.comments.length} comments
         </p>
       )}
       {diplayComments && (
