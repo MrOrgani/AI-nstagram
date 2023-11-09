@@ -52,7 +52,6 @@ const PostButton = () => {
     setOpen(isOpen);
 
     if (isOpen === false) {
-      setForm({ ...form, generatedImages: [] });
       setGeneratingImg(false);
     }
   };
@@ -99,10 +98,6 @@ const PostButton = () => {
     }
   };
 
-  const deleteImg = () => {
-    setForm({ ...form, generatedImages: [] });
-  };
-
   const handlePublishPost = async () => {
     if (!userProfile?.id) {
       setOpen(false);
@@ -128,7 +123,14 @@ const PostButton = () => {
       ) : null}
       <Dialog open={open} onOpenChange={handleDialogOnOpenChange}>
         <DialogTrigger asChild>
-          <OpenDialogButton onClick={() => setOpen(true)}></OpenDialogButton>
+          <Button
+            onClick={() => setOpen(true)}
+            className="rounded-md bg-black-pearl bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5">
+            <div className="text-md flex h-full w-full items-center  justify-center rounded-md p-4  text-white">
+              <span className="mx-1">Post</span>
+              <PlusSquare />
+            </div>
+          </Button>
         </DialogTrigger>
         <DialogOverlay className="fixed left-0 top-0 z-30 h-screen w-screen bg-black opacity-50" />
         <DialogContent className="fixed left-1/2 top-1/2 z-40 flex w-full -translate-x-1/2 -translate-y-1/2 transform flex-col space-x-4 space-y-4 rounded-md bg-white p-5 shadow-feed-post md:w-3/4 lg:w-1/2 xl:w-1/3">
@@ -139,7 +141,7 @@ const PostButton = () => {
               </span>
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-4 place-items-stretch gap-4">
+          <div>
             <Textarea
               name="prompt"
               placeholder="Type your text here."
@@ -149,14 +151,15 @@ const PostButton = () => {
             />
           </div>
 
-          <div className="relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50 p-3 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 md:w-64">
+          <div
+            className={`relative h-64 w-full place-self-center rounded-lg border border-gray-300 bg-gray-50  p-3 text-sm text-gray-900 duration-700 ease-in-out ${
+              form.generatedImages.length > 0
+                ? "hover:flex hover:scale-150"
+                : ""
+            }  focus:border-blue-500 focus:ring-blue-500 md:w-64`}>
             {form.generatedImages.length > 0 &&
               form.generatedImages.map((image) => (
-                <ImagePreviewDidsplay
-                  img={image}
-                  key={image.revised_prompt}
-                  onClick={deleteImg}
-                />
+                <ImagePreviewDidsplay img={image} key={image.revised_prompt} />
               ))}
             {form.generatedImages.length === 0 && (
               <img
@@ -172,7 +175,7 @@ const PostButton = () => {
             )}
           </div>
 
-          <DialogFooter className="flex-col gap-1">
+          <DialogFooter className="-z-10 flex-col gap-1">
             <EraseButton
               onClick={() => {
                 setForm({ generatedImages: [], prompt: "" });
@@ -198,20 +201,51 @@ const PostButton = () => {
   );
 };
 
-function OpenDialogButton({ onClick }: { onClick: () => void }) {
+const EraseButton = ({
+  disabled,
+  onClick,
+}: {
+  disabled: boolean;
+  onClick: () => void;
+}) => {
   return (
     <Button
       onClick={onClick}
-      className="rounded-md bg-black-pearl bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5">
-      <div className="text-md flex h-full w-full items-center  justify-center rounded-md p-4  text-white">
-        <span className="mx-1">Post</span>
-        <PlusSquare />
+      disabled={disabled}
+      className="rounded-md bg-gradient-to-r from-[#FF0000] to-red-300 p-0.5 ">
+      <div className="text-md flex h-full w-full items-center justify-center rounded-md p-4 text-white">
+        <span className="mx-1">Erase</span>
+        <Eraser className="h-5 w-8" />
       </div>
     </Button>
   );
-}
+};
 
-function PublishButton({
+const GenerateImageButton = ({
+  onClick,
+  disabled,
+  generatingImg,
+}: {
+  onClick: () => void;
+  disabled: boolean;
+  generatingImg: boolean;
+}) => {
+  return (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
+      <div className="-z-1 text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
+        <span className="mx-1">
+          {generatingImg ? "Generating..." : "Generate"}
+        </span>
+        <Icons.openai className="h-5 w-8" />
+      </div>
+    </Button>
+  );
+};
+
+const PublishButton = ({
   onClick,
   disabled,
   isLoading,
@@ -219,7 +253,7 @@ function PublishButton({
   onClick: () => void;
   disabled: boolean;
   isLoading: boolean;
-}) {
+}) => {
   return (
     <Button
       onClick={onClick}
@@ -237,75 +271,18 @@ function PublishButton({
       </div>
     </Button>
   );
-}
+};
 
-function GenerateImageButton({
-  onClick,
-  disabled,
-  generatingImg,
-}: {
-  onClick: () => void;
-  disabled: boolean;
-  generatingImg: boolean;
-}) {
+const ImagePreviewDidsplay = ({ img }: { img: GenerateImg }) => {
   return (
-    <Button
-      onClick={onClick}
-      disabled={disabled}
-      className="rounded-md bg-gradient-to-r from-gradient-blue to-gradient-purple p-0.5 ">
-      <div className="text-md flex h-full w-full items-center justify-center rounded-md bg-white p-4 text-[#262626]">
-        <span className="mx-1">
-          {generatingImg ? "Generating..." : "Generate"}
-        </span>
-        <Icons.openai className="h-5 w-8" />
-      </div>
-    </Button>
-  );
-}
-
-function EraseButton({
-  disabled,
-  onClick,
-}: {
-  disabled: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <Button
-      onClick={onClick}
-      disabled={disabled}
-      className="rounded-md bg-gradient-to-r from-[#FF0000] to-red-300 p-0.5 ">
-      <div className="text-md flex h-full w-full items-center justify-center rounded-md p-4 text-white">
-        <span className="mx-1">Erase</span>
-        <Eraser className="h-5 w-8" />
-      </div>
-    </Button>
-  );
-}
-
-function ImagePreviewDidsplay({
-  img,
-  onClick: deleteImg,
-}: {
-  img: GenerateImg;
-  onClick: () => void;
-}) {
-  return (
-    <div className="group flex">
+    <div className="transition-transforn group z-40 flex h-full w-full transform items-center justify-center ">
       <img
         src={`data:image/jpeg;base64,${img.b64_json}`}
         alt={img.revised_prompt}
-        className="block h-full w-full object-contain"
+        className=" z-50 block h-full w-full "
       />
-      <div className="hidden group-hover:block ">
-        <div
-          className="full-rounded text-md absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 font-bold text-white"
-          onClick={deleteImg}>
-          <X />
-        </div>
-      </div>
     </div>
   );
-}
+};
 
 export default PostButton;
