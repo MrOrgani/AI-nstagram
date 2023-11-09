@@ -71,14 +71,6 @@ export const getPostById = async (postId: number): Promise<PostType> => {
   return data[0];
 };
 
-export const getImgFromStorage = async (imgPath: string) => {
-  const { data } = await supabase.storage
-    .from("ai-stagram-bucket")
-    .getPublicUrl(imgPath);
-
-  return data.publicUrl;
-};
-
 export const getPostsByUserId = async (userId: string) => {
   const { data: posts, error } = await supabase
     .from("posts")

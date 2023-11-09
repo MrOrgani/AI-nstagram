@@ -52,13 +52,6 @@ export const useGetPostById = (postId: number) => {
   });
 };
 
-export const useGetPostImg = (imgPath: string) => {
-  return useQuery({
-    queryKey: ["post-img", imgPath],
-    queryFn: () => getImgFromStorage(imgPath),
-  });
-};
-
 export const usePublishPost = () => {
   const queryClient = useQueryClient();
   return useMutation({
