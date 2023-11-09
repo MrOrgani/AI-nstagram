@@ -1,9 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  getContrastingColor,
-  getDateFromNow,
-  stringToColour,
-} from "@/lib/utils";
+import { getDateFromNow } from "@/lib/utils";
 
 import type { IComment } from "@/lib/types";
 import { usePostContext } from "@/context/PostContext";
