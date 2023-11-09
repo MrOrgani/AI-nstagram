@@ -127,7 +127,6 @@ export const publishPost = async (newPost: INewPost) => {
     .upload(`/${newPost.authorId}/${fileName}`, fileImage, {
       contentType: "image/*",
     });
-  console.log("New post uploadData", uploadData);
 
   if (errorUpload) {
     throw new Error(errorUpload.message);
@@ -341,7 +340,9 @@ export const getUserById = async (userId: string) => {
       `
     *,
     id:user_id, 
-    posts(*,likedByUser:likes(id:user_id))
+    posts(
+      *,
+      likedByUser:likes(id:user_id))
     `
     )
     .eq("user_id", userId)
