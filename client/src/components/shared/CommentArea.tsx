@@ -48,7 +48,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         />
       ) : null}
       <textarea
-        maxLength={255}
+        maxLength={1000}
         id={`comment_area_${currentPost.id}`}
         className={cn("static h-5 w-full resize-none leading-5 outline-none")}
         placeholder="Add a comment..."
