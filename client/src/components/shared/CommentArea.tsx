@@ -39,7 +39,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   }
 
   return (
-    <div className=" text-sm flex items-center justify-between mx-2 py-2 ">
+    <div className=" mx-2 flex items-center justify-between py-2 text-sm ">
       {loginDialog ? (
         <LoginModal
           initialDisplay={true}
@@ -48,8 +48,9 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
         />
       ) : null}
       <textarea
+        maxLength={255}
         id={`comment_area_${currentPost.id}`}
-        className={cn("outline-none w-full resize-none h-5 leading-5 static")}
+        className={cn("static h-5 w-full resize-none leading-5 outline-none")}
         placeholder="Add a comment..."
         value={comment}
         onChange={(e) => setComment(e.target.value)}
@@ -60,7 +61,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
       />
       {comment.length ? (
         <div
-          className="text-blue-400 font-bold mr-1 cursor-pointer"
+          className="mr-1 cursor-pointer font-bold text-blue-400"
           onClick={handlePost}>
           Post
         </div>
