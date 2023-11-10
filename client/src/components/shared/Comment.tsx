@@ -28,7 +28,7 @@ export const Comment = ({ comment }: Props) => {
         <SmallAvatar user={comment.user} />
       </div>
       <div className="ml-3 w-full">
-        <div className="group/edit flex">
+        <div className="group/edit flex flex-col">
           <span className="mr-1 text-sm font-semibold text-gray-800">
             {comment.user.name}
           </span>
