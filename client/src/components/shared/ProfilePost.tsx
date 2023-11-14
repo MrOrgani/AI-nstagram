@@ -48,20 +48,21 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     }
   };
 
-  const postDecription = {
-    comment_id: `${post.id}`,
-    created_at: post.created_at,
-    user_id: currentUserProfile?.id,
-    text: post.prompt,
-    post_id: post.id,
-    user: currentUserProfile,
-  };
-
   const { data: currentPost } = useGetPostById(post.id);
 
   if (!currentPost) {
     return null;
   }
+
+  const postDecription = {
+    comment_id: `${currentPost.id}`,
+    created_at: currentPost.created_at,
+    user_id: currentUserProfile?.id,
+    text: currentPost.prompt,
+    post_id: currentPost.id,
+    user: currentUserProfile,
+  };
+
   return (
     <PostProvider post={currentPost}>
       <Dialog>
@@ -72,8 +73,8 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
               <div className="flex h-full items-center justify-center overflow-hidden">
                 <img
                   className="h-full w-full object-cover md:w-auto"
-                  src={post.photo}
-                  alt={post.prompt}
+                  src={currentPost.photo}
+                  alt={currentPost.prompt}
                 />
               </div>
             </div>
