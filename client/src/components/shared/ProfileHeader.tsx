@@ -15,14 +15,14 @@ export const ProfileHeader: React.FC<Props> = ({
 }) => {
   return (
     <header className="flex h-[182px]">
-      <div className="rounded-full mr-7 flex justify-center grow-[1] items-center ">
+      <div className="mr-7 flex grow-[1] items-center justify-center rounded-full ">
         <div className="flex ">
           <SmallAvatar user={user} className="h-[150px] w-[150px]" />
         </div>
       </div>
-      <section className="grow-[2] flex flex-col mt-4 ">
-        <div className="font-normal text-xl mb-5 flex  flex-col md:flex-row">
-          <span>{user.name}</span>
+      <section className="mt-4 flex grow-[2] flex-col ">
+        <div className="mb-5 flex flex-col text-xl  font-normal md:flex-row ">
+          <span className="text-ellipsis ">{user.name}</span>
           {children}
         </div>
         <span className="text-base">

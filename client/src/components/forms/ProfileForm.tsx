@@ -8,30 +8,40 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/AuthContext";
 import { useUpdateUser } from "@/lib/react-query/queries";
 import { Loader } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProfileValidation } from "@/lib/validations";
 
-interface Inputs {
-  username: string;
-  avatar: FileList;
-}
 export const ProfileForm = () => {
   const { user: userProfile, setUser } = useUserContext();
   const navigate = useNavigate();
 
   const { mutateAsync, isLoading } = useUpdateUser();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    setError,
-    formState: { errors: inputErrors },
-  } = useForm<Inputs>();
+  const form = useForm<z.infer<typeof ProfileValidation>>({
+    resolver: zodResolver(ProfileValidation),
+    defaultValues: {
+      username: userProfile?.name ?? "",
+      avatar: undefined,
+    },
+  });
   const [selectedImage, setSelectedImage] = useState<FileList | undefined>(
     undefined
   );
 
-  const onSubmit: SubmitHandler<Inputs> = async (inputs) => {
-    if (Object.keys(inputErrors).length > 0 || !userProfile?.id) return;
+  const onSubmit: SubmitHandler<z.infer<typeof ProfileValidation>> = async (
+    inputs
+  ) => {
+    if (!userProfile?.id) return;
 
     const { username, avatar } = inputs;
     const file: File | string | undefined = avatar?.[0];
@@ -55,98 +65,94 @@ export const ProfileForm = () => {
     ? URL.createObjectURL(selectedImage[0])
     : userProfile?.avatar;
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="my-2 flex h-full grow flex-col">
-      <div>
-        <h2 className="my-3 flex-grow-0 grid-rows-3 text-2xl font-bold tracking-tight">
-          Settings
-        </h2>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="my-2 flex  w-full grow flex-col gap-40">
         <div>
-          <h3 className="text-lg font-medium">Edit Profile</h3>
-          <p className="text-sm text-muted-foreground">
-            This is how others will see you on the site.
-          </p>
+          <h2 className="my-3 flex-grow-0 grid-rows-3 text-2xl font-bold tracking-tight">
+            Settings
+          </h2>
+          <div>
+            <h3 className="text-lg font-medium">Edit Profile</h3>
+            <p className="text-sm text-muted-foreground">
+              This is how others will see you on the site.
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex grow flex-col items-center justify-center">
-        <div className="mx-5">
-          <div className="flex h-full flex-col items-end justify-center gap-8">
-            <div className="flex flex-col items-center justify-center md:flex-row">
-              <SmallAvatar
-                user={{ ...userProfile, avatar: imgSrc }}
-                className="h-20 w-20"
-              />
-              <div className="md:ml-10">
-                <Label htmlFor="picture">Change your profile picture</Label>
-                <Controller
-                  control={control}
-                  name={"avatar"}
-                  defaultValue={selectedImage}
-                  render={({ field: { value, onChange, ...field } }) => {
-                    return (
-                      <Input
-                        {...field}
-                        onChange={(event) => {
-                          if (
-                            !event.target.files ||
-                            event.target.files.length === 0
-                          ) {
-                            setSelectedImage(undefined);
-                            return;
-                          }
-                          if (event.target.files[0].size > 10000000) {
-                            setError("avatar", {
-                              type: "custom",
-                              message: "The file is too big",
-                            });
-                            return;
-                          }
-                          onChange(event.target.files);
-                          setSelectedImage(event.target.files);
-                        }}
-                        type="file"
-                        id="picture"
-                        accept="image/*"
-                      />
-                    );
-                  }}
+        <div className="flex grow flex-col items-center justify-center gap-10">
+          <div className="flex h-full flex-col justify-center ">
+            <div className="gap-30 flex flex-col items-center justify-center">
+              <Label htmlFor="avatar" className="cursor-pointer">
+                <SmallAvatar
+                  user={{ ...userProfile, avatar: imgSrc }}
+                  className="h-20 w-20"
                 />
-                {inputErrors.avatar && (
-                  <span className="text-xs text-red-500">
-                    {inputErrors.avatar.message}
-                  </span>
-                )}
-              </div>
+              </Label>
+              <Controller
+                control={form.control}
+                name={"avatar"}
+                defaultValue={selectedImage}
+                render={({ field: { onChange, value, ...field } }) => {
+                  return (
+                    <FormItem>
+                      <FormControl>
+                        <>
+                          <Input
+                            className="hidden"
+                            {...field}
+                            onChange={(event) => {
+                              if (
+                                !event.target.files ||
+                                event.target.files.length === 0
+                              ) {
+                                setSelectedImage(undefined);
+                                return;
+                              }
+                              onChange(event.target.files);
+                              setSelectedImage(event.target.files);
+                            }}
+                            type="file"
+                            id="avatar"
+                            accept="image/*"
+                          />
+                          <FormMessage />
+                        </>
+                      </FormControl>
+                      <FormDescription>
+                        Change your profile picture.
+                      </FormDescription>
+                    </FormItem>
+                  );
+                }}
+              />
             </div>
           </div>
 
-          <div className="flex">
-            <span>Username</span>
-            <Input
-              {...register("username", { required: true })}
-              className="ml-10"
-              id="username"
-              type="text"
-              defaultValue={userProfile?.name}
-            />
-            {inputErrors.username && (
-              <span className="text-xs text-red-500">
-                {inputErrors.username.message}
-              </span>
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="w-full md:px-10">
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
-          </div>
+          />
         </div>
-      </div>
-      <Button type="submit" className="shad-button_primary">
-        {isLoading ? (
-          <div className="flex-center gap-2">
-            <Loader /> Loading...
-          </div>
-        ) : (
-          "Save changes"
-        )}
-      </Button>
-    </form>
+        <Button type="submit" className="shad-button_primary">
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            "Save changes"
+          )}
+        </Button>
+      </form>
+    </Form>
   );
 };

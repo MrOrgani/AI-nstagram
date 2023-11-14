@@ -18,14 +18,14 @@ export const SmallAvatar = ({ user, className }: SmallAvatarProps) => {
 
   return (
     <Avatar
-      className={`w-8 h-8 flex items-center align-middle -z-1 ${className}`}>
+      className={`-z-1 flex h-8 w-8 items-center align-middle ${className}`}>
       <AvatarImage
         src={user?.avatar}
         alt={user?.name + "_avatar"}
-        className="object-cover w-full h-full"
+        className="h-full w-full object-cover"
       />
       <AvatarFallback
-        className={`text-md font-bold  ${className} w-full h-full flex items-center justify-center`}
+        className={`text-md font-bold  ${className} flex h-full w-full items-center justify-center`}
         style={{ backgroundColor: bgColour, color }}>
         {userName?.[0]}
       </AvatarFallback>

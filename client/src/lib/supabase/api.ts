@@ -269,10 +269,8 @@ export const getUserById = async (userId: string) => {
       *,
       id:user_id, 
       posts(
-        *,
-        likedByUser:likes(
-          id:user_id
-        )
+        id,
+        created_at
       )
     `
     )
@@ -392,7 +390,10 @@ export const updateUser = async (userInfo: IUpdateUser) => {
 
   // if New avatar is present, upload it and delete the old one
   if (userInfo.newAvatar) {
-    const fileName = `${userInfo?.id}_${Date.now()}`;
+    const fileName = `${userInfo?.id}_${Date.now()}${userInfo.newAvatar.type.replace(
+      "image/",
+      "."
+    )}`;
 
     const newAvatarPath = await uploadNewAvatar({
       file: userInfo.newAvatar,
