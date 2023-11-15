@@ -16,7 +16,7 @@ const CommentArea = forwardRef<HTMLTextAreaElement>((_, ref) => {
   const setLoginDialogCallback = (value: boolean) => setLoginDialog(value);
 
   const handlePost = async () => {
-    if (!userProfile) {
+    if (!userProfile?.id) {
       setLoginDialog(true);
       return;
     }

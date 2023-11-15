@@ -67,9 +67,9 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
     <PostProvider post={currentPost}>
       <Dialog>
         <ProfilePostDialogTrigger post={currentPost} />
-        <DialogContent className="h-[500px] w-full max-w-6xl overflow-hidden bg-white p-0 shadow-feed-post">
-          <article className="flex flex-col overflow-auto md:flex-row">
-            <div className="flex grow content-center items-center justify-center border-b-2 border-r-0 border-[#EFEFEF] md:w-1/2 md:border-b-0 md:border-r-2">
+        <DialogContent className=" w-full max-w-6xl overflow-hidden bg-white p-0 shadow-feed-post">
+          <article className="grid grid-cols-2">
+            <div className="flex grow content-center items-center justify-center place-self-center border-b-2 border-r-0 border-[#EFEFEF] md:border-b-0 md:border-r-2">
               <div className="flex h-full items-center justify-center overflow-hidden">
                 <img
                   className="h-full w-full object-cover md:w-auto"
@@ -78,7 +78,7 @@ const ProfilePost = ({ post, currentUserProfile }: Props) => {
                 />
               </div>
             </div>
-            <div className="contents md:w-1/2">
+            <div className="contents ">
               <div className="relative mx-0 my-0 flex w-full flex-col">
                 <header className="flex content-center items-center border-b border-[#EFEFEF] p-3">
                   <SmallAvatar user={currentUserProfile} />
