@@ -27,13 +27,17 @@ export const Comment = ({ comment }: Props) => {
       <div className={`min-h-10  rounded-full`}>
         <SmallAvatar user={comment.user} />
       </div>
-      <div className="ml-3 w-full">
-        <div className="group/edit flex flex-col">
-          <span className="mr-1 text-sm font-semibold text-gray-800">
-            {comment.user.name}
-          </span>
-          <span className="break-words text-sm text-black">{comment.text}</span>
-          <div className="invisible ml-auto group-hover/edit:visible ">
+      <div className="group/edit ml-3  w-full">
+        <div className=" flex w-full">
+          <div className="flex flex-col">
+            <span className="mr-1 text-sm font-semibold text-gray-800">
+              {comment.user.name}
+            </span>
+            <span className="break-words text-sm text-black">
+              {comment.text}
+            </span>
+          </div>
+          <div className="invisible ml-auto flex items-center justify-center group-hover/edit:visible">
             {isAuthor ? (
               <Trash2
                 className=" h-4 w-4 "

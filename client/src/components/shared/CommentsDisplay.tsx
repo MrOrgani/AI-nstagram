@@ -7,7 +7,6 @@ import { Comment } from "./Comment";
 import { useGetCommentsFromPostId } from "@/lib/react-query/queries";
 import { SkeletonComment } from "./SkeletonComment";
 import { useInView } from "react-intersection-observer";
-import { Loader } from "lucide-react";
 
 interface CommentsDisplayProps {
   defaultComments?: IComment[];
@@ -22,7 +21,7 @@ export const CommentsDisplay = ({
   const [diplayComments, setDiplayComments] = useState(defaultDisplayComments);
   const { currentPost } = usePostContext();
 
-  const { data, isLoading, isFetchingNextPage, isFetching, fetchNextPage } =
+  const { data, isLoading, isFetchingNextPage, fetchNextPage } =
     useGetCommentsFromPostId(currentPost?.id);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export const CommentsDisplay = ({
   }, [fetchNextPage, inView]);
 
   const feedPostWithNoComments =
-    !defaultDisplayComments && currentPost.comments.length === 0;
+    !defaultDisplayComments && currentPost.comments[0].count === 0;
 
   if (!currentPost || feedPostWithNoComments) {
     return null;
@@ -47,7 +46,7 @@ export const CommentsDisplay = ({
             return <Comment key={comment.comment_id} comment={comment} />;
           })
         : null}
-      {diplayComments && (isLoading || isFetching) && (
+      {diplayComments && isLoading && (
         <div data-testid="comments-from-post">
           {new Array(Math.min(currentPost.comments.length, 20))
             .fill(<SkeletonComment key={0} />)
@@ -61,7 +60,7 @@ export const CommentsDisplay = ({
           className="my-2 cursor-pointer text-sm font-medium text-neutral-500"
           onClick={() => setDiplayComments(!diplayComments)}
           data-testid="view-all-comments">
-          View all {currentPost.comments.length} comments
+          View all {currentPost.comments[0].count} comments
         </p>
       )}
       {diplayComments && (

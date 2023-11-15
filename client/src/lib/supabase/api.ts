@@ -26,8 +26,7 @@ export const fetchFeedPosts = async (
     .from("posts")
     .select(
       `*,
-      user:user_id (*,id:user_id),
-      likedByUser:likes(id:user_id)
+      user:user_id (*,id:user_id)
       `
     )
     .range(from, to)
@@ -103,8 +102,8 @@ export const getPostById = async (postId: number): Promise<PostType> => {
         likes:likes(
           user_id
         ),
-        comments:comments(*)
-    `
+        comments:comments(count)
+        `
     )
     .eq("id", postId);
   if (error) {

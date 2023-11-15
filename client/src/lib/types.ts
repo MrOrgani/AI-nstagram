@@ -19,7 +19,7 @@ export type PostType = {
   prompt: string;
   photo: string;
   created_at: string;
-  comments: Array<IComment>;
+  comments: [{ count: number }];
   likes: Array<{ user_id: IUser["id"] }>;
   user: IUser;
 };
