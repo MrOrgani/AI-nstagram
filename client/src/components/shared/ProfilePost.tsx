@@ -24,7 +24,7 @@ const ProfilePostDialogTrigger = ({ post }: { post: PostType }) => {
             <Heart className=" w-11  " color={"white"} />
             {post.likes.length}
             <MessageCircle className=" z-10 w-11 " color={"white"} />
-            {comments.length}
+            {comments[0].count}
           </span>
           <div className=" absolute bottom-0 left-0 right-0 top-0 bg-black opacity-30" />
         </div>
