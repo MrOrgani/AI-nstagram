@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePostContext } from "@/context/PostContext";
 
@@ -6,6 +6,8 @@ import type { IComment } from "@/lib/types";
 import { Comment } from "./Comment";
 import { useGetCommentsFromPostId } from "@/lib/react-query/queries";
 import { SkeletonComment } from "./SkeletonComment";
+import { useInView } from "react-intersection-observer";
+import { Loader } from "lucide-react";
 
 interface CommentsDisplayProps {
   defaultComments?: IComment[];
@@ -16,14 +18,18 @@ export const CommentsDisplay = ({
   defaultComments = [],
   defaultDisplayComments = false,
 }: CommentsDisplayProps) => {
+  const { ref, inView } = useInView();
   const [diplayComments, setDiplayComments] = useState(defaultDisplayComments);
   const { currentPost } = usePostContext();
 
-  const {
-    data: comments,
-    isLoading,
-    isFetching,
-  } = useGetCommentsFromPostId(currentPost?.id);
+  const { data, isLoading, isFetchingNextPage, isFetching, fetchNextPage } =
+    useGetCommentsFromPostId(currentPost?.id);
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, inView]);
 
   const feedPostWithNoComments =
     !defaultDisplayComments && currentPost.comments.length === 0;
@@ -32,11 +38,18 @@ export const CommentsDisplay = ({
     return null;
   }
 
+  const currentComments = data?.pages?.map((page) => page.data).flat() ?? [];
+
   return (
     <>
+      {defaultComments.length > 0
+        ? defaultComments.map((comment) => {
+            return <Comment key={comment.comment_id} comment={comment} />;
+          })
+        : null}
       {diplayComments && (isLoading || isFetching) && (
         <div data-testid="comments-from-post">
-          {new Array(currentPost.comments.length)
+          {new Array(Math.min(currentPost.comments.length, 20))
             .fill(<SkeletonComment key={0} />)
             .map((_, i) => (
               <SkeletonComment key={i} />
@@ -53,9 +66,10 @@ export const CommentsDisplay = ({
       )}
       {diplayComments && (
         <div data-testid="comments-from-post">
-          {[...defaultComments, ...(comments || [])].map((comment) => {
+          {currentComments.map((comment) => {
             return <Comment key={comment.comment_id} comment={comment} />;
           })}
+          <div ref={ref}>{isFetchingNextPage ? <SkeletonComment /> : null}</div>
         </div>
       )}
     </>

@@ -1,5 +1,6 @@
 import supabase from "@/lib/supabase";
 import {
+  IComment,
   INewComment,
   INewPost,
   INewUser,
@@ -32,6 +33,46 @@ export const fetchFeedPosts = async (
     .range(from, to)
     .order("created_at", { ascending: false })
     .limit(PAGE_COUNT);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return new Promise((resolve) =>
+    setTimeout(
+      () =>
+        resolve({
+          data: data ?? [],
+          nextId: data?.length > 0 ? offset + 1 : undefined,
+        }),
+      1000
+    )
+  );
+};
+export const getCommentsFromPostId = async ({
+  offset,
+  postId,
+}: {
+  offset: number;
+  postId: number;
+}): Promise<{ data: IComment[]; nextId?: number }> => {
+  const from = offset * 20;
+  const to = from + 20 - 1;
+
+  const { data, error } = await supabase
+    .from("comments")
+    .select(
+      `*,
+      user:user_id(
+        *,
+        id:user_id
+      )
+    `
+    )
+    .eq("post_id", postId)
+    .range(from, to)
+    .order("created_at", { ascending: false })
+    .limit(20);
 
   if (error) {
     throw new Error(error.message);
@@ -82,33 +123,13 @@ export const getPostsByUserId = async (userId: string) => {
     `
     )
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+    .order("created_at", { ascending: true })
     .returns<PostType[]>();
 
   if (error) {
     throw new Error(error.message);
   }
   return posts;
-};
-
-export const getCommentsFromPostId = async (postId: number) => {
-  const { data, error } = await supabase
-    .from("comments")
-    .select(
-      `*,
-      user:user_id(
-        *,
-        id:user_id
-      )
-    `
-    )
-    .eq("post_id", postId)
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    throw new Error(error.message);
-  }
-  return data;
 };
 
 export const publishPost = async (newPost: INewPost) => {

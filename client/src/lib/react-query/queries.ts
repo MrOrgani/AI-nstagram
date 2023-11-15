@@ -98,9 +98,15 @@ export const useDislikePost = () => {
 };
 
 export const useGetCommentsFromPostId = (postId: number) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ["comments", postId],
-    queryFn: () => getCommentsFromPostId(postId),
+    queryFn: async ({ pageParam = 0 }) => {
+      const res = await getCommentsFromPostId({ postId, offset: pageParam });
+      return res;
+    },
+    getNextPageParam: (lastPage) => {
+      return lastPage?.nextId ?? undefined;
+    },
   });
 };
 export const useCommentPost = () => {
